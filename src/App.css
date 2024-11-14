@@ -4,3 +4,26 @@
   padding: 2rem;
   text-align: center;
 }
+
+.board {
+  width: calc(64px * 8);
+  height: calc(64px * 8);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cell {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.black {
+  background-color: #965223;
+}
+
+.white {
+  background-color: #D9A55E;
+}
