@@ -33,3 +33,18 @@
 .white {
   background-color: #D9A55E;
 }
+
+.selected {
+  background-color: #747934;
+}
+
+.available {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #427934;
+}
+
+.attacked {
+  background-color: #c44e47;
+}
