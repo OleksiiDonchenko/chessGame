@@ -1,7 +1,7 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
 }
 
@@ -10,6 +10,7 @@
   height: calc(64px * 8);
   display: flex;
   flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 .cell {
@@ -47,4 +48,12 @@
 
 .attacked {
   background-color: #c44e47;
+}
+
+.header h3 {
+  display: inline;
+}
+
+.header button {
+  margin-left: 25px;
 }
