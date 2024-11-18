@@ -50,10 +50,25 @@
   background-color: #c44e47;
 }
 
-.header h3 {
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.title h3 {
   display: inline;
 }
 
-.header button {
+.title button {
   margin-left: 25px;
+}
+
+.main {
+  display: flex;
+}
+
+.lost {
+  height: calc(50vh - 60px);
+  /* padding: 30px; */
+  margin-left: 50px;
 }
