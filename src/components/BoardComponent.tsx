@@ -9,10 +9,9 @@ interface BoardProps {
   setBoard: (board: Board) => void;
   currentPlayer: Player | null;
   swapPlayer: () => void;
-  gameRestart: () => void;
 }
 
-const BoardComponent: FC<BoardProps> = ({ board, setBoard, currentPlayer, swapPlayer, gameRestart }) => {
+const BoardComponent: FC<BoardProps> = ({ board, setBoard, currentPlayer, swapPlayer }) => {
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
   function click(cell: Cell) {
@@ -46,7 +45,6 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard, currentPlayer, swapPl
       <div className='wrapper'>
         <div className='title'>
           <h3>Current player {currentPlayer?.color}</h3>
-          <button onClick={() => gameRestart()}>Game Restart</button>
         </div>
         <div className='board'>
           {board.cells.map((row, index) =>

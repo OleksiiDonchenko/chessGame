@@ -59,16 +59,11 @@
   display: inline;
 }
 
-.title button {
-  margin-left: 25px;
-}
-
 .main {
   display: flex;
 }
 
 .lost {
   height: calc(50vh - 60px);
-  /* padding: 30px; */
   margin-left: 50px;
 }
