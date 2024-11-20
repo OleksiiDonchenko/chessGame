@@ -49,6 +49,20 @@ export class Board {
     return this.cells[y][x];
   }
 
+  public isUnderAttack(cell: Cell, color: Colors): boolean {
+    for (let row of this.cells) {
+      for (let currentCell of row) {
+        const figure = currentCell.figure;
+        if (figure && figure.color !== color) {
+          if (figure.canAttack(cell)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   private addKings() {
     new King(Colors.BLACK, this.getCell(4, 0));
     new King(Colors.WHITE, this.getCell(4, 7));

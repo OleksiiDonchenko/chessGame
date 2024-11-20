@@ -66,12 +66,33 @@ export class Cell {
     if (absY !== absX)
       return false;
 
-    const dy = this.y < target.y ? 1 : -1;
     const dx = this.x < target.x ? 1 : -1;
+    const dy = this.y < target.y ? 1 : -1;
 
     for (let i = 1; i < absY; i++) {
       if (!this.board.getCell(this.x + dx * i, this.y + dy * i).isEmpty())
         return false;
+    }
+
+    return true;
+  }
+
+  isPathClear(target: Cell): boolean {
+    const dx = target.x - this.x;
+    const dy = target.y - this.y;
+
+    const stepX = dx === 0 ? 0 : dx / Math.abs(dx);
+    const stepY = dy === 0 ? 0 : dy / Math.abs(dy);
+
+    let x = this.x + stepX;
+    let y = this.y + stepY;
+
+    while (x !== target.x || y !== target.y) {
+      if (!this.board.getCell(x, y).isEmpty()) {
+        return false;
+      }
+      x += stepX;
+      y += stepY;
     }
 
     return true;

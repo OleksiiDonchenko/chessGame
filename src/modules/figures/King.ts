@@ -15,6 +15,25 @@ export class King extends Figure {
   canMove(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
-    return true;
+
+    const dx = Math.abs(target.x - this.cell.x);
+    const dy = Math.abs(target.y - this.cell.y);
+
+    if ((dx === 1 && dy <= 1) || (dy === 1 && dx <= 1)) {
+      if (target.isEmpty() || this.cell.isEnemy(target)) {
+        if (!this.cell.board.isUnderAttack(target, this.color)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  canAttack(target: Cell): boolean {
+    const dx = Math.abs(target.x - this.cell.x);
+    const dy = Math.abs(target.y - this.cell.y);
+
+    return dx <= 1 && dy <= 1;
   }
 }

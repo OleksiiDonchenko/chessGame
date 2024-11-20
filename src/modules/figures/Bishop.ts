@@ -19,4 +19,12 @@ export class Bishop extends Figure {
       return true;
     return false;
   }
+
+  canAttack(target: Cell): boolean {
+    if (!super.canMove(target))
+      return false;
+    if (this.cell.isEmptyDiagonal(target))
+      return this.cell.isPathClear(target);
+    return false;
+  }
 }

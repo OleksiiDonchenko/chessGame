@@ -10,7 +10,7 @@
   height: calc(64px * 8);
   display: flex;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .cell {
@@ -55,10 +55,6 @@
   flex-direction: column;
 }
 
-.title h3 {
-  display: inline;
-}
-
 .main {
   display: flex;
 }
@@ -66,4 +62,34 @@
 .lost {
   height: calc(50vh - 60px);
   margin-left: 50px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 5px;
+}
+
+.blackTime {
+  padding: 5px;
+  margin-top: 5px;
+  color: white;
+  background-color: black;
+  font-weight: 700;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 125px;
+  align-self: flex-end;
+}
+
+.whiteTime {
+  padding: 5px;
+  margin-top: 5px;
+  color: black;
+  background-color: white;
+  font-weight: 700;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 125px;
+  align-self: flex-end;
 }

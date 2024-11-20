@@ -39,4 +39,8 @@ export class Figure {
   moveFigure(target: Cell) {
 
   }
+
+  canAttack(target: Cell): boolean {
+    return false;
+  }
 }
