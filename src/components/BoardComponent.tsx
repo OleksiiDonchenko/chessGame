@@ -96,15 +96,17 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         <Buttons handleRestart={handleRestart} />
         <span className='blackTime'>Time: {blackTime}sec</span>
         <div className='board'>
-          {board.cells.map((row, index) =>
-            <React.Fragment key={index}>
+          {board.cells.map((row, y) =>
+            <React.Fragment key={y}>
               {
-                row.map(cell =>
+                row.map((cell, x) =>
                   <CellComponent
                     cell={cell}
                     key={cell.id}
                     click={click}
                     selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
+                    y={y}
+                    x={x}
                   />
                 )
               }

@@ -37,7 +37,7 @@ export class Figure {
   }
 
   moveFigure(target: Cell) {
-
+    this.cell.board.inPassingTarget = null;
   }
 
   canAttack(target: Cell): boolean {

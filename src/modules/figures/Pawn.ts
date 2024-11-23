@@ -41,9 +41,13 @@ export class Pawn extends Figure {
     }
 
     // The hit in passing
-    if (this.cell.board.inPassingTarget && target.x === this.cell.board.inPassingTarget?.x && target.y === this.cell.board.inPassingTarget?.y &&
-      Math.abs(this.cell.x - target.x) === 1 && this.cell.board.getCell(target.x, this.cell.y).figure?.color !== this.color) {
-      return true;
+    if (this.cell.y === 3 && this.cell.figure?.color === 'white'
+      || this.cell.y === 4 && this.cell.figure?.color === 'black') {
+      if (this.cell.board.inPassingTarget
+        && target.x === this.cell.board.inPassingTarget?.x
+        && target.y === this.cell.board.inPassingTarget?.y) {
+        return true;
+      }
     }
 
     return false;
