@@ -15,13 +15,25 @@ export class Queen extends Figure {
   canMove(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
-    if (this.cell.isEmptyVertical(target) || this.cell.isEmptyHorizontal(target) || this.cell.isEmptyDiagonal(target))
-      return true;
+    const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+
+    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+      if (this.cell.isEmptyVertical(target) && canMoveWithoutCheck
+        || this.cell.isEmptyHorizontal(target) && canMoveWithoutCheck
+        || this.cell.isEmptyDiagonal(target) && canMoveWithoutCheck)
+        return true;
+    } else {
+      if (this.cell.isEmptyVertical(target) && canBlockCheck
+        || this.cell.isEmptyHorizontal(target) && canBlockCheck
+        || this.cell.isEmptyDiagonal(target) && canBlockCheck)
+        return true;
+    }
     return false;
   }
 
   canAttack(target: Cell): boolean {
-    if (!super.canMove(target))
+    if (!super.canAttack(target))
       return false;
 
     if (this.cell.isEmptyVertical(target) || this.cell.isEmptyHorizontal(target) || this.cell.isEmptyDiagonal(target)) {

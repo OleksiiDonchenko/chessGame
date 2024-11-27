@@ -11,6 +11,7 @@ export class Cell {
   board: Board;
   available: boolean; // Can you move?
   id: number; // For keys of React
+  isKingInCheck: boolean;
 
   constructor(board: Board, x: number, y: number, color: Colors, figure: Figure | null) {
     this.x = x;
@@ -20,9 +21,13 @@ export class Cell {
     this.board = board;
     this.available = false;
     this.id = Math.random();
+    this.isKingInCheck = false;
   }
 
   isEmpty(): boolean {
+    if (this.isKingInCheck) {
+      return true;
+    }
     return this.figure === null;
   }
 
@@ -89,7 +94,8 @@ export class Cell {
     let y = this.y + stepY;
 
     while (x !== target.x || y !== target.y) {
-      if (!this.board.getCell(x, y).isEmpty()) {
+      const cell = this.board.getCell(x, y);
+      if (!cell.isEmpty() && cell.figure?.color !== this.figure?.color) {
         return false;
       }
       x += stepX;
@@ -130,6 +136,14 @@ export class Cell {
       }
       target.setFigure(this.figure);
       this.figure = null;
+
+      if (this.board.isKingInCheck(Colors.WHITE)) {
+        this.board.highlightKing(Colors.WHITE);
+      }
+
+      if (this.board.isKingInCheck(Colors.BLACK)) {
+        this.board.highlightKing(Colors.BLACK);
+      }
     }
   }
 }

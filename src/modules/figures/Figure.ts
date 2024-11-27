@@ -31,16 +31,18 @@ export class Figure {
   canMove(target: Cell): boolean {
     if (target.figure?.color === this.color)
       return false;
-    if (target.figure?.name === FigureNames.KING)
-      return false;
     return true;
   }
 
   moveFigure(target: Cell) {
     this.cell.board.inPassingTarget = null;
+    const kingCell = this.cell.board.findKing(this.color);
+    if (kingCell?.isKingInCheck) {
+      kingCell.isKingInCheck = false;
+    }
   }
 
   canAttack(target: Cell): boolean {
-    return false;
+    return true;
   }
 }

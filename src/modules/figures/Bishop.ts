@@ -15,9 +15,14 @@ export class Bishop extends Figure {
   canMove(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
-    if (this.cell.isEmptyDiagonal(target))
-      return true;
-    return false;
+    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+      if (this.cell.isEmptyDiagonal(target) && this.cell.board.canMoveWithoutCheck(this.cell, this.color))
+        return true;
+    } else {
+      if (this.cell.isEmptyDiagonal(target) && this.cell.board.canBlockCheck(target, this.color))
+        return true;
+    }
+    return false; 0
   }
 
   canAttack(target: Cell): boolean {

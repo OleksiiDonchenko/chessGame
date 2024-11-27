@@ -15,8 +15,18 @@ export class Rook extends Figure {
   canMove(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
-    if (this.cell.isEmptyVertical(target) || this.cell.isEmptyHorizontal(target))
-      return true;
+    const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+
+    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+      if (this.cell.isEmptyVertical(target) && canMoveWithoutCheck
+        || this.cell.isEmptyHorizontal(target) && canMoveWithoutCheck)
+        return true;
+    } else {
+      if (this.cell.isEmptyVertical(target) && canBlockCheck
+        || this.cell.isEmptyHorizontal(target) && canBlockCheck)
+        return true;
+    }
     return false;
   }
 

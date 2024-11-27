@@ -20,10 +20,8 @@ export class King extends Figure {
     const dy = Math.abs(target.y - this.cell.y);
 
     if ((dx === 1 && dy <= 1) || (dy === 1 && dx <= 1)) {
-      if (target.isEmpty() || this.cell.isEnemy(target)) {
-        if (!this.cell.board.isUnderAttack(target, this.color)) {
-          return true;
-        }
+      if (target.isEmpty() && !this.cell.board.isUnderAttack(target, this.color) || this.cell.isEnemy(target)) {
+        return true;
       }
     }
 

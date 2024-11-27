@@ -19,25 +19,43 @@ export class Pawn extends Figure {
       return false;
     const direction = this.cell.figure?.color === Colors.BLACK ? 1 : -1;
     const firstStepDirection = this.cell.figure?.color === Colors.BLACK ? 2 : -2;
-
-    // Move forward
-    if (target.y === this.cell.y + direction && target.x === this.cell.x && this.cell.board.getCell(target.x, target.y).isEmpty()) {
-      return true;
-    }
-
-    // Move forward 2 cells
-    if (this.isFirstStep
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+    const moveForward: boolean = target.y === this.cell.y + direction
+      && target.x === this.cell.x
+      && this.cell.board.getCell(target.x, target.y).isEmpty()
+      && target.figure?.name !== 'King'
+      && canMoveWithoutCheck;
+    const moveForward2Cells: boolean = this.isFirstStep
       && target.y === this.cell.y + firstStepDirection
       && target.x === this.cell.x
-      && this.cell.board.getCell(target.x, target.y).isEmpty() && this.cell.board.getCell(target.x, this.cell.y + direction).isEmpty()) {
-      return true;
-    }
-
-    // Attack
-    if (target.y === this.cell.y + direction
+      && this.cell.board.getCell(target.x, target.y).isEmpty()
+      && this.cell.board.getCell(target.x, this.cell.y + direction).isEmpty()
+      && canMoveWithoutCheck;
+    const attack: boolean = target.y === this.cell.y + direction
       && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1)
-      && this.cell.isEnemy(target)) {
-      return true;
+      && this.cell.isEnemy(target);
+    const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
+
+    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+      if (moveForward) {
+        return true;
+      }
+      if (moveForward2Cells) {
+        return true;
+      }
+      if (attack) {
+        return true;
+      }
+    } else {
+      if (moveForward && canBlockCheck) {
+        return true;
+      }
+      if (moveForward2Cells && canBlockCheck) {
+        return true;
+      }
+      if (attack && canBlockCheck) {
+        return true;
+      }
     }
 
     // The hit in passing

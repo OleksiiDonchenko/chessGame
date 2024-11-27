@@ -13,8 +13,8 @@ interface BoardProps {
 
 const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
-  const [whitePlayer, setWhitePlayer] = useState(new Player(Colors.WHITE));
-  const [blackPlayer, setBlackPlayer] = useState(new Player(Colors.BLACK));
+  const [whitePlayer] = useState(new Player(Colors.WHITE));
+  const [blackPlayer] = useState(new Player(Colors.BLACK));
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
   useEffect(() => {

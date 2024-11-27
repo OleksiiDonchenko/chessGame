@@ -64,6 +64,95 @@ export class Board {
     return false;
   }
 
+  public isKingInCheck(color: Colors): boolean {
+    const kingCell = this.findKing(color);
+    if (!kingCell) {
+      return false;
+    }
+    return this.isUnderAttack(kingCell, color);
+  }
+
+  public findKing(color: Colors): Cell | null {
+    for (let row of this.cells) {
+      for (let cell of row) {
+        if (cell.figure instanceof King && cell.figure.color === color) {
+          return cell;
+        }
+      }
+    }
+    return null;
+  }
+
+  public highlightKing(color: Colors) {
+    const kingCell = this.findKing(color);
+    if (kingCell) {
+      kingCell.isKingInCheck = true;
+    }
+  }
+
+  public canBlockCheck(cell: Cell, color: Colors): boolean {
+    // Find the king's cell
+    const kingCell = this.findKing(color);
+    if (!kingCell || !this.isKingInCheck(color)) {
+      return false; // If there is no check, blocking is not required
+    }
+
+    // Determine the piece that attacks the king
+    const attackerCells: Cell[] = [];
+    for (let row of this.cells) {
+      for (let currentCell of row) {
+        const figure = currentCell.figure;
+        if (figure && figure.color !== color && figure.canAttack(kingCell)) {
+          attackerCells.push(currentCell);
+        }
+      }
+    }
+
+    // If check is declared by more than one piece, blocking is not possible
+    if (attackerCells.length !== 1) {
+      return false;
+    }
+
+    const attackerCell = attackerCells[0];
+    const attackingFigure = attackerCell.figure!;
+
+    // If it's check from the knight, the only way to block it is to take the knight
+    if (attackingFigure instanceof Knight) {
+      return cell === attackerCell;
+    }
+
+    // Determine the cells in the path between the king and the attacking piece
+    const blockingCells: Cell[] = [];
+    let x = attackerCell.x;
+    let y = attackerCell.y;
+
+    const xStep = Math.sign(kingCell.x - x);
+    const yStep = Math.sign(kingCell.y - y);
+
+    while (x !== kingCell.x || y !== kingCell.y) {
+      x += xStep;
+      y += yStep;
+      const pathCell = this.getCell(x, y);
+      blockingCells.push(pathCell);
+    }
+
+    // Check if the current cell coincides with one of the cells on the path
+    return blockingCells.includes(cell);
+  }
+
+  public canMoveWithoutCheck(fromCell: Cell, color: Colors): boolean {
+    const originalFigure = fromCell.figure; // Save the figure, which was on the cell
+    fromCell.figure = null;
+
+    // Checking, is King safe?
+    const isKingSafe = !this.isKingInCheck(color);
+
+    // And put everything back in place
+    fromCell.figure = originalFigure;
+
+    return isKingSafe;
+  }
+
   private addKings() {
     new King(Colors.BLACK, this.getCell(4, 0));
     new King(Colors.WHITE, this.getCell(4, 7));
