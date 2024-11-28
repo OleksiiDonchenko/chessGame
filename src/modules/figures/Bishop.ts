@@ -21,6 +21,8 @@ export class Bishop extends Figure {
     } else {
       if (this.cell.isEmptyDiagonal(target) && this.cell.board.canBlockCheck(target, this.color))
         return true;
+      if (this.cell.isEmptyDiagonal(target) && this.cell.board.attackerCellOnKing(target, this.color))
+        return true;
     }
     return false; 0
   }

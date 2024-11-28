@@ -23,27 +23,26 @@ export class Pawn extends Figure {
     const moveForward: boolean = target.y === this.cell.y + direction
       && target.x === this.cell.x
       && this.cell.board.getCell(target.x, target.y).isEmpty()
-      && target.figure?.name !== 'King'
-      && canMoveWithoutCheck;
+      && target.figure?.name !== 'King';
     const moveForward2Cells: boolean = this.isFirstStep
       && target.y === this.cell.y + firstStepDirection
       && target.x === this.cell.x
       && this.cell.board.getCell(target.x, target.y).isEmpty()
-      && this.cell.board.getCell(target.x, this.cell.y + direction).isEmpty()
-      && canMoveWithoutCheck;
+      && this.cell.board.getCell(target.x, this.cell.y + direction).isEmpty();
     const attack: boolean = target.y === this.cell.y + direction
       && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1)
       && this.cell.isEnemy(target);
     const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
+    const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
 
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
-      if (moveForward) {
+      if (moveForward && canMoveWithoutCheck) {
         return true;
       }
-      if (moveForward2Cells) {
+      if (moveForward2Cells && canMoveWithoutCheck) {
         return true;
       }
-      if (attack) {
+      if (attack && canMoveWithoutCheck) {
         return true;
       }
     } else {
@@ -53,7 +52,7 @@ export class Pawn extends Figure {
       if (moveForward2Cells && canBlockCheck) {
         return true;
       }
-      if (attack && canBlockCheck) {
+      if (attack && attackerCellOnKing) {
         return true;
       }
     }

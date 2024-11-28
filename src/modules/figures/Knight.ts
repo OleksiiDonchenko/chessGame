@@ -19,10 +19,14 @@ export class Knight extends Figure {
     const dy = Math.abs(this.cell.y - target.y);
     const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
     const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+    const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
 
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
       return (dx === 1 && dy === 2) && canMoveWithoutCheck || (dx === 2 && dy === 1 && canMoveWithoutCheck);
     } else {
+      if (attackerCellOnKing) {
+        return (dx === 1 && dy === 2) && attackerCellOnKing || (dx === 2 && dy === 1) && attackerCellOnKing;
+      }
       return (dx === 1 && dy === 2) && canBlockCheck || (dx === 2 && dy === 1) && canBlockCheck;
     }
   }

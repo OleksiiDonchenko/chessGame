@@ -90,6 +90,32 @@ export class Board {
     }
   }
 
+  public attackerCellOnKing(cell: Cell, color: Colors): boolean {
+    const kingCell = this.findKing(color);
+    if (!kingCell || !this.isKingInCheck(color)) {
+      return false; // If there is no check, blocking is not required
+    }
+    // Determine the piece that attacks the king
+    const attackerCells: Cell[] = [];
+    for (let row of this.cells) {
+      for (let currentCell of row) {
+        const figure = currentCell.figure;
+        if (figure && figure.color !== color && figure.canAttack(kingCell)) {
+          attackerCells.push(currentCell);
+        }
+      }
+    }
+    // If check is declared by more than one piece, blocking is not possible
+    if (attackerCells.length !== 1) {
+      return false;
+    }
+    const attackerCell = attackerCells[0];
+    if (cell === attackerCell) {
+      return true;
+    }
+    return false;
+  }
+
   public canBlockCheck(cell: Cell, color: Colors): boolean {
     // Find the king's cell
     const kingCell = this.findKing(color);
