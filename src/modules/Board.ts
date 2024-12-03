@@ -179,6 +179,40 @@ export class Board {
     return isKingSafe;
   }
 
+  public findRook(color: Colors, x: number, y: number): Rook | null {
+    for (let row of this.cells) {
+      for (let cell of row) {
+        const rook = cell.figure;
+        if (cell.x === x && cell.y === y && rook instanceof Rook && rook.color === color) {
+          return rook;
+        }
+      }
+    }
+    return null;
+  }
+
+  public findCellForRookCastle(x: number, y: number): Cell | null {
+    for (let row of this.cells) {
+      for (let cell of row) {
+        if (cell.x === x && cell.y === y) {
+          return cell;
+        }
+      }
+    }
+    return null;
+  }
+
+  public findCellForKingCastle(x: number, y: number): Cell | null {
+    for (let row of this.cells) {
+      for (let cell of row) {
+        if (cell.x === x && cell.y === y) {
+          return cell;
+        }
+      }
+    }
+    return null;
+  }
+
   private addKings() {
     new King(Colors.BLACK, this.getCell(4, 0));
     new King(Colors.WHITE, this.getCell(4, 7));

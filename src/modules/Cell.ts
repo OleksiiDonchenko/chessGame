@@ -4,8 +4,8 @@ import { Figure } from "./figures/Figure";
 import { Pawn } from "./figures/Pawn";
 
 export class Cell {
-  readonly x: number;
-  readonly y: number;
+  x: number;
+  y: number;
   readonly color: Colors;
   figure: Figure | null;
   board: Board;
@@ -96,6 +96,9 @@ export class Cell {
     while (x !== target.x || y !== target.y) {
       const cell = this.board.getCell(x, y);
       if (!cell.isEmpty() && cell.figure?.color !== this.figure?.color) {
+        return false;
+      }
+      if (!cell.isEmpty() && cell.figure?.color === this.figure?.color) {
         return false;
       }
       x += stepX;

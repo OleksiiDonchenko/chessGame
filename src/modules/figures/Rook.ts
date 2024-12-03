@@ -5,6 +5,8 @@ import blackLogo from '../../assets/black_rook.png';
 import whiteLogo from '../../assets/white_rook.png';
 
 export class Rook extends Figure {
+  longCastle = true;
+  shortCastle = true;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
@@ -30,6 +32,18 @@ export class Rook extends Figure {
         return true;
     }
     return false;
+  }
+
+  moveFigure(target: Cell): void {
+    if (this.cell.x === 0 && this.cell.y === 0 && this.color === Colors.BLACK) {
+      this.longCastle = false;
+    } else if (this.cell.x === 7 && this.cell.y === 0 && this.color === Colors.BLACK) {
+      this.shortCastle = false;
+    } else if (this.cell.x === 0 && this.cell.y === 7 && this.color === Colors.WHITE) {
+      this.longCastle = false;
+    } else if (this.cell.x === 7 && this.cell.y === 7 && this.color === Colors.WHITE) {
+      this.shortCastle = false;
+    }
   }
 
   canAttack(target: Cell): boolean {
