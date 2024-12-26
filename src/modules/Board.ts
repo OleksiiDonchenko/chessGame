@@ -166,17 +166,37 @@ export class Board {
     return blockingCells.includes(cell);
   }
 
-  public canMoveWithoutCheck(fromCell: Cell, color: Colors): boolean {
+  public canMoveWithoutCheck(fromCell: Cell, toCell: Cell, color: Colors): boolean {
     const originalFigure = fromCell.figure; // Save the figure, which was on the cell
-    fromCell.figure = null;
+    const originalEnemyFigure = toCell.figure;
 
-    // Checking, is King safe?
-    const isKingSafe = !this.isKingInCheck(color);
+    if (toCell.figure && toCell.figure.color !== color) {
+      // Moving our figure
+      fromCell.figure = null;
+      toCell.figure = originalFigure;
 
-    // And put everything back in place
-    fromCell.figure = originalFigure;
+      // Checking, is King safe?
+      const isKingSafe = !this.isKingInCheck(color);
 
-    return isKingSafe;
+      // And put everything back in place
+      toCell.figure = originalEnemyFigure;
+      fromCell.figure = originalFigure;
+
+      return isKingSafe;
+    } else {
+      // Moving our figure
+      fromCell.figure = null;
+      toCell.figure = originalFigure;
+
+      // Checking, is King safe?
+      const isKingSafe = !this.isKingInCheck(color);
+
+      // And put everything back in place
+      toCell.figure = null;
+      fromCell.figure = originalFigure;
+
+      return isKingSafe;
+    }
   }
 
   public findRook(color: Colors, x: number, y: number): Rook | null {

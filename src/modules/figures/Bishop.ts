@@ -15,8 +15,9 @@ export class Bishop extends Figure {
   canMove(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
+    // const movesOfBishop = this.cell.isEmptyDiagonal(target);
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
-      if (this.cell.isEmptyDiagonal(target) && this.cell.board.canMoveWithoutCheck(this.cell, this.color))
+      if (this.cell.isEmptyDiagonal(target) && this.cell.board.canMoveWithoutCheck(this.cell, target, this.color))
         return true;
     } else {
       if (this.cell.isEmptyDiagonal(target) && this.cell.board.canBlockCheck(target, this.color))

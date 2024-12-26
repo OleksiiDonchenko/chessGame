@@ -19,7 +19,7 @@ export class Pawn extends Figure {
       return false;
     const direction = this.cell.figure?.color === Colors.BLACK ? 1 : -1;
     const firstStepDirection = this.cell.figure?.color === Colors.BLACK ? 2 : -2;
-    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
     const moveForward: boolean = target.y === this.cell.y + direction
       && target.x === this.cell.x
       && this.cell.board.getCell(target.x, target.y).isEmpty()
@@ -42,7 +42,7 @@ export class Pawn extends Figure {
       if (moveForward2Cells && canMoveWithoutCheck) {
         return true;
       }
-      if (attack && canMoveWithoutCheck) {
+      if (attack) {
         return true;
       }
     } else {

@@ -17,14 +17,14 @@ export class Queen extends Figure {
       return false;
     const movesOfQueen = (this.cell.isEmptyVertical(target) || this.cell.isEmptyHorizontal(target) || this.cell.isEmptyDiagonal(target));
     const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
-    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
     const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
 
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
       if (movesOfQueen && canMoveWithoutCheck)
         return true;
     } else {
-      if (movesOfQueen && canBlockCheck)
+      if (movesOfQueen && canBlockCheck && canMoveWithoutCheck)
         return true;
       if (movesOfQueen && attackerCellOnKing) {
         return true;

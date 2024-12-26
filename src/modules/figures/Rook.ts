@@ -19,7 +19,7 @@ export class Rook extends Figure {
       return false;
     const movesOfRook = (this.cell.isEmptyVertical(target) || this.cell.isEmptyHorizontal(target));
     const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
-    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, this.color);
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
     const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
 
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
@@ -34,7 +34,7 @@ export class Rook extends Figure {
     return false;
   }
 
-  moveFigure(target: Cell): void {
+  moveFigure(): void {
     if (this.cell.x === 0 && this.cell.y === 0 && this.color === Colors.BLACK) {
       this.longCastle = false;
     } else if (this.cell.x === 7 && this.cell.y === 0 && this.color === Colors.BLACK) {
