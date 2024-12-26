@@ -75,6 +75,8 @@ export class King extends Figure {
   }
 
   moveFigure(target: Cell): void {
+    // Do the basic figure movement
+    super.moveFigure(target);
     this.hasMoved = true;
 
     const whiteRookShortCastle = this.cell.board.findRook(this.color, 7, 7);

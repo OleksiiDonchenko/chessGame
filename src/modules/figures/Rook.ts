@@ -34,7 +34,9 @@ export class Rook extends Figure {
     return false;
   }
 
-  moveFigure(): void {
+  moveFigure(target: Cell): void {
+    // Do the basic figure movement
+    super.moveFigure(target);
     if (this.cell.x === 0 && this.cell.y === 0 && this.color === Colors.BLACK) {
       this.longCastle = false;
     } else if (this.cell.x === 7 && this.cell.y === 0 && this.color === Colors.BLACK) {

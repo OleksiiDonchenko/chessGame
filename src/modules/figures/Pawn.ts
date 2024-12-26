@@ -42,7 +42,7 @@ export class Pawn extends Figure {
       if (moveForward2Cells && canMoveWithoutCheck) {
         return true;
       }
-      if (attack) {
+      if (attack && canMoveWithoutCheck) {
         return true;
       }
     } else {
@@ -52,7 +52,7 @@ export class Pawn extends Figure {
       if (moveForward2Cells && canBlockCheck) {
         return true;
       }
-      if (attack && attackerCellOnKing) {
+      if (attack && attackerCellOnKing && canMoveWithoutCheck) {
         return true;
       }
     }

@@ -27,7 +27,7 @@ export class Knight extends Figure {
       if (attackerCellOnKing) {
         return (dx === 1 && dy === 2) && attackerCellOnKing || (dx === 2 && dy === 1) && attackerCellOnKing;
       }
-      return (dx === 1 && dy === 2) && canBlockCheck || (dx === 2 && dy === 1) && canBlockCheck;
+      return (dx === 1 && dy === 2) && canBlockCheck && canMoveWithoutCheck || (dx === 2 && dy === 1) && canBlockCheck && canMoveWithoutCheck;
     }
   }
 

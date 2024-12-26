@@ -26,7 +26,7 @@ export class Queen extends Figure {
     } else {
       if (movesOfQueen && canBlockCheck && canMoveWithoutCheck)
         return true;
-      if (movesOfQueen && attackerCellOnKing) {
+      if (movesOfQueen && attackerCellOnKing && canMoveWithoutCheck) {
         return true;
       }
     }
