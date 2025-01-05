@@ -42,7 +42,7 @@ export class King extends Figure {
       const isWhiteLongCastlePossibleCellOne = this.cell.board.findCellForKingCastle(2, 7);
       const isWhiteLongCastlePossibleCellTwo = this.cell.board.findCellForKingCastle(3, 7);
 
-      if (isWhiteShortCastlePossibleCell && isWhiteLongCastlePossibleCellOne && isWhiteLongCastlePossibleCellTwo)
+      if (isWhiteShortCastlePossibleCell && isWhiteLongCastlePossibleCellOne && isWhiteLongCastlePossibleCellTwo) {
         if ((dx === 1 && dy <= 1) || (dy === 1 && dx <= 1)
           || whiteShortCastleMove && whiteRookShortCastle?.shortCastle && !this.cell.isKingInCheck
           && !this.cell.board.isUnderAttack(isWhiteShortCastlePossibleCell, this.color)
@@ -50,18 +50,24 @@ export class King extends Figure {
           && !this.cell.board.isUnderAttack(isWhiteLongCastlePossibleCellOne, this.color)
           && !this.cell.board.isUnderAttack(isWhiteLongCastlePossibleCellTwo, this.color)) {
           if (standardMoves || this.cell.isEnemy(target)) {
+            const isKingUnderAttackAfterMove = !this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
+            if (isKingUnderAttackAfterMove) {
+              return false; // If the King is under check, the move is not possible
+            }
             return true;
           }
         }
+      }
     } else {
       const isBlackShortCastlePossibleCell = this.cell.board.findCellForKingCastle(5, 0);
       const isBlackLongCastlePossibleCellOne = this.cell.board.findCellForKingCastle(2, 0);
       const isBlackLongCastlePossibleCellTwo = this.cell.board.findCellForKingCastle(3, 0);
+
       if (isBlackShortCastlePossibleCell && isBlackLongCastlePossibleCellOne && isBlackLongCastlePossibleCellTwo) {
         if ((dx === 1 && dy <= 1) || (dy === 1 && dx <= 1)
           || blackShortCastleMove && blackRookShortCastle?.shortCastle && !this.cell.isKingInCheck
           && !this.cell.board.isUnderAttack(isBlackShortCastlePossibleCell, this.color)
-          || blackLongCastleMove && blackRookShortCastle?.longCastle && !this.cell.isKingInCheck
+          || blackLongCastleMove && blackRookLongCastle?.longCastle && !this.cell.isKingInCheck
           && !this.cell.board.isUnderAttack(isBlackLongCastlePossibleCellOne, this.color)
           && !this.cell.board.isUnderAttack(isBlackLongCastlePossibleCellTwo, this.color)) {
           if (standardMoves || this.cell.isEnemy(target)) {

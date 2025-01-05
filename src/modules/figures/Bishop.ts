@@ -28,7 +28,7 @@ export class Bishop extends Figure {
   }
 
   canAttack(target: Cell): boolean {
-    if (!super.canMove(target))
+    if (!super.canAttack(target))
       return false;
     if (this.cell.isEmptyDiagonal(target, this.color))
       return this.cell.isPathClear(target, this.color);
