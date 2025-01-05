@@ -21,7 +21,7 @@ export class King extends Figure {
     const dy = Math.abs(target.y - this.cell.y);
     const x = target.x - this.cell.x;
 
-    const standardMoves = target.isEmpty() && !this.cell.board.isUnderAttack(target, this.color);
+    const standardMoves = target.isEmpty(true, this.color) && !this.cell.board.isUnderAttack(target, this.color);
 
     const whiteRookShortCastle = this.cell.board.findRook(this.color, 7, 7);
     const whiteRookLongCastle = this.cell.board.findRook(this.color, 0, 7);
@@ -29,13 +29,13 @@ export class King extends Figure {
     const blackRookLongCastle = this.cell.board.findRook(this.color, 0, 0);
 
     const whiteShortCastleMove = (x === 2 && dy === 0) && !this.hasMoved
-      && whiteRookShortCastle ? this.cell.isPathClear(whiteRookShortCastle?.cell) : false;
+      && whiteRookShortCastle ? this.cell.isPathClear(whiteRookShortCastle?.cell, this.color) : false;
     const blackShortCastleMove = (x === 2 && dy === 0) && !this.hasMoved
-      && blackRookShortCastle ? this.cell.isPathClear(blackRookShortCastle?.cell) : false;
+      && blackRookShortCastle ? this.cell.isPathClear(blackRookShortCastle?.cell, this.color) : false;
     const whiteLongCastleMove = (x === -2 && dy === 0) && !this.hasMoved
-      && whiteRookLongCastle ? this.cell.isPathClear(whiteRookLongCastle?.cell) : false;
+      && whiteRookLongCastle ? this.cell.isPathClear(whiteRookLongCastle?.cell, this.color) : false;
     const blackLongCastleMove = (x === -2 && dy === 0) && !this.hasMoved
-      && blackRookLongCastle ? this.cell.isPathClear(blackRookLongCastle?.cell) : false;
+      && blackRookLongCastle ? this.cell.isPathClear(blackRookLongCastle?.cell, this.color) : false;
 
     if (this.color === Colors.WHITE) {
       const isWhiteShortCastlePossibleCell = this.cell.board.findCellForKingCastle(5, 7);

@@ -22,13 +22,13 @@ export class Pawn extends Figure {
     const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
     const moveForward: boolean = target.y === this.cell.y + direction
       && target.x === this.cell.x
-      && this.cell.board.getCell(target.x, target.y).isEmpty()
+      && this.cell.board.getCell(target.x, target.y).isEmpty(true, this.color)
       && target.figure?.name !== 'King';
     const moveForward2Cells: boolean = this.isFirstStep
       && target.y === this.cell.y + firstStepDirection
       && target.x === this.cell.x
-      && this.cell.board.getCell(target.x, target.y).isEmpty()
-      && this.cell.board.getCell(target.x, this.cell.y + direction).isEmpty();
+      && this.cell.board.getCell(target.x, target.y).isEmpty(true, this.color)
+      && this.cell.board.getCell(target.x, this.cell.y + direction).isEmpty(true, this.color);
     const attack: boolean = target.y === this.cell.y + direction
       && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1)
       && this.cell.isEnemy(target);

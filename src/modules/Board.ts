@@ -54,10 +54,8 @@ export class Board {
     for (let row of this.cells) {
       for (let currentCell of row) {
         const figure = currentCell.figure;
-        if (figure && figure.color !== color) {
-          if (figure.canAttack(cell)) {
-            return true;
-          }
+        if (figure && figure.color !== color && figure.canAttack(cell)) {
+          return true;
         }
       }
     }

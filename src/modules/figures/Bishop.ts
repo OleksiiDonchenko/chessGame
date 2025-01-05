@@ -16,12 +16,12 @@ export class Bishop extends Figure {
     if (!super.canMove(target))
       return false;
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
-      if (this.cell.isEmptyDiagonal(target) && this.cell.board.canMoveWithoutCheck(this.cell, target, this.color))
+      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.canMoveWithoutCheck(this.cell, target, this.color))
         return true;
     } else {
-      if (this.cell.isEmptyDiagonal(target) && this.cell.board.canBlockCheck(target, this.color))
+      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.canBlockCheck(target, this.color))
         return true;
-      if (this.cell.isEmptyDiagonal(target) && this.cell.board.attackerCellOnKing(target, this.color))
+      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.attackerCellOnKing(target, this.color))
         return true;
     }
     return false;
@@ -30,8 +30,8 @@ export class Bishop extends Figure {
   canAttack(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
-    if (this.cell.isEmptyDiagonal(target))
-      return this.cell.isPathClear(target);
+    if (this.cell.isEmptyDiagonal(target, this.color))
+      return this.cell.isPathClear(target, this.color);
     return false;
   }
 }
