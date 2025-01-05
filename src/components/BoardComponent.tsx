@@ -5,6 +5,8 @@ import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
 import { Colors } from '../modules/Colors';
 import Buttons from './Buttons';
+import { Pawn } from '../modules/figures/Pawn';
+import PromotionModal from './PromotionModal';
 
 interface BoardProps {
   board: Board;
@@ -16,6 +18,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   const [whitePlayer] = useState(new Player(Colors.WHITE));
   const [blackPlayer] = useState(new Player(Colors.BLACK));
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+  const [promotionCell, setPromotionCell] = useState<Cell | null>(null);
 
   useEffect(() => {
     highlightCells();
@@ -23,14 +26,35 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
   function click(cell: Cell) {
     if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
-      selectedCell.moveFigure(cell);
-      swapPlayer();
+      if (selectedCell.figure instanceof Pawn && (cell.y === 0 || cell.y === 7)) {
+        setPromotionCell(cell);
+        selectedCell.moveFigure(cell);
+      } else {
+        selectedCell.moveFigure(cell);
+        swapPlayer();
+      }
       setSelectedCell(null);
     } else {
       if (cell.figure?.color === currentPlayer?.color) {
         setSelectedCell(cell);
       }
     }
+  }
+
+  function handlePromotion(figure: string) {
+    if (promotionCell && promotionCell.figure instanceof Pawn) {
+      promotionCell.figure = board.createNewFigure(figure, promotionCell.figure.color, promotionCell);
+      let colorEnemyKing = Colors.WHITE;
+      if (promotionCell.figure) {
+        colorEnemyKing = promotionCell.figure.color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
+      }
+      updateBoard();
+      if (board.isKingInCheck(colorEnemyKing)) {
+        board.highlightKing(colorEnemyKing);
+      }
+      swapPlayer();
+    }
+    setPromotionCell(null);
   }
 
   function highlightCells() {
@@ -95,7 +119,11 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       <div className='wrapper'>
         <Buttons handleRestart={handleRestart} />
         <span className='blackTime'>Time: {blackTime}sec</span>
-        <div className='board'>
+        <div className={['board', promotionCell ? 'eclipse' : ''].join(' ')}>
+          {promotionCell && (
+            <PromotionModal onSelect={handlePromotion} x={promotionCell.x} color={promotionCell.figure?.color}
+              cell={promotionCell} />
+          )}
           {board.cells.map((row, y) =>
             <React.Fragment key={y}>
               {

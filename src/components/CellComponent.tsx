@@ -13,7 +13,8 @@ const CellComponent: FC<CellProps> = ({ cell, selected, click, y, x }) => {
   return (
     <div className={['cell', cell.color,
       selected ? 'selected' : '',
-      cell.available && cell.figure ? 'attacked' : '', cell.isKingInCheck ? 'check' : ''].join(' ')}
+      cell.available && cell.figure ? 'attacked' : '',
+      cell.isKingInCheck ? 'check' : ''].join(' ')}
       onClick={() => click(cell)}
     >
       <span className='index'>{x};{y}</span>

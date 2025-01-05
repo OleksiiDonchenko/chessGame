@@ -233,6 +233,21 @@ export class Board {
     return null;
   }
 
+  public createNewFigure(type: string, color: Colors, cell: Cell) {
+    switch (type) {
+      case 'Queen':
+        return new Queen(color, cell);
+      case 'Knight':
+        return new Knight(color, cell);
+      case 'Rook':
+        return new Rook(color, cell);
+      case 'Bishop':
+        return new Bishop(color, cell);
+      default:
+        return null;
+    }
+  }
+
   private addKings() {
     new King(Colors.BLACK, this.getCell(4, 0));
     new King(Colors.WHITE, this.getCell(4, 7));
