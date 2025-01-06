@@ -37,13 +37,11 @@ export class Rook extends Figure {
   moveFigure(target: Cell): void {
     // Do the basic figure movement
     super.moveFigure(target);
-    if (this.cell.x === 0 && this.cell.y === 0 && this.color === Colors.BLACK) {
+    if (this.cell.x === 0 && this.cell.y === 0 && this.color === Colors.BLACK
+      || this.cell.x === 0 && this.cell.y === 7 && this.color === Colors.WHITE) {
       this.longCastle = false;
-    } else if (this.cell.x === 7 && this.cell.y === 0 && this.color === Colors.BLACK) {
-      this.shortCastle = false;
-    } else if (this.cell.x === 0 && this.cell.y === 7 && this.color === Colors.WHITE) {
-      this.longCastle = false;
-    } else if (this.cell.x === 7 && this.cell.y === 7 && this.color === Colors.WHITE) {
+    } else if (this.cell.x === 7 && this.cell.y === 0 && this.color === Colors.BLACK
+      || this.cell.x === 7 && this.cell.y === 7 && this.color === Colors.WHITE) {
       this.shortCastle = false;
     }
   }
