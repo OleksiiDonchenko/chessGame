@@ -24,11 +24,28 @@
   position: relative;
 }
 
-.index {
+.number {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 2px;
+  top: 2px;
   font-size: 10px;
+  font-weight: 700;
+}
+
+._white {
+  color: #D9A55E;
+}
+
+._black {
+  color: #965223;
+}
+
+.letter {
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .cell img {
