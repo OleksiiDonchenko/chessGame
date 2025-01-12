@@ -18,6 +18,9 @@
   -moz-user-select: none;
   /* поэтому нужны префиксы */
   -ms-user-select: none;
+
+  background-image: url(../src/assets/wood.jpg);
+  background-size: calc(64px * 8);
 }
 
 .cell {
@@ -29,17 +32,24 @@
   position: relative;
 }
 
-.cell img {
+/* .cell img {
   width: 60px;
   height: 60px;
   position: absolute;
-  /* top: 50%;
-  left: 50%; */
-  /* transform: translate(0, 0); */
   top: 2px;
   left: 2px;
   cursor: grab;
   z-index: 2;
+} */
+
+.figure {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  cursor: grab;
+  z-index: 3;
 }
 
 .cell img:active {
@@ -76,11 +86,13 @@
 }
 
 .black {
-  background-color: #965223;
+  /* background-color: #965223; */
+  background-color: transparent;
 }
 
 .white {
-  background-color: #D9A55E;
+  /* background-color: #D9A55E; */
+  background-color: transparent;
 }
 
 .selected {
