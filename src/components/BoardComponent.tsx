@@ -1,12 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Board } from '../modules/Board';
-import CellComponent from './CellComponent';
 import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
 import { Colors } from '../modules/Colors';
 import Buttons from './Buttons';
 import { Pawn } from '../modules/figures/Pawn';
 import PromotionModal from './PromotionModal';
+import { DndContext } from '@dnd-kit/core';
+import DroppableCell from './DroppableCell';
+import DraggableFigure from './DraggableFigure';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 interface BoardProps {
   board: Board;
@@ -38,6 +41,26 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       if (cell.figure?.color === currentPlayer?.color) {
         setSelectedCell(cell);
       }
+    }
+  }
+
+  function mouseDown(cell: Cell) {
+    if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
+      if (selectedCell.figure instanceof Pawn && (cell.y === 0 || cell.y === 7)) {
+        setPromotionCell(cell);
+        selectedCell.moveFigure(cell);
+      } else {
+        selectedCell.moveFigure(cell);
+        swapPlayer();
+      }
+      setSelectedCell(null);
+    } else {
+      if (cell.figure?.color === currentPlayer?.color) {
+        setSelectedCell(cell);
+      }
+    }
+    if (cell.figure === null || cell.figure.color !== currentPlayer?.color) {
+      setSelectedCell(null);
     }
   }
 
@@ -114,34 +137,107 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     restart();
   }
 
+  const handleDragStart = (event: any) => {
+    const { active, over } = event;
+
+    // const fromCell = board.getCellById(active.id);
+
+    const figure = event.activatorEvent.srcElement;
+    const cell = figure.parentElement;
+
+    const cellRect = cell.getBoundingClientRect();
+
+    // Размеры фигуры
+    const figureSize = 60;
+
+    // Позиция курсора внутри клетки
+    const cursorX = event.activatorEvent.clientX - cellRect.left;
+    const cursorY = event.activatorEvent.clientY - cellRect.top;
+
+    // Смещение для центрирования фигуры под курсором
+    const offsetX = cursorX - figureSize / 2;
+    const offsetY = cursorY - figureSize / 2;
+
+    figure.style.left = `${offsetX}px`;
+    figure.style.top = `${offsetY}px`;
+
+    figure.addEventListener('mouseup', () => {
+      figure.style.left = '2px';
+      figure.style.top = '2px';
+    })
+
+    if (!over) return;
+  }
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const figure = event.activatorEvent.srcElement;
+    const fromCell = board.getCellById(`${active.id}`);
+    const toCell = board.getCellById(`${over.id}`);
+
+    if (currentPlayer?.color === fromCell?.figure?.color) {
+      if (fromCell && toCell && fromCell.figure?.canMove(toCell)) {
+        if (fromCell.figure instanceof Pawn && (toCell.y === 0 || toCell.y === 7)) {
+          setPromotionCell(toCell);
+          fromCell.moveFigure(toCell);
+        } else {
+          fromCell.moveFigure(toCell);
+          swapPlayer();
+        }
+        setSelectedCell(null);
+      } else if (fromCell?.figure?.color === currentPlayer?.color) {
+        setSelectedCell(fromCell);
+      }
+    }
+
+    figure.style.left = '2px';
+    figure.style.top = '2px';
+  }
+
   return (
     <>
       <div className='wrapper'>
         <Buttons handleRestart={handleRestart} />
         <span className='blackTime'>Time: {blackTime}sec</span>
-        <div className={['board', promotionCell ? 'eclipse' : ''].join(' ')}>
-          {promotionCell && (
-            <PromotionModal onSelect={handlePromotion} x={promotionCell.x} color={promotionCell.figure?.color}
-              cell={promotionCell} />
-          )}
-          {board.cells.map((row, y) =>
-            <React.Fragment key={y}>
-              {
-                row.map((cell, x) =>
-                  <CellComponent
-                    cell={cell}
-                    key={cell.id}
-                    click={click}
-                    selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
-                    y={y}
-                    x={x}
-                  />
-                )
-              }
-            </React.Fragment>
-          )
-          }
-        </div >
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
+          <div className={['board', promotionCell ? 'eclipse' : ''].join(' ')}>
+            {promotionCell && (
+              <PromotionModal onSelect={handlePromotion} x={promotionCell.x} color={promotionCell.figure?.color}
+                cell={promotionCell} />
+            )}
+            {board.cells.map((row, y) =>
+              <React.Fragment key={y}>
+                {
+                  row.map((cell) =>
+                    <DroppableCell
+                      key={cell.id}
+                      id={`${cell.x}-${cell.y}`}
+                      color={cell.color}
+                      selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
+                      isAvailable={cell.available}
+                      isKingInCheck={cell.isKingInCheck}
+                      cell={cell}
+                      click={click}
+                      mouseDown={mouseDown}
+                      coordinates={{ x: cell.x, y: cell.y }}
+                    >
+                      {cell.figure?.logo && (
+                        <DraggableFigure
+                          id={`${cell.x}-${cell.y}`}
+                          src={cell.figure.logo}
+                        />
+                      )}
+                    </DroppableCell>
+                  )
+                }
+              </React.Fragment>
+            )
+            }
+          </div >
+        </DndContext>
         <span className='whiteTime'>Time: {whiteTime}sec</span>
       </div>
     </>

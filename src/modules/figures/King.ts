@@ -71,6 +71,10 @@ export class King extends Figure {
           && !this.cell.board.isUnderAttack(isBlackLongCastlePossibleCellOne, this.color)
           && !this.cell.board.isUnderAttack(isBlackLongCastlePossibleCellTwo, this.color)) {
           if (standardMoves || this.cell.isEnemy(target)) {
+            const isKingUnderAttackAfterMove = !this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
+            if (isKingUnderAttackAfterMove) {
+              return false; // If the King is under check, the move is not possible
+            }
             return true;
           }
         }

@@ -50,6 +50,14 @@ export class Board {
     return this.cells[y][x];
   }
 
+  public getCellById(id: string): Cell | null {
+    const [x, y] = id.split('-').map(Number);
+    if (!isNaN(x) && !isNaN(y)) {
+      return this.cells[y]?.[x] || null;
+    }
+    return null;
+  }
+
   public isUnderAttack(cell: Cell, color: Colors): boolean {
     for (let row of this.cells) {
       for (let currentCell of row) {
