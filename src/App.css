@@ -54,7 +54,7 @@
 
 .cell img:active {
   cursor: grabbing;
-  z-index: 3;
+  z-index: 4;
 }
 
 .background-figure {

@@ -35,6 +35,7 @@ export class Figure {
   }
 
   moveFigure(target: Cell) {
+    target;
     this.cell.board.inPassingTarget = null;
     const kingCell = this.cell.board.findKing(this.color);
     if (kingCell?.isKingInCheck) {
@@ -43,6 +44,7 @@ export class Figure {
   }
 
   canAttack(target: Cell): boolean {
+    target;
     return true;
   }
 }

@@ -138,8 +138,8 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   }
 
   const handleDragStart = (event: any) => {
-    const { active, over } = event;
-
+    const { over } = event;
+    // active,
     // const fromCell = board.getCellById(active.id);
 
     const figure = event.activatorEvent.srcElement;
