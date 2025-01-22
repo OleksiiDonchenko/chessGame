@@ -32,16 +32,6 @@
   position: relative;
 }
 
-/* .cell img {
-  width: 60px;
-  height: 60px;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  cursor: grab;
-  z-index: 2;
-} */
-
 .figure {
   width: 60px;
   height: 60px;
@@ -141,10 +131,6 @@
   opacity: 0.6;
 }
 
-/* .attacked:hover::after {
-  opacity: 0;
-} */
-
 .check::before {
   content: '';
   position: absolute;
@@ -197,28 +183,31 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-.blackTime {
+.time {
   padding: 5px;
   margin-top: 5px;
-  color: white;
-  background-color: black;
+  display: flex;
+  align-items: center;
+  align-self: flex-end;
+  width: 100%;
+  max-width: 80px;
   font-weight: 700;
   border-radius: 10px;
-  width: 100%;
-  max-width: 125px;
-  align-self: flex-end;
+}
+
+.time svg {
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+.blackTime {
+  color: white;
+  background-color: black;
 }
 
 .whiteTime {
-  padding: 5px;
-  margin-top: 5px;
   color: black;
   background-color: white;
-  font-weight: 700;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 125px;
-  align-self: flex-end;
 }
 
 .eclipse::before {

@@ -10,6 +10,7 @@ import { DndContext } from '@dnd-kit/core';
 import DroppableCell from './DroppableCell';
 import DraggableFigure from './DraggableFigure';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import Clock from '../assets/icons/clock.svg?react';
 
 interface BoardProps {
   board: Board;
@@ -92,7 +93,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
   useEffect(() => {
     restart();
-    setCurrentPlayer(whitePlayer);
+    // setCurrentPlayer(whitePlayer);
   }, [])
 
   function restart() {
@@ -106,13 +107,16 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
   }
 
-  const [blackTime, setBlackTime] = useState(300);
-  const [whiteTime, setWhiteTime] = useState(300);
+  const [gameIsOn, setgameIsOn] = useState(false);
+  const [blackTimeMinutes, setBlackTimeMinutes] = useState(5);
+  const [whiteTimeMinutes, setWhiteTimeMinutes] = useState(5);
+  const [blackTimeSeconds, setBlackTimeSeconds] = useState(60);
+  const [whiteTimeSeconds, setWhiteTimeSeconds] = useState(60);
   const timer = useRef<null | ReturnType<typeof setInterval>>(null);
 
   useEffect(() => {
     startTimer();
-  }, [currentPlayer])
+  }, [currentPlayer, gameIsOn, blackTimeMinutes, whiteTimeMinutes, blackTimeSeconds, whiteTimeSeconds])
 
   function startTimer() {
     if (timer.current) {
@@ -123,18 +127,52 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   }
 
   function decrementBlackTimer() {
-    setBlackTime(prev => prev - 1);
+    if (gameIsOn) {
+      if (blackTimeMinutes > 0 && blackTimeSeconds === 0 || blackTimeSeconds === 60) {
+        setBlackTimeMinutes(prev => prev - 1);
+      }
+      if (blackTimeMinutes > 0 && blackTimeSeconds === 0) {
+        setBlackTimeSeconds(59);
+      }
+      if (blackTimeSeconds > 0) {
+        setBlackTimeSeconds(prev => prev - 1);
+      }
+    }
   }
 
   function decrementWhiteTimer() {
-    setWhiteTime(prev => prev - 1);
+    if (gameIsOn) {
+      if (whiteTimeMinutes > 0 && whiteTimeSeconds === 0 || whiteTimeSeconds === 60) {
+        setWhiteTimeMinutes(prev => prev - 1);
+      }
+      if (whiteTimeMinutes > 0 && whiteTimeSeconds === 0) {
+        setWhiteTimeSeconds(59);
+      }
+      if (whiteTimeSeconds > 0) {
+        setWhiteTimeSeconds(prev => prev - 1);
+      }
+    }
   }
 
   function handleRestart() {
-    setBlackTime(300);
-    setWhiteTime(300);
-    setCurrentPlayer(whitePlayer);
+    setgameIsOn(false);
+    setCurrentPlayer(null);
+    setBlackTimeMinutes(5);
+    setWhiteTimeMinutes(5);
+    setBlackTimeSeconds(60);
+    setWhiteTimeSeconds(60);
     restart();
+  }
+
+  function handleStartGame() {
+    setgameIsOn(true);
+    setCurrentPlayer(whitePlayer);
+    startTimer();
+  }
+
+  function handleStopGame() {
+    setgameIsOn(false);
+    setCurrentPlayer(null);
   }
 
   const handleDragStart = (event: any) => {
@@ -200,8 +238,13 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   return (
     <>
       <div className='wrapper'>
-        <Buttons handleRestart={handleRestart} />
-        <span className='blackTime'>Time: {blackTime}sec</span>
+        <Buttons handleRestart={handleRestart} handleStartGame={handleStartGame} handleStopGame={handleStopGame} />
+        <div className='time blackTime'>
+          <Clock fill='white' />
+          <span>
+            {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
+          </span>
+        </div>
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className={['board', promotionCell ? 'eclipse' : ''].join(' ')}>
             {promotionCell && (
@@ -238,7 +281,12 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
             }
           </div >
         </DndContext>
-        <span className='whiteTime'>Time: {whiteTime}sec</span>
+        <div className='time whiteTime'>
+          <Clock fill='black' />
+          <span>
+            {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
+          </span>
+        </div>
       </div>
     </>
   );
