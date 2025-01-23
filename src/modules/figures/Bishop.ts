@@ -15,13 +15,14 @@ export class Bishop extends Figure {
   canMove(target: Cell): boolean {
     if (!super.canMove(target))
       return false;
+    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
-      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.canMoveWithoutCheck(this.cell, target, this.color))
+      if (this.cell.isEmptyDiagonal(target, this.color) && canMoveWithoutCheck)
         return true;
     } else {
-      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.canBlockCheck(target, this.color))
+      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.canBlockCheck(target, this.color) && canMoveWithoutCheck)
         return true;
-      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.attackerCellOnKing(target, this.color))
+      if (this.cell.isEmptyDiagonal(target, this.color) && this.cell.board.attackerCellOnKing(target, this.color) && canMoveWithoutCheck)
         return true;
     }
     return false;
