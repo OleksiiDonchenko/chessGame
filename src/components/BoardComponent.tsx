@@ -93,7 +93,6 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
   useEffect(() => {
     restart();
-    // setCurrentPlayer(whitePlayer);
   }, [])
 
   function restart() {
@@ -108,6 +107,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   }
 
   const [gameIsOn, setgameIsOn] = useState(false);
+  const [gameWasStarted, setGameWasStarted] = useState(false);
   const [blackTimeMinutes, setBlackTimeMinutes] = useState(5);
   const [whiteTimeMinutes, setWhiteTimeMinutes] = useState(5);
   const [blackTimeSeconds, setBlackTimeSeconds] = useState(60);
@@ -156,6 +156,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
   function handleRestart() {
     setgameIsOn(false);
+    setGameWasStarted(false);
     setCurrentPlayer(null);
     setBlackTimeMinutes(5);
     setWhiteTimeMinutes(5);
@@ -166,6 +167,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
   function handleStartGame() {
     setgameIsOn(true);
+    setGameWasStarted(true);
     setCurrentPlayer(whitePlayer);
     startTimer();
   }
@@ -173,6 +175,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   function handleStopGame() {
     setgameIsOn(false);
     setCurrentPlayer(null);
+    setSelectedCell(null);
   }
 
   const handleDragStart = (event: any) => {
@@ -238,7 +241,12 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   return (
     <>
       <div className='wrapper'>
-        <Buttons handleRestart={handleRestart} handleStartGame={handleStartGame} handleStopGame={handleStopGame} />
+        <Buttons handleRestart={handleRestart}
+          handleStartGame={handleStartGame}
+          handleStopGame={handleStopGame}
+          gameIsOn={gameIsOn}
+          gameWasStarted={gameWasStarted}
+        />
         <div className='time blackTime'>
           <Clock fill='white' />
           <span>
