@@ -151,9 +151,14 @@
   display: flex;
 }
 
+.lostFiguresAndTime {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
 .lost {
-  height: calc(50vh - 60px);
-  margin-left: 50px;
+  display: flex;
 }
 
 .buttons {

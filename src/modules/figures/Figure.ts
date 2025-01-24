@@ -18,6 +18,7 @@ export class Figure {
   cell: Cell;
   name: FigureNames;
   id: number;
+  value: number;
 
   constructor(color: Colors, cell: Cell) {
     this.color = color;
@@ -26,6 +27,7 @@ export class Figure {
     this.logo = null;
     this.name = FigureNames.FIGURE;
     this.id = Math.random();
+    this.value = 0;
   }
 
   canMove(target: Cell): boolean {

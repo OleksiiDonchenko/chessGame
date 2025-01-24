@@ -11,6 +11,7 @@ import DroppableCell from './DroppableCell';
 import DraggableFigure from './DraggableFigure';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import Clock from '../assets/icons/clock.svg?react';
+import LostFigures from './LostFigures';
 
 interface BoardProps {
   board: Board;
@@ -23,10 +24,13 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   const [blackPlayer] = useState(new Player(Colors.BLACK));
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [promotionCell, setPromotionCell] = useState<Cell | null>(null);
+  const [whitePoints, setWhitePoints] = useState(0);
+  const [blackPoints, setBlackPoints] = useState(0);
+  const [whoLeads, setWholeads] = useState(0);
 
   useEffect(() => {
     highlightCells();
-  }, [selectedCell])
+  }, [selectedCell, whitePoints, blackPoints, whoLeads])
 
   function click(cell: Cell) {
     if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
@@ -100,6 +104,9 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     newBoard.initCells();
     newBoard.addFigures();
     setBoard(newBoard);
+    setWhitePoints(0);
+    setBlackPoints(0);
+    setWholeads(0);
   }
 
   function swapPlayer() {
@@ -247,11 +254,23 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
           gameIsOn={gameIsOn}
           gameWasStarted={gameWasStarted}
         />
-        <div className='time blackTime'>
-          <Clock fill='white' />
-          <span>
-            {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
-          </span>
+        <div className='lostFiguresAndTime'>
+          <LostFigures
+            color='white'
+            figures={board.lostWhiteFigures}
+            whoLeads={whoLeads}
+            setWholeads={setWholeads}
+            whitePoints={whitePoints}
+            setWhitePoints={setWhitePoints}
+            blackPoints={blackPoints}
+            setBlackPoints={setBlackPoints}
+          />
+          <div className='time blackTime'>
+            <Clock fill='white' />
+            <span>
+              {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
+            </span>
+          </div>
         </div>
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
           <div className={['board', promotionCell ? 'eclipse' : ''].join(' ')}>
@@ -289,11 +308,23 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
             }
           </div >
         </DndContext>
-        <div className='time whiteTime'>
-          <Clock fill='black' />
-          <span>
-            {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
-          </span>
+        <div className='lostFiguresAndTime'>
+          <LostFigures
+            color='black'
+            figures={board.lostBlackFigures}
+            whoLeads={whoLeads}
+            setWholeads={setWholeads}
+            whitePoints={whitePoints}
+            setWhitePoints={setWhitePoints}
+            blackPoints={blackPoints}
+            setBlackPoints={setBlackPoints}
+          />
+          <div className='time whiteTime'>
+            <Clock fill='black' />
+            <span>
+              {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
+            </span>
+          </div>
         </div>
       </div>
     </>
