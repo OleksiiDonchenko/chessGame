@@ -58,6 +58,14 @@ export class Board {
     return null;
   }
 
+  public isKingInCheck(color: Colors): boolean {
+    const kingCell = this.findKing(color);
+    if (!kingCell) {
+      return false;
+    }
+    return this.isUnderAttack(kingCell, color);
+  }
+
   public isUnderAttack(cell: Cell, color: Colors): boolean {
     for (let row of this.cells) {
       for (let currentCell of row) {
@@ -68,14 +76,6 @@ export class Board {
       }
     }
     return false;
-  }
-
-  public isKingInCheck(color: Colors): boolean {
-    const kingCell = this.findKing(color);
-    if (!kingCell) {
-      return false;
-    }
-    return this.isUnderAttack(kingCell, color);
   }
 
   public findKing(color: Colors): Cell | null {
