@@ -23,13 +23,15 @@ export class Knight extends Figure {
     const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
 
     if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
-      return (dx === 1 && dy === 2) && canMoveWithoutCheck || (dx === 2 && dy === 1 && canMoveWithoutCheck);
-    } else {
-      if (attackerCellOnKing) {
-        return (dx === 1 && dy === 2) && attackerCellOnKing || (dx === 2 && dy === 1) && attackerCellOnKing;
+      if (canMoveWithoutCheck) {
+        return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
       }
-      return (dx === 1 && dy === 2) && canBlockCheck && canMoveWithoutCheck || (dx === 2 && dy === 1) && canBlockCheck && canMoveWithoutCheck;
+    } else {
+      if (attackerCellOnKing && canMoveWithoutCheck || canBlockCheck && canMoveWithoutCheck) {
+        return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
+      }
     }
+    return false;
   }
 
   canAttack(target: Cell): boolean {
