@@ -27,9 +27,9 @@ export class Rook extends Figure {
       if (movesOfRook && canMoveWithoutCheck)
         return true;
     } else {
-      if (movesOfRook && canBlockCheck)
+      if (movesOfRook && canBlockCheck && canMoveWithoutCheck)
         return true;
-      if (movesOfRook && attackerCellOnKing)
+      if (movesOfRook && attackerCellOnKing && canMoveWithoutCheck)
         return true;
     }
     return false;
