@@ -1,5 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { Cell } from '../modules/Cell';
 
 interface DroppableCellProps {
@@ -11,14 +11,22 @@ interface DroppableCellProps {
   selected: boolean;
   isAvailable: boolean;
   isKingInCheck: boolean;
+  isCheckmate: boolean;
+  handleStopGame: () => void;
   coordinates: { x: number; y: number };
   mouseDown: (cell: Cell) => void;
 }
 
-const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, color, selected, isAvailable, isKingInCheck, coordinates, mouseDown }) => {
+const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, handleStopGame, coordinates, mouseDown }) => {
   const { setNodeRef, isOver, active } = useDroppable({ id, });
   const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+  useEffect(() => {
+    if (isCheckmate) {
+      handleStopGame();
+    }
+  }, [isCheckmate]);
 
   return (
     <div

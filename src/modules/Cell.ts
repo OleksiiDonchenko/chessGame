@@ -13,6 +13,7 @@ export class Cell {
   available: boolean; // Can you move?
   id: number; // For keys of React
   isKingInCheck: boolean;
+  isCheckmate: boolean;
 
   constructor(board: Board, x: number, y: number, color: Colors, figure: Figure | null) {
     this.x = x;
@@ -23,6 +24,7 @@ export class Cell {
     this.available = false;
     this.id = Math.random();
     this.isKingInCheck = false;
+    this.isCheckmate = false;
   }
 
   isEmpty(ignoreOpponentKing: boolean = false, color: Colors): boolean {
@@ -139,12 +141,17 @@ export class Cell {
       target.setFigure(this.figure);
       this.figure = null;
 
-      if (this.board.isKingInCheck(Colors.WHITE)) {
-        this.board.highlightKing(Colors.WHITE);
+      const white = Colors.WHITE;
+      const black = Colors.BLACK;
+
+      if (this.board.isKingInCheck(white)) {
+        this.board.highlightKing(white);
+        this.board.isCheckmate(white);
       }
 
-      if (this.board.isKingInCheck(Colors.BLACK)) {
-        this.board.highlightKing(Colors.BLACK);
+      if (this.board.isKingInCheck(black)) {
+        this.board.highlightKing(black);
+        this.board.isCheckmate(black);
       }
     }
   }

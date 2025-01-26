@@ -195,14 +195,14 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
     const cellRect = cell.getBoundingClientRect();
 
-    // Размеры фигуры
+    // Size the figure
     const figureSize = 60;
 
-    // Позиция курсора внутри клетки
+    // The cursor position in the cell
     const cursorX = event.activatorEvent.clientX - cellRect.left;
     const cursorY = event.activatorEvent.clientY - cellRect.top;
 
-    // Смещение для центрирования фигуры под курсором
+    // Offset for centering the figure under the cursor
     const offsetX = cursorX - figureSize / 2;
     const offsetY = cursorY - figureSize / 2;
 
@@ -289,6 +289,8 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
                       selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
                       isAvailable={cell.available}
                       isKingInCheck={cell.isKingInCheck}
+                      isCheckmate={cell.isCheckmate}
+                      handleStopGame={handleStopGame}
                       cell={cell}
                       click={click}
                       mouseDown={mouseDown}

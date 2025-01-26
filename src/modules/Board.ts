@@ -58,6 +58,68 @@ export class Board {
     return null;
   }
 
+  public canKingEscape(color: Colors): boolean {
+    const kingCell = this.findKing(color);
+    const cellsForEscape: Cell[] = [];
+
+    if (kingCell) {
+      for (let i = 0; i < this.cells.length; i++) {
+        const row = this.cells[i];
+        for (let j = 0; j < row.length; j++) {
+          const target = row[j];
+          if (kingCell.figure?.canMove(target)) {
+            cellsForEscape.push(target);
+          }
+        }
+      }
+    }
+
+    if (cellsForEscape.length === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public canBlockOrCapture(color: Colors): boolean {
+    const cellsForBlockOrCapture: Cell[] = [];
+    const allies: Figure[] = [];
+
+    for (let i = 0; i < this.cells.length; i++) {
+      const row = this.cells[i];
+      for (let j = 0; j < row.length; j++) {
+        const target = row[j];
+        if (target.figure?.color === color && target.figure.name !== 'King') {
+          allies.push(target.figure);
+        }
+      }
+    }
+
+    allies.forEach(figure => {
+      this.cells.forEach(row => {
+        row.forEach(target => {
+          if (figure.canMove(target)) {
+            cellsForBlockOrCapture.push(target);
+          }
+        })
+      })
+    })
+
+    if (cellsForBlockOrCapture.length === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public isCheckmate(color: Colors) {
+    if (!this.canKingEscape(color) && !this.canBlockOrCapture(color)) {
+      const kingCell = this.findKing(color);
+      if (kingCell) {
+        return kingCell.isCheckmate = true;
+      }
+    }
+    return;
+  }
+
   public isKingInCheck(color: Colors): boolean {
     const kingCell = this.findKing(color);
     if (!kingCell) {
