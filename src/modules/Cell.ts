@@ -15,6 +15,7 @@ export class Cell {
   isKingInCheck: boolean;
   isCheckmate: boolean;
   isVictory: boolean;
+  losingByTime: boolean;
 
   constructor(board: Board, x: number, y: number, color: Colors, figure: Figure | null) {
     this.x = x;
@@ -27,6 +28,7 @@ export class Cell {
     this.isKingInCheck = false;
     this.isCheckmate = false;
     this.isVictory = false;
+    this.losingByTime = false;
   }
 
   isEmpty(ignoreOpponentKing: boolean = false, color: Colors): boolean {

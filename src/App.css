@@ -315,3 +315,24 @@ button:focus-visible {
     border-radius: 50%;
   }
 }
+
+.losingByTime {
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    height: 30px;
+    width: 30px;
+    background-image: url('../src/assets/icons/clock.svg');
+    color: white;
+    background-position: center;
+    background-size: initial;
+    background-repeat: no-repeat;
+    z-index: 4;
+    color: white;
+    background-color: #e02828;
+    border-radius: 50%;
+  }
+}

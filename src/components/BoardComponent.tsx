@@ -144,6 +144,10 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       if (blackTimeSeconds > 0) {
         setBlackTimeSeconds(prev => prev - 1);
       }
+      if (blackTimeMinutes === 0 && blackTimeSeconds === 0 && currentPlayer) {
+        handleStopGame();
+        board.losingByTime(currentPlayer.color);
+      }
     }
   }
 
@@ -157,6 +161,10 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       }
       if (whiteTimeSeconds > 0) {
         setWhiteTimeSeconds(prev => prev - 1);
+      }
+      if (whiteTimeMinutes === 0 && whiteTimeSeconds === 0 && currentPlayer) {
+        handleStopGame();
+        board.losingByTime(currentPlayer.color);
       }
     }
   }
@@ -290,6 +298,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
                       isAvailable={cell.available}
                       isKingInCheck={cell.isKingInCheck}
                       isCheckmate={cell.isCheckmate}
+                      losingByTime={cell.losingByTime}
                       isVictory={cell.isVictory}
                       handleStopGame={handleStopGame}
                       cell={cell}

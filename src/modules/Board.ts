@@ -124,6 +124,19 @@ export class Board {
     return;
   }
 
+  public losingByTime(color: Colors) {
+    const loserColor = color;
+    const victoryColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+    const kingCell = this.findKing(loserColor);
+    const victoryKing = this.findKing(victoryColor);
+    if (kingCell && victoryKing) {
+      kingCell.losingByTime = true;
+      victoryKing.isVictory = true;
+      return;
+    }
+    return;
+  }
+
   public isKingInCheck(color: Colors): boolean {
     const kingCell = this.findKing(color);
     if (!kingCell) {
