@@ -14,6 +14,7 @@ export class Cell {
   id: number; // For keys of React
   isKingInCheck: boolean;
   isCheckmate: boolean;
+  isVictory: boolean;
 
   constructor(board: Board, x: number, y: number, color: Colors, figure: Figure | null) {
     this.x = x;
@@ -25,6 +26,7 @@ export class Cell {
     this.id = Math.random();
     this.isKingInCheck = false;
     this.isCheckmate = false;
+    this.isVictory = false;
   }
 
   isEmpty(ignoreOpponentKing: boolean = false, color: Colors): boolean {

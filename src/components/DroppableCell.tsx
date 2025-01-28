@@ -12,12 +12,13 @@ interface DroppableCellProps {
   isAvailable: boolean;
   isKingInCheck: boolean;
   isCheckmate: boolean;
+  isVictory: boolean;
   handleStopGame: () => void;
   coordinates: { x: number; y: number };
   mouseDown: (cell: Cell) => void;
 }
 
-const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, handleStopGame, coordinates, mouseDown }) => {
+const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, isVictory, handleStopGame, coordinates, mouseDown }) => {
   const { setNodeRef, isOver, active } = useDroppable({ id, });
   const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -39,6 +40,8 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, colo
         isAvailable && isOver ? 'over-available-cell' : '',
         isAvailable && cell.figure && active || isAvailable && cell.figure ? 'attacked' : '',
         isKingInCheck ? 'check' : '',
+        isVictory ? 'victoriousKing' : '',
+        isCheckmate && cell.figure?.color === 'white' ? 'defeatedWhiteKing' : isCheckmate && cell.figure?.color === 'black' ? 'defeatedBlackKing' : '',
       ].join(' ')}
       onClick={() => click(cell)}
       onMouseDown={() => mouseDown(cell)}

@@ -111,10 +111,14 @@ export class Board {
   }
 
   public isCheckmate(color: Colors) {
+    const victoryColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
     if (!this.canKingEscape(color) && !this.canBlockOrCapture(color)) {
       const kingCell = this.findKing(color);
-      if (kingCell) {
-        return kingCell.isCheckmate = true;
+      const victoryKing = this.findKing(victoryColor);
+      if (kingCell && victoryKing) {
+        kingCell.isCheckmate = true;
+        victoryKing.isVictory = true;
+        return;
       }
     }
     return;

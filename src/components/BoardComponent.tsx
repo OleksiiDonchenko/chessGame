@@ -290,6 +290,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
                       isAvailable={cell.available}
                       isKingInCheck={cell.isKingInCheck}
                       isCheckmate={cell.isCheckmate}
+                      isVictory={cell.isVictory}
                       handleStopGame={handleStopGame}
                       cell={cell}
                       click={click}
