@@ -36,7 +36,7 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, colo
       className={[
         'cell',
         color,
-        selected ? 'selected' : '',
+        selected && cell.figure ? 'selected' : '',
         isAvailable ? 'available' : '',
         isAvailable && isOver ? 'over-available-cell' : '',
         isAvailable && cell.figure && active || isAvailable && cell.figure ? 'attacked' : '',

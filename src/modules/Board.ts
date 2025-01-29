@@ -7,6 +7,11 @@ import { Knight } from "./figures/Knight";
 import { Pawn } from "./figures/Pawn";
 import { Queen } from "./figures/Queen";
 import { Rook } from "./figures/Rook";
+import moveSound from "../assets/sounds/move.mp3";
+import checkSound from "../assets/sounds/check.mp3";
+import captureSound from "../assets/sounds/capture.mp3";
+import castleSound from "../assets/sounds/castle.mp3";
+import silenceSound from "../assets/sounds/silence.mp3";
 
 export class Board {
   cells: Cell[][] = [];
@@ -331,6 +336,33 @@ export class Board {
       default:
         return null;
     }
+  }
+
+  public handleMove(moveType: string) {
+    switch (moveType) {
+      case 'move':
+        this.playSound(moveSound);
+        break;
+      case 'check':
+        this.playSound(checkSound);
+        break;
+      case 'capture':
+        this.playSound(captureSound);
+        break;
+      case 'castle':
+        this.playSound(castleSound);
+        break;
+      case 'silence':
+        this.playSound(silenceSound);
+        break;
+      default:
+        break;
+    }
+  }
+
+  private playSound(src: string) {
+    const audio = new Audio(src);
+    audio.play();
   }
 
   private addKings() {

@@ -3,16 +3,21 @@ import { Colors } from "../Colors";
 import { Cell } from "../Cell";
 import blackLogo from '../../assets/black_rook.png';
 import whiteLogo from '../../assets/white_rook.png';
+import { King } from "./King";
 
 export class Rook extends Figure {
-  longCastle = true;
-  shortCastle = true;
+  longCastle: boolean;
+  shortCastle: boolean;
+  firstMove: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.ROOK;
     this.value = 5;
+    this.longCastle = true;
+    this.shortCastle = true;
+    this.firstMove = false;
   }
 
   canMove(target: Cell): boolean {
@@ -38,13 +43,50 @@ export class Rook extends Figure {
   moveFigure(target: Cell): void {
     // Do the basic figure movement
     super.moveFigure(target);
+
+    const king = this.cell.board.findKing(this.color)?.figure;
+
+    if (this.color === Colors.WHITE && king instanceof King) {
+      if (target.x === 5 && target.y === 7 && this.shortCastle && this.longCastle && !this.firstMove && king.hasMoved && king.castleMove) {
+        this.cell.board.handleMove('silence');
+      } else if (target.x === 5 && target.y === 7 && !this.firstMove) {
+        this.cell.board.handleMove('move');
+      } else if (target.x === 3 && target.y === 7 && this.shortCastle && this.longCastle && !this.firstMove && king.hasMoved && king.castleMove) {
+        this.cell.board.handleMove('silence');
+      } else if (target.x === 3 && target.y === 7 && !this.firstMove) {
+        this.cell.board.handleMove('move');
+      } else if (this.cell.isEnemy(target)) {
+        this.cell.board.handleMove('capture');
+      } else {
+        this.cell.board.handleMove('move');
+      }
+    } else if (this.color === Colors.BLACK && king instanceof King) {
+      if (target.x === 5 && target.y === 0 && this.shortCastle && this.longCastle && !this.firstMove && king.hasMoved && king.castleMove) {
+        this.cell.board.handleMove('silence');
+      } else if (target.x === 5 && target.y === 0 && !this.firstMove) {
+        this.cell.board.handleMove('move');
+      } else if (target.x === 3 && target.y === 0 && this.shortCastle && this.longCastle && !this.firstMove && king.hasMoved && king.castleMove) {
+        this.cell.board.handleMove('silence');
+      } else if (target.x === 3 && target.y === 0 && !this.firstMove) {
+        this.cell.board.handleMove('move');
+      } else if (this.cell.isEnemy(target)) {
+        this.cell.board.handleMove('capture');
+      } else {
+        this.cell.board.handleMove('move');
+      }
+    }
+
     if (this.cell.x === 0 && this.cell.y === 0 && this.color === Colors.BLACK
       || this.cell.x === 0 && this.cell.y === 7 && this.color === Colors.WHITE) {
+      this.shortCastle = false;
       this.longCastle = false;
     } else if (this.cell.x === 7 && this.cell.y === 0 && this.color === Colors.BLACK
       || this.cell.x === 7 && this.cell.y === 7 && this.color === Colors.WHITE) {
       this.shortCastle = false;
+      this.longCastle = false;
     }
+
+    this.firstMove = true;
   }
 
   canAttack(target: Cell): boolean {

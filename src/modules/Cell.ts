@@ -3,6 +3,7 @@ import { Colors } from "./Colors";
 import { Figure } from "./figures/Figure";
 import { King } from "./figures/King";
 import { Pawn } from "./figures/Pawn";
+import { Rook } from "./figures/Rook";
 
 export class Cell {
   x: number;
@@ -129,34 +130,84 @@ export class Cell {
 
   moveFigure(target: Cell) {
     if (this.figure && this.figure.canMove(target)) {
+      const white = Colors.WHITE;
+      const black = Colors.BLACK;
+
       if (this.figure instanceof Pawn && this.board.inPassingTarget && target.x === this.board.inPassingTarget.x && target.y === this.board.inPassingTarget.y) {
         const passingPawnCell = this.board.getCell(this.board.inPassingTarget.x, this.figure.cell.y);
 
         if (passingPawnCell.figure) {
           this.addLostFigure(passingPawnCell.figure);
+          this.board.handleMove('capture');
           passingPawnCell.figure = null;
         }
+        this.figure.moveFigure(target);
+
+        target.setFigure(this.figure);
+        this.figure = null;
+
+        return;
+      } else if (this.figure instanceof Pawn && target.figure === null) {
+        this.board.handleMove('move');
+        this.figure.moveFigure(target);
+
+        target.setFigure(this.figure);
+        this.figure = null;
+
+        return;
       }
 
       this.figure.moveFigure(target);
       if (target.figure) {
         this.addLostFigure(target.figure);
       }
-      target.setFigure(this.figure);
-      this.figure = null;
 
-      const white = Colors.WHITE;
-      const black = Colors.BLACK;
-
-      if (this.board.isKingInCheck(white)) {
-        this.board.highlightKing(white);
-        this.board.isCheckmate(white);
+      // Just a move and check except for the King and the Rook
+      if (target.figure === null && this.figure.name !== 'King' && this.figure.name !== 'Rook' && this.figure.name !== 'Pawn') {
+        target.setFigure(this.figure);
+        this.figure = null;
+        if (this.board.isKingInCheck(white)) {
+          this.board.handleMove('check');
+          this.board.highlightKing(white);
+          this.board.isCheckmate(white);
+        } else if (this.board.isKingInCheck(black)) {
+          this.board.handleMove('check');
+          this.board.highlightKing(black);
+          this.board.isCheckmate(black);
+        } else {
+          this.board.handleMove('move');
+        }
+        return;
       }
 
-      if (this.board.isKingInCheck(black)) {
-        this.board.highlightKing(black);
-        this.board.isCheckmate(black);
+      // Capture and check
+      if (this.isEnemy(target) && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
+        target.setFigure(this.figure);
+        this.figure = null;
+        if (this.board.isKingInCheck(white)) {
+          this.board.handleMove('check');
+          this.board.highlightKing(white);
+          this.board.isCheckmate(white);
+        } else if (this.board.isKingInCheck(black)) {
+          this.board.handleMove('check');
+          this.board.highlightKing(black);
+          this.board.isCheckmate(black);
+        } else {
+          this.board.handleMove('capture');
+        }
+        return;
       }
+
+      // The King moves and the Rook moves
+      if (this.figure instanceof King || this.figure instanceof Rook) {
+
+        target.setFigure(this.figure);
+        this.figure = null;
+
+        return;
+      }
+
+      return;
     }
   }
 }

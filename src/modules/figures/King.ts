@@ -5,12 +5,15 @@ import blackLogo from '../../assets/black_king.png';
 import whiteLogo from '../../assets/white_king.png';
 
 export class King extends Figure {
-  hasMoved = false;
+  hasMoved: boolean;
+  castleMove: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.KING;
+    this.hasMoved = false;
+    this.castleMove = false;
   }
 
   canMove(target: Cell): boolean {
@@ -87,7 +90,6 @@ export class King extends Figure {
   moveFigure(target: Cell): void {
     // Do the basic figure movement
     super.moveFigure(target);
-    this.hasMoved = true;
 
     const whiteRookShortCastle = this.cell.board.findRook(this.color, 7, 7);
     const whiteRookLongCastle = this.cell.board.findRook(this.color, 0, 7);
@@ -97,28 +99,49 @@ export class King extends Figure {
     let cellForRookCastle;
 
     if (this.color === Colors.WHITE) {
-      if (target.x === 6 && target.y === 7 && this.hasMoved && whiteRookShortCastle?.shortCastle) {
+      if (target.x === 6 && target.y === 7 && !this.hasMoved && whiteRookShortCastle?.shortCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(5, 7);
-        if (cellForRookCastle)
+        if (cellForRookCastle) {
+          this.hasMoved = true;
+          this.castleMove = true;
+          target.board.handleMove('castle');
           whiteRookShortCastle.cell.moveFigure(cellForRookCastle);
-      }
-      if (target.x === 2 && target.y === 7 && this.hasMoved && whiteRookLongCastle?.longCastle) {
+        }
+      } else if (target.x === 2 && target.y === 7 && !this.hasMoved && whiteRookLongCastle?.longCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(3, 7);
-        if (cellForRookCastle)
+        if (cellForRookCastle) {
+          this.hasMoved = true;
+          this.castleMove = true;
+          target.board.handleMove('castle');
           whiteRookLongCastle.cell.moveFigure(cellForRookCastle);
+        }
+      } else {
+        this.castleMove = false;
+        target.board.handleMove('move');
       }
     } else {
-      if (target.x === 6 && target.y === 0 && this.hasMoved && blackRookShortCastle?.shortCastle) {
+      if (target.x === 6 && target.y === 0 && !this.hasMoved && blackRookShortCastle?.shortCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(5, 0);
-        if (cellForRookCastle)
+        if (cellForRookCastle) {
+          this.hasMoved = true;
+          this.castleMove = true;
+          target.board.handleMove('castle');
           blackRookShortCastle.cell.moveFigure(cellForRookCastle);
-      }
-      if (target.x === 2 && target.y === 0 && this.hasMoved && blackRookLongCastle?.longCastle) {
+        }
+      } else if (target.x === 2 && target.y === 0 && !this.hasMoved && blackRookLongCastle?.longCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(3, 0);
-        if (cellForRookCastle)
+        if (cellForRookCastle) {
+          this.hasMoved = true;
+          this.castleMove = true;
+          target.board.handleMove('castle');
           blackRookLongCastle.cell.moveFigure(cellForRookCastle);
+        }
+      } else {
+        this.castleMove = false;
+        target.board.handleMove('move');
       }
     }
+    this.hasMoved = true;
   }
 
   canAttack(target: Cell): boolean {
