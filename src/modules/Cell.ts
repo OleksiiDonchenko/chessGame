@@ -138,32 +138,142 @@ export class Cell {
 
         if (passingPawnCell.figure) {
           this.addLostFigure(passingPawnCell.figure);
-          this.board.handleMove('capture');
           passingPawnCell.figure = null;
         }
         this.figure.moveFigure(target);
-
         target.setFigure(this.figure);
         this.figure = null;
 
-        return;
-      } else if (this.figure instanceof Pawn && target.figure === null) {
-        this.board.handleMove('move');
-        this.figure.moveFigure(target);
-
-        target.setFigure(this.figure);
-        this.figure = null;
+        if (this.board.isKingInCheck(white)) {
+          this.board.handleMove('check');
+          this.board.highlightKing(white);
+          this.board.isCheckmate(white);
+        } else if (this.board.isKingInCheck(black)) {
+          this.board.handleMove('check');
+          this.board.highlightKing(black);
+          this.board.isCheckmate(black);
+        } else {
+          this.board.handleMove('capture');
+        }
 
         return;
       }
 
+      // The King moves
+      if (this.figure instanceof King) {
+        const king = this.figure;
+        const enemy = this.isEnemy(target);
+
+        this.figure.moveFigure(target);
+        if (target.figure) {
+          this.addLostFigure(target.figure);
+        }
+        target.setFigure(this.figure);
+        this.figure = null;
+
+        if (king.castleMove && !king.hasMoved) {
+          if (this.board.isKingInCheck(white)) {
+            this.board.highlightKing(white);
+            this.board.isCheckmate(white);
+          } else if (this.board.isKingInCheck(black)) {
+            this.board.highlightKing(black);
+            this.board.isCheckmate(black);
+          } else {
+            this.board.handleMove('castle');
+          }
+        } else if (enemy) {
+          if (this.board.isKingInCheck(white)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(white);
+            this.board.isCheckmate(white);
+          } else if (this.board.isKingInCheck(black)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(black);
+            this.board.isCheckmate(black);
+          } else {
+            this.board.handleMove('capture');
+          }
+        } else if (!enemy && !king.castleMove) {
+          if (this.board.isKingInCheck(white)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(white);
+            this.board.isCheckmate(white);
+          } else if (this.board.isKingInCheck(black)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(black);
+            this.board.isCheckmate(black);
+          } else {
+            this.board.handleMove('move');
+          }
+        }
+
+        king.hasMoved = true;
+        king.castleMove = false;
+
+        return;
+      }
+
+      // The Rook moves
+      if (this.figure instanceof Rook) {
+        const rook = this.figure;
+        const enemy = this.isEnemy(target);
+
+        this.figure.moveFigure(target);
+        if (target.figure) {
+          this.addLostFigure(target.figure);
+        }
+        target.setFigure(this.figure);
+        this.figure = null;
+
+        if (rook.castleMove && !rook.firstMove) {
+          if (this.board.isKingInCheck(white)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(white);
+            this.board.isCheckmate(white);
+          } else if (this.board.isKingInCheck(black)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(black);
+            this.board.isCheckmate(black);
+          }
+        } else if (enemy) {
+          if (this.board.isKingInCheck(white)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(white);
+            this.board.isCheckmate(white);
+          } else if (this.board.isKingInCheck(black)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(black);
+            this.board.isCheckmate(black);
+          } else {
+            this.board.handleMove('capture');
+          }
+        } else if (!enemy) {
+          if (this.board.isKingInCheck(white)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(white);
+            this.board.isCheckmate(white);
+          } else if (this.board.isKingInCheck(black)) {
+            this.board.handleMove('check');
+            this.board.highlightKing(black);
+            this.board.isCheckmate(black);
+          } else {
+            this.board.handleMove('move');
+          }
+        }
+
+        rook.firstMove = true;
+
+        return;
+      }
+
+      // Other figures
       this.figure.moveFigure(target);
       if (target.figure) {
         this.addLostFigure(target.figure);
       }
 
       // Just a move and check except for the King and the Rook
-      if (target.figure === null && this.figure.name !== 'King' && this.figure.name !== 'Rook' && this.figure.name !== 'Pawn') {
+      if (target.figure === null && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
         target.setFigure(this.figure);
         this.figure = null;
         if (this.board.isKingInCheck(white)) {
@@ -180,7 +290,7 @@ export class Cell {
         return;
       }
 
-      // Capture and check
+      // Capture and check except for the King and the Rook
       if (this.isEnemy(target) && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
         target.setFigure(this.figure);
         this.figure = null;
@@ -195,15 +305,6 @@ export class Cell {
         } else {
           this.board.handleMove('capture');
         }
-        return;
-      }
-
-      // The King moves and the Rook moves
-      if (this.figure instanceof King || this.figure instanceof Rook) {
-
-        target.setFigure(this.figure);
-        this.figure = null;
-
         return;
       }
 

@@ -11,7 +11,6 @@ import moveSound from "../assets/sounds/move.mp3";
 import checkSound from "../assets/sounds/check.mp3";
 import captureSound from "../assets/sounds/capture.mp3";
 import castleSound from "../assets/sounds/castle.mp3";
-import silenceSound from "../assets/sounds/silence.mp3";
 
 export class Board {
   cells: Cell[][] = [];
@@ -351,9 +350,6 @@ export class Board {
         break;
       case 'castle':
         this.playSound(castleSound);
-        break;
-      case 'silence':
-        this.playSound(silenceSound);
         break;
       default:
         break;

@@ -102,46 +102,35 @@ export class King extends Figure {
       if (target.x === 6 && target.y === 7 && !this.hasMoved && whiteRookShortCastle?.shortCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(5, 7);
         if (cellForRookCastle) {
-          this.hasMoved = true;
           this.castleMove = true;
-          target.board.handleMove('castle');
+          whiteRookShortCastle.castleMove = true;
           whiteRookShortCastle.cell.moveFigure(cellForRookCastle);
         }
       } else if (target.x === 2 && target.y === 7 && !this.hasMoved && whiteRookLongCastle?.longCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(3, 7);
         if (cellForRookCastle) {
-          this.hasMoved = true;
           this.castleMove = true;
-          target.board.handleMove('castle');
+          whiteRookLongCastle.castleMove = true;
           whiteRookLongCastle.cell.moveFigure(cellForRookCastle);
         }
-      } else {
-        this.castleMove = false;
-        target.board.handleMove('move');
       }
     } else {
       if (target.x === 6 && target.y === 0 && !this.hasMoved && blackRookShortCastle?.shortCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(5, 0);
         if (cellForRookCastle) {
-          this.hasMoved = true;
           this.castleMove = true;
-          target.board.handleMove('castle');
+          blackRookShortCastle.castleMove = true;
           blackRookShortCastle.cell.moveFigure(cellForRookCastle);
         }
       } else if (target.x === 2 && target.y === 0 && !this.hasMoved && blackRookLongCastle?.longCastle) {
         cellForRookCastle = this.cell.board.findCellForRookCastle(3, 0);
         if (cellForRookCastle) {
-          this.hasMoved = true;
           this.castleMove = true;
-          target.board.handleMove('castle');
+          blackRookLongCastle.castleMove = true;
           blackRookLongCastle.cell.moveFigure(cellForRookCastle);
         }
-      } else {
-        this.castleMove = false;
-        target.board.handleMove('move');
       }
     }
-    this.hasMoved = true;
   }
 
   canAttack(target: Cell): boolean {
