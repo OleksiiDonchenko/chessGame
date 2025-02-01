@@ -206,17 +206,12 @@ export class Board {
       }
     })
 
-
     if (allies.length === 0
       || countKnights === 2 && countBishops === 0 && countOtherFigures === 0
       || countKnights === 1 && countBishops === 0 && countOtherFigures === 0
       || countKnights === 0 && countBishops === 1 && countOtherFigures === 0) {
       return false;
     }
-    console.log('Bishops: ', countBishops);
-    console.log('Kinghts: ', countKnights);
-    console.log('Other figures: ', countOtherFigures);
-    console.log(color);
     return true;
   }
 
@@ -530,9 +525,9 @@ export class Board {
   public addFigures() {
     this.addKings();
     this.addQueens();
-    // this.addRooks();
+    this.addRooks();
     this.addBishops();
     this.addKnights();
-    // this.addPawns();
+    this.addPawns();
   }
 }
