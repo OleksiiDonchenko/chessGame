@@ -80,6 +80,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       if (board.isKingInCheck(colorEnemyKing)) {
         board.highlightKing(colorEnemyKing);
       }
+      board.isStalemate(colorEnemyKing);
       swapPlayer();
     }
     setPromotionCell(null);
@@ -187,10 +188,17 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     startTimer();
   }
 
-  function handleStopGame() {
+  function handleStopGame(color?: Colors) {
+    if (color)
+      board.handleResign(color);
     setgameIsOn(false);
     setCurrentPlayer(null);
     setSelectedCell(null);
+  }
+
+  function handleDraw(color: Colors) {
+    board.handleDraw(color);
+    handleStopGame();
   }
 
   const handleDragStart = (event: any) => {
@@ -259,8 +267,10 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         <Buttons handleRestart={handleRestart}
           handleStartGame={handleStartGame}
           handleStopGame={handleStopGame}
+          handleDraw={handleDraw}
           gameIsOn={gameIsOn}
           gameWasStarted={gameWasStarted}
+          currentPlayer={currentPlayer}
         />
         <div className='lostFiguresAndTime'>
           <LostFigures
@@ -298,8 +308,11 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
                       isAvailable={cell.available}
                       isKingInCheck={cell.isKingInCheck}
                       isCheckmate={cell.isCheckmate}
+                      resign={cell.resign}
                       losingByTime={cell.losingByTime}
                       isVictory={cell.isVictory}
+                      isStalemate={cell.isStalemate}
+                      isDraw={cell.isDraw}
                       handleStopGame={handleStopGame}
                       cell={cell}
                       click={click}

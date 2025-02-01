@@ -16,7 +16,10 @@ export class Cell {
   isKingInCheck: boolean;
   isCheckmate: boolean;
   isVictory: boolean;
+  resign: boolean;
   losingByTime: boolean;
+  isStalemate: boolean;
+  isDraw: boolean;
 
   constructor(board: Board, x: number, y: number, color: Colors, figure: Figure | null) {
     this.x = x;
@@ -29,7 +32,10 @@ export class Cell {
     this.isKingInCheck = false;
     this.isCheckmate = false;
     this.isVictory = false;
+    this.resign = false;
     this.losingByTime = false;
+    this.isStalemate = false;
+    this.isDraw = false;
   }
 
   isEmpty(ignoreOpponentKing: boolean = false, color: Colors): boolean {
@@ -132,6 +138,7 @@ export class Cell {
     if (this.figure && this.figure.canMove(target)) {
       const white = Colors.WHITE;
       const black = Colors.BLACK;
+      const enemyColor = this.figure.color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
       if (this.figure instanceof Pawn && this.board.inPassingTarget && target.x === this.board.inPassingTarget.x && target.y === this.board.inPassingTarget.y) {
         const passingPawnCell = this.board.getCell(this.board.inPassingTarget.x, this.figure.cell.y);
@@ -156,6 +163,7 @@ export class Cell {
           this.board.handleMove('capture');
         }
 
+        this.board.isStalemate(enemyColor);
         return;
       }
 
@@ -207,6 +215,7 @@ export class Cell {
           }
         }
 
+        this.board.isStalemate(enemyColor);
         king.hasMoved = true;
         king.castleMove = false;
 
@@ -261,6 +270,7 @@ export class Cell {
           }
         }
 
+        this.board.isStalemate(enemyColor);
         rook.firstMove = true;
 
         return;
@@ -287,6 +297,8 @@ export class Cell {
         } else {
           this.board.handleMove('move');
         }
+
+        this.board.isStalemate(enemyColor);
         return;
       }
 
@@ -305,6 +317,8 @@ export class Cell {
         } else {
           this.board.handleMove('capture');
         }
+
+        this.board.isStalemate(enemyColor);
         return;
       }
 

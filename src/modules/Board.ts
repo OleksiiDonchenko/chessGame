@@ -66,7 +66,7 @@ export class Board {
     const kingCell = this.findKing(color);
     const cellsForEscape: Cell[] = [];
 
-    if (kingCell) {
+    if (kingCell && kingCell.isKingInCheck) {
       for (let i = 0; i < this.cells.length; i++) {
         const row = this.cells[i];
         for (let j = 0; j < row.length; j++) {
@@ -124,6 +124,134 @@ export class Board {
         victoryKing.isVictory = true;
         return;
       }
+    }
+    return;
+  }
+
+  public canKingMove(color: Colors): boolean {
+    const kingCell = this.findKing(color);
+    const cellsForMove: Cell[] = [];
+
+    if (kingCell) {
+      for (let i = 0; i < this.cells.length; i++) {
+        const row = this.cells[i];
+        for (let j = 0; j < row.length; j++) {
+          const target = row[j];
+          if (kingCell.figure?.canMove(target)) {
+            cellsForMove.push(target);
+          }
+        }
+      }
+    }
+
+    if (cellsForMove.length === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public canAlliesMakeMoves(color: Colors): boolean {
+    const cellsForMoves: Cell[] = [];
+    const allies: Figure[] = [];
+
+    for (let i = 0; i < this.cells.length; i++) {
+      const row = this.cells[i];
+      for (let j = 0; j < row.length; j++) {
+        const target = row[j];
+        if (target.figure?.color === color && target.figure.name !== 'King') {
+          allies.push(target.figure);
+        }
+      }
+    }
+
+    allies.forEach(figure => {
+      this.cells.forEach(row => {
+        row.forEach(target => {
+          if (figure.canMove(target)) {
+            cellsForMoves.push(target);
+          }
+        })
+      })
+    })
+
+    if (cellsForMoves.length === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public doAlliedFiguresExist(color: Colors) {
+    const allies: Figure[] = [];
+    let countBishops = 0;
+    let countKnights = 0;
+    let countOtherFigures = 0;
+
+    for (let i = 0; i < this.cells.length; i++) {
+      const row = this.cells[i];
+      for (let j = 0; j < row.length; j++) {
+        const target = row[j];
+        if (target.figure?.color === color && target.figure.name !== 'King') {
+          allies.push(target.figure);
+        }
+      }
+    }
+
+    allies.forEach(figure => {
+      if (figure instanceof Bishop) {
+        countBishops += 1;
+      } else if (figure instanceof Knight) {
+        countKnights += 1;
+      } else if (figure.name !== 'Bishop' && figure.name !== 'Knight') {
+        countOtherFigures += 1;
+      }
+    })
+
+
+    if (allies.length === 0
+      || countKnights === 2 && countBishops === 0 && countOtherFigures === 0
+      || countKnights === 1 && countBishops === 0 && countOtherFigures === 0
+      || countKnights === 0 && countBishops === 1 && countOtherFigures === 0) {
+      return false;
+    }
+    console.log('Bishops: ', countBishops);
+    console.log('Kinghts: ', countKnights);
+    console.log('Other figures: ', countOtherFigures);
+    console.log(color);
+    return true;
+  }
+
+  public isStalemate(color: Colors) {
+    const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+    if (!this.canKingMove(color) && !this.canAlliesMakeMoves(color) || !this.doAlliedFiguresExist(color) && !this.doAlliedFiguresExist(enemyColor)) {
+      const kingOne = this.findKing(color);
+      const kingTwo = this.findKing(enemyColor);
+      if (kingOne && kingTwo) {
+        kingOne.isStalemate = true;
+        kingTwo.isStalemate = true;
+      }
+      return console.log('It is stalemate');
+    }
+    return;
+  }
+
+  public handleDraw(color: Colors) {
+    const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+    const kingOne = this.findKing(color);
+    const kingTwo = this.findKing(enemyColor);
+    if (kingOne && kingTwo) {
+      kingOne.isDraw = true;
+      kingTwo.isDraw = true;
+    }
+    return;
+  }
+
+  public handleResign(color: Colors) {
+    const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+    const kingResign = this.findKing(color);
+    const kingVictory = this.findKing(enemyColor);
+    if (kingResign && kingVictory) {
+      kingResign.resign = true;
+      kingVictory.isVictory = true;
     }
     return;
   }
@@ -402,9 +530,9 @@ export class Board {
   public addFigures() {
     this.addKings();
     this.addQueens();
-    this.addRooks();
+    // this.addRooks();
     this.addBishops();
     this.addKnights();
-    this.addPawns();
+    // this.addPawns();
   }
 }

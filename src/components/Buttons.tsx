@@ -1,14 +1,18 @@
 import { FC } from 'react';
+import { Player } from '../modules/Player';
+import { Colors } from '../modules/Colors';
 
 interface ButtonsProps {
   handleRestart: () => void;
   handleStartGame: () => void;
-  handleStopGame: () => void;
+  handleStopGame: (color?: Colors) => void;
+  handleDraw: (color: Colors) => void;
   gameIsOn: boolean;
   gameWasStarted: boolean;
+  currentPlayer: Player | null;
 }
 
-const Buttons: FC<ButtonsProps> = ({ handleRestart, handleStartGame, handleStopGame, gameIsOn, gameWasStarted }) => {
+const Buttons: FC<ButtonsProps> = ({ handleRestart, handleStartGame, handleStopGame, handleDraw, gameIsOn, gameWasStarted, currentPlayer }) => {
   return (
     <div className="buttons">
       <div>
@@ -26,12 +30,13 @@ const Buttons: FC<ButtonsProps> = ({ handleRestart, handleStartGame, handleStopG
         </button>
       </div>
       <div>
-        <button disabled={!gameIsOn ? true : false}>
+        <button onClick={currentPlayer ? () => handleDraw(currentPlayer.color) : () => { }}
+          disabled={!gameIsOn ? true : false}>
           Draw
         </button>
       </div>
       <div>
-        <button onClick={handleStopGame}
+        <button onClick={currentPlayer ? () => handleStopGame(currentPlayer.color) : () => { }}
           disabled={!gameIsOn ? true : false}
         >
           Resign
