@@ -147,7 +147,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       }
       if (blackTimeMinutes === 0 && blackTimeSeconds === 0 && currentPlayer) {
         handleStopGame();
-        board.losingByTime(currentPlayer.color);
+        !board.doAlliedFiguresExist(Colors.WHITE) ? handleDraw(Colors.WHITE) : board.losingByTime(currentPlayer.color);
       }
     }
   }
@@ -165,7 +165,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       }
       if (whiteTimeMinutes === 0 && whiteTimeSeconds === 0 && currentPlayer) {
         handleStopGame();
-        board.losingByTime(currentPlayer.color);
+        !board.doAlliedFiguresExist(Colors.BLACK) ? handleDraw(Colors.BLACK) : board.losingByTime(currentPlayer.color);
       }
     }
   }

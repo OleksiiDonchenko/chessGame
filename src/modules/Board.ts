@@ -180,7 +180,26 @@ export class Board {
     return true;
   }
 
-  public doAlliedFiguresExist(color: Colors) {
+  public doAlliedFiguresExist(color: Colors): boolean {
+    const allies: Figure[] = [];
+
+    for (let i = 0; i < this.cells.length; i++) {
+      const row = this.cells[i];
+      for (let j = 0; j < row.length; j++) {
+        const target = row[j];
+        if (target.figure?.color === color && target.figure.name !== 'King') {
+          allies.push(target.figure);
+        }
+      }
+    }
+
+    if (allies.length === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public isInsufficientMaterialForCheckmate(color: Colors) {
     const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
     const allies: Figure[] = [];
@@ -244,15 +263,15 @@ export class Board {
       && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
       || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
       && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherFigures === 0)) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   public isStalemate(color: Colors) {
     const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
     if (!this.canKingMove(color) && !this.canAlliesMakeMoves(color) && !this.isKingInCheck(color)
-      || !this.doAlliedFiguresExist(enemyColor)) {
+      || this.isInsufficientMaterialForCheckmate(enemyColor)) {
       const kingOne = this.findKing(color);
       const kingTwo = this.findKing(enemyColor);
       if (kingOne && kingTwo) {
