@@ -181,6 +181,8 @@ export class Board {
   }
 
   public doAlliedFiguresExist(color: Colors) {
+    const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+
     const allies: Figure[] = [];
     let countBishops = 0;
     let countKnights = 0;
@@ -206,10 +208,42 @@ export class Board {
       }
     })
 
-    if (allies.length === 0
-      || countKnights === 2 && countBishops === 0 && countOtherFigures === 0
-      || countKnights === 1 && countBishops === 0 && countOtherFigures === 0
-      || countKnights === 0 && countBishops === 1 && countOtherFigures === 0) {
+    const enemyAllies: Figure[] = [];
+    let countEnemyBishops = 0;
+    let countEnemyKnights = 0;
+    let countEnemyOtherFigures = 0;
+
+    for (let i = 0; i < this.cells.length; i++) {
+      const row = this.cells[i];
+      for (let j = 0; j < row.length; j++) {
+        const target = row[j];
+        if (target.figure?.color === enemyColor && target.figure.name !== 'King') {
+          enemyAllies.push(target.figure);
+        }
+      }
+    }
+
+    enemyAllies.forEach(figure => {
+      if (figure instanceof Bishop) {
+        countEnemyBishops += 1;
+      } else if (figure instanceof Knight) {
+        countEnemyKnights += 1;
+      } else if (figure.name !== 'Bishop' && figure.name !== 'Knight') {
+        countEnemyOtherFigures += 1;
+      }
+    })
+
+    if (allies.length === 0 && enemyAllies.length === 0
+      // || (countKnights === 2 && countBishops === 0 && countOtherFigures === 0)
+      // && (enemyAllies.length === 0)
+      || (countKnights === 1 && countBishops === 0 && countOtherFigures === 0)
+      && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherFigures === 0)
+      || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
+      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
+      || (countKnights === 1 && countBishops === 0 && countOtherFigures === 0)
+      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
+      || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
+      && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherFigures === 0)) {
       return false;
     }
     return true;
@@ -217,14 +251,15 @@ export class Board {
 
   public isStalemate(color: Colors) {
     const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
-    if (!this.canKingMove(color) && !this.canAlliesMakeMoves(color) || !this.doAlliedFiguresExist(color) && !this.doAlliedFiguresExist(enemyColor)) {
+    if (!this.canKingMove(color) && !this.canAlliesMakeMoves(color) && !this.isKingInCheck(color)
+      || !this.doAlliedFiguresExist(enemyColor)) {
       const kingOne = this.findKing(color);
       const kingTwo = this.findKing(enemyColor);
       if (kingOne && kingTwo) {
         kingOne.isStalemate = true;
         kingTwo.isStalemate = true;
       }
-      return console.log('It is stalemate');
+      return;
     }
     return;
   }
