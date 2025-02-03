@@ -284,6 +284,7 @@ export class Cell {
 
       // Just a move and check except for the King and the Rook
       if (target.figure === null && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
+        const pawn = this.figure;
         target.setFigure(this.figure);
         this.figure = null;
         if (this.board.isKingInCheck(white)) {
@@ -294,6 +295,8 @@ export class Cell {
           this.board.handleMove('check');
           this.board.highlightKing(black);
           this.board.isCheckmate(black);
+        } else if (pawn instanceof Pawn && (target.y === 0 || target.y === 7)) {
+          // 'Silence', because if the pawn gets promotion cell sounds will after transformation
         } else {
           this.board.handleMove('move');
         }
@@ -304,6 +307,7 @@ export class Cell {
 
       // Capture and check except for the King and the Rook
       if (this.isEnemy(target) && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
+        const pawn = this.figure;
         target.setFigure(this.figure);
         this.figure = null;
         if (this.board.isKingInCheck(white)) {
@@ -314,6 +318,9 @@ export class Cell {
           this.board.handleMove('check');
           this.board.highlightKing(black);
           this.board.isCheckmate(black);
+        } else if (pawn instanceof Pawn && (target.y === 0 || target.y === 7)) {
+          // 'Silence', because if the pawn gets promotion cell sounds will after transformation
+          pawn.isItCapture = true;
         } else {
           this.board.handleMove('capture');
         }

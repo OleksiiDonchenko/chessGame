@@ -71,6 +71,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
   function handlePromotion(figure: string) {
     if (promotionCell && promotionCell.figure instanceof Pawn) {
+      const pawn = promotionCell.figure;
       promotionCell.figure = board.createNewFigure(figure, promotionCell.figure.color, promotionCell);
       let colorEnemyKing = Colors.WHITE;
       if (promotionCell.figure) {
@@ -78,7 +79,13 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
       }
       updateBoard();
       if (board.isKingInCheck(colorEnemyKing)) {
+        board.handleMove('check');
         board.highlightKing(colorEnemyKing);
+        board.isCheckmate(colorEnemyKing);
+      } else if (pawn.isItCapture) {
+        board.handleMove('capture');
+      } else {
+        board.handleMove('move');
       }
       board.isStalemate(colorEnemyKing);
       swapPlayer();

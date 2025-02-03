@@ -6,13 +6,16 @@ import whiteLogo from '../../assets/white_pawn.png';
 
 export class Pawn extends Figure {
 
-  isFirstStep: boolean = true;
+  isFirstStep: boolean;
+  isItCapture: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.PAWN;
     this.value = 1;
+    this.isFirstStep = true;
+    this.isItCapture = false;
   }
 
   canMove(target: Cell): boolean {
