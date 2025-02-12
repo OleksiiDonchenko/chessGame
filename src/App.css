@@ -198,6 +198,11 @@ button:focus-visible {
   max-width: 80px;
   font-weight: 700;
   border-radius: 10px;
+  opacity: 0.4;
+}
+
+.goes {
+  opacity: 1;
 }
 
 .time svg {

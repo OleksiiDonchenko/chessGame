@@ -293,7 +293,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
             blackPoints={blackPoints}
             setBlackPoints={setBlackPoints}
           />
-          <div className='time blackTime'>
+          <div className={['time', 'blackTime', currentPlayer === blackPlayer ? 'goes' : ''].join(' ')}>
             <Clock fill='white' />
             <span>
               {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
@@ -355,7 +355,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
             blackPoints={blackPoints}
             setBlackPoints={setBlackPoints}
           />
-          <div className='time whiteTime'>
+          <div className={['time', 'whiteTime', currentPlayer === whitePlayer ? 'goes' : ''].join(' ')}>
             <Clock fill='black' />
             <span>
               {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
