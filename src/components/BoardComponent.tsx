@@ -72,22 +72,24 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   function handlePromotion(figure: string) {
     if (promotionCell && promotionCell.figure instanceof Pawn) {
       const pawn = promotionCell.figure;
+      promotionCell.addLostFigure(pawn);
       promotionCell.figure = board.createNewFigure(figure, promotionCell.figure.color, promotionCell);
-      let colorEnemyKing = Colors.WHITE;
+      let enemyColor = Colors.WHITE;
       if (promotionCell.figure) {
-        colorEnemyKing = promotionCell.figure.color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
+        enemyColor = promotionCell.figure.color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
+        promotionCell.figure.isItPromotionFigure = true;
       }
       updateBoard();
-      if (board.isKingInCheck(colorEnemyKing)) {
+      if (board.isKingInCheck(enemyColor)) {
         board.handleMove('check');
-        board.highlightKing(colorEnemyKing);
-        board.isCheckmate(colorEnemyKing);
+        board.highlightKing(enemyColor);
+        board.isCheckmate(enemyColor);
       } else if (pawn.isItCapture) {
         board.handleMove('capture');
       } else {
         board.handleMove('move');
       }
-      board.isStalemate(colorEnemyKing);
+      board.isStalemate(enemyColor);
       swapPlayer();
     }
     setPromotionCell(null);
@@ -281,6 +283,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         />
         <div className='lostFiguresAndTime'>
           <LostFigures
+            board={board}
             color='white'
             figures={board.lostWhiteFigures}
             whoLeads={whoLeads}
@@ -342,6 +345,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         </DndContext>
         <div className='lostFiguresAndTime'>
           <LostFigures
+            board={board}
             color='black'
             figures={board.lostBlackFigures}
             whoLeads={whoLeads}

@@ -173,7 +173,7 @@ export class Cell {
         const enemy = this.isEnemy(target);
 
         this.figure.moveFigure(target);
-        if (target.figure) {
+        if (target.figure && !target.figure.isItPromotionFigure) {
           this.addLostFigure(target.figure);
         }
         target.setFigure(this.figure);
@@ -228,7 +228,7 @@ export class Cell {
         const enemy = this.isEnemy(target);
 
         this.figure.moveFigure(target);
-        if (target.figure) {
+        if (target.figure && !target.figure.isItPromotionFigure) {
           this.addLostFigure(target.figure);
         }
         target.setFigure(this.figure);
@@ -278,7 +278,7 @@ export class Cell {
 
       // Other figures
       this.figure.moveFigure(target);
-      if (target.figure) {
+      if (target.figure && !target.figure.isItPromotionFigure) {
         this.addLostFigure(target.figure);
       }
 

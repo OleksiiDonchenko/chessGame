@@ -1,7 +1,10 @@
 import { FC, useEffect } from 'react';
 import { Figure } from '../modules/figures/Figure';
+import { Board } from '../modules/Board';
+import { Colors } from '../modules/Colors';
 
 interface LostFiguresProps {
+  board: Board;
   color: string;
   figures: Figure[];
   whoLeads: number;
@@ -12,7 +15,7 @@ interface LostFiguresProps {
   setBlackPoints: (value: number) => void;
 }
 
-const LostFigures: FC<LostFiguresProps> = ({ color, figures, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
+const LostFigures: FC<LostFiguresProps> = ({ board, color, figures, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints}) => {
   let sortedFigures: Figure[] = [];
   if (figures.length > 0) {
     sortedFigures = figures.sort((a, b) => {
@@ -25,6 +28,14 @@ const LostFigures: FC<LostFiguresProps> = ({ color, figures, whoLeads, setWholea
 
   const arrWhitePoints: number[] = [];
   const arrBlackPoints: number[] = [];
+
+  if (color === Colors.WHITE) {
+    const promotionFigureValue = board.isItPromotionFigure(Colors.BLACK);
+    arrWhitePoints.push(promotionFigureValue);
+  } else if (color === Colors.BLACK) {
+    const promotionFigureValue = board.isItPromotionFigure(Colors.WHITE);
+    arrBlackPoints.push(promotionFigureValue);
+  }
 
   useEffect(() => {
     if (sortedFigures.length > 0) {

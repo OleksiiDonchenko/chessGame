@@ -533,6 +533,18 @@ export class Board {
     }
   }
 
+  public isItPromotionFigure(color: Colors): number {
+    const arrPromotionValues: number[] = [0];
+    for (let row of this.cells) {
+      for (let cell of row) {
+        if (cell.figure && cell.figure.color === color && cell.figure.isItPromotionFigure) {
+          arrPromotionValues.push(cell.figure.value);
+        }
+      }
+    }
+    return arrPromotionValues.reduce((acc, curVal) => acc + curVal, 0);
+  }
+
   private playSound(src: string) {
     const audio = new Audio(src);
     audio.play();
