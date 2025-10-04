@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+// import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Board } from '../modules/Board';
 import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
@@ -12,13 +13,17 @@ import DraggableFigure from './DraggableFigure';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import Clock from '../assets/icons/clock.svg?react';
 import LostFigures from './LostFigures';
+import { useChess } from '../context/ChessContext';
+import SidebarComponent from './SidebarComponent';
 
-interface BoardProps {
-  board: Board;
-  setBoard: (board: Board) => void;
-}
+// interface BoardProps {
+//   board: Board;
+//   setBoard: (board: Board) => void;
+// }
+// : FC<BoardProps> { board, setBoard }
 
-const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
+function BoardComponent() {
+  const boardRef = useRef<HTMLDivElement | null>(null);
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [whitePlayer] = useState(new Player(Colors.WHITE));
   const [blackPlayer] = useState(new Player(Colors.BLACK));
@@ -27,10 +32,12 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   const [whitePoints, setWhitePoints] = useState(0);
   const [blackPoints, setBlackPoints] = useState(0);
   const [whoLeads, setWholeads] = useState(0);
+  const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
 
+  const { board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard } = useChess();
   useEffect(() => {
     highlightCells();
-  }, [selectedCell, whitePoints, blackPoints, whoLeads])
+  }, [selectedCell]);
 
   function click(cell: Cell) {
     if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
@@ -39,6 +46,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         selectedCell.moveFigure(cell);
       } else {
         selectedCell.moveFigure(cell);
+        makeMove(board);
         swapPlayer();
       }
       setSelectedCell(null);
@@ -56,6 +64,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         selectedCell.moveFigure(cell);
       } else {
         selectedCell.moveFigure(cell);
+        makeMove(board);
         swapPlayer();
       }
       setSelectedCell(null);
@@ -79,7 +88,6 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         enemyColor = promotionCell.figure.color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
         promotionCell.figure.isItPromotionFigure = true;
       }
-      updateBoard();
       if (board.isKingInCheck(enemyColor)) {
         board.handleMove('check');
         board.highlightKing(enemyColor);
@@ -90,6 +98,8 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         board.handleMove('move');
       }
       board.isStalemate(enemyColor);
+      board.promotionFigureValues(pawn.color);
+      makeMove(board);
       swapPlayer();
     }
     setPromotionCell(null);
@@ -103,11 +113,12 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   function updateBoard() {
     const newBoard = board.getCopyBoard();
     setBoard(newBoard);
+    return newBoard;
   }
 
   useEffect(() => {
     restart();
-  }, [])
+  }, []);
 
   function restart() {
     const newBoard = new Board();
@@ -117,6 +128,8 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     setWhitePoints(0);
     setBlackPoints(0);
     setWholeads(0);
+    sethistory([newBoard.getDeepCopyBoard()]);
+    setCurrentMove(0);
   }
 
   function swapPlayer() {
@@ -130,10 +143,13 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   const [blackTimeSeconds, setBlackTimeSeconds] = useState(60);
   const [whiteTimeSeconds, setWhiteTimeSeconds] = useState(60);
   const timer = useRef<null | ReturnType<typeof setInterval>>(null);
+  const [isAnalysis, setIsAnalysis] = useState(false);
 
   useEffect(() => {
-    startTimer();
-  }, [currentPlayer, gameIsOn, blackTimeMinutes, whiteTimeMinutes, blackTimeSeconds, whiteTimeSeconds])
+    if (!isAnalysis) {
+      startTimer();
+    }
+  }, [currentPlayer, gameIsOn, blackTimeMinutes, whiteTimeMinutes, blackTimeSeconds, whiteTimeSeconds, isAnalysis]);
 
   function startTimer() {
     if (timer.current) {
@@ -155,8 +171,9 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         setBlackTimeSeconds(prev => prev - 1);
       }
       if (blackTimeMinutes === 0 && blackTimeSeconds === 0 && currentPlayer) {
-        handleStopGame();
         !board.doAlliedFiguresExist(Colors.WHITE) ? handleDraw(Colors.WHITE) : board.losingByTime(currentPlayer.color);
+        handleStopGame();
+        snapshotBoard(board);
       }
     }
   }
@@ -173,8 +190,9 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
         setWhiteTimeSeconds(prev => prev - 1);
       }
       if (whiteTimeMinutes === 0 && whiteTimeSeconds === 0 && currentPlayer) {
-        handleStopGame();
         !board.doAlliedFiguresExist(Colors.BLACK) ? handleDraw(Colors.BLACK) : board.losingByTime(currentPlayer.color);
+        handleStopGame();
+        snapshotBoard(board);
       }
     }
   }
@@ -191,10 +209,18 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
   }
 
   function handleStartGame() {
+    setIsAnalysis(false);
     setgameIsOn(true);
     setGameWasStarted(true);
     setCurrentPlayer(whitePlayer);
     startTimer();
+  }
+
+  function handleAnalysis() {
+    setIsAnalysis(true);
+    setgameIsOn(true);
+    setGameWasStarted(true);
+    setCurrentPlayer(whitePlayer);
   }
 
   function handleStopGame(color?: Colors) {
@@ -214,7 +240,6 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     const { over } = event;
     // active,
     // const fromCell = board.getCellById(active.id);
-
     const figure = event.activatorEvent.srcElement;
     const cell = figure.parentElement;
 
@@ -237,10 +262,12 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
     figure.addEventListener('mouseup', () => {
       figure.style.left = '2px';
       figure.style.top = '2px';
-    })
+    });
+
+    setClickOnBoard(true);
 
     if (!over) return;
-  }
+  };
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -258,6 +285,7 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
           fromCell.moveFigure(toCell);
         } else {
           fromCell.moveFigure(toCell);
+          makeMove(board);
           swapPlayer();
         }
         setSelectedCell(null);
@@ -268,103 +296,117 @@ const BoardComponent: FC<BoardProps> = ({ board, setBoard }) => {
 
     figure.style.left = '2px';
     figure.style.top = '2px';
+  };
+
+  function clickOnTheBoard() {
+    setClickOnBoard(true);
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (boardRef.current && !boardRef.current.contains(event.target as Node)) {
+        setClickOnBoard(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
       <div className='wrapper'>
-        <Buttons handleRestart={handleRestart}
-          handleStartGame={handleStartGame}
-          handleStopGame={handleStopGame}
-          handleDraw={handleDraw}
-          gameIsOn={gameIsOn}
-          gameWasStarted={gameWasStarted}
-          currentPlayer={currentPlayer}
-        />
-        <div className='lostFiguresAndTime'>
-          <LostFigures
+        <div className="wrapper-board">
+          <Buttons handleRestart={handleRestart}
+            handleStartGame={handleStartGame}
+            handleAnalysis={handleAnalysis}
+            handleStopGame={handleStopGame}
+            handleDraw={handleDraw}
+            gameIsOn={gameIsOn}
+            gameWasStarted={gameWasStarted}
+            currentPlayer={currentPlayer}
             board={board}
-            color='white'
-            figures={board.lostWhiteFigures}
-            whoLeads={whoLeads}
-            setWholeads={setWholeads}
-            whitePoints={whitePoints}
-            setWhitePoints={setWhitePoints}
-            blackPoints={blackPoints}
-            setBlackPoints={setBlackPoints}
-          />
-          <div className={['time', 'blackTime', currentPlayer === blackPlayer ? 'goes' : ''].join(' ')}>
-            <Clock fill='white' />
-            <span>
-              {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
-            </span>
+            snapshotBoard={snapshotBoard} />
+          <div className='lostFiguresAndTime'>
+            <LostFigures
+              board={board}
+              color='white'
+              figures={board.lostWhiteFigures}
+              whoLeads={whoLeads}
+              setWholeads={setWholeads}
+              whitePoints={whitePoints}
+              setWhitePoints={setWhitePoints}
+              blackPoints={blackPoints}
+              setBlackPoints={setBlackPoints} />
+            <div className={['time', 'blackTime', currentPlayer === blackPlayer && !isAnalysis ? 'goes' : ''].join(' ')}>
+              <Clock fill='white' />
+              <span>
+                {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
+              </span>
+            </div>
           </div>
-        </div>
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-          <div className={['board', promotionCell ? 'eclipse' : ''].join(' ')}>
-            {promotionCell && (
-              <PromotionModal onSelect={handlePromotion} x={promotionCell.x} color={promotionCell.figure?.color}
-                cell={promotionCell} />
-            )}
-            {board.cells.map((row, y) =>
-              <React.Fragment key={y}>
-                {
-                  row.map((cell) =>
-                    <DroppableCell
-                      key={cell.id}
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
+            <div ref={boardRef} className={['board', promotionCell ? 'eclipse' : ''].join(' ')} onClick={() => clickOnTheBoard()}>
+              {promotionCell && (
+                <PromotionModal onSelect={handlePromotion} x={promotionCell.x} color={promotionCell.figure?.color}
+                  cell={promotionCell} />
+              )}
+              {board.cells.map((row, y) => <React.Fragment key={y}>
+                {row.map((cell) => <DroppableCell
+                  key={cell.id}
+                  id={`${cell.x}-${cell.y}`}
+                  color={cell.color}
+                  selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
+                  isAvailable={cell.available}
+                  isKingInCheck={cell.isKingInCheck}
+                  isCheckmate={cell.isCheckmate}
+                  resign={cell.resign}
+                  losingByTime={cell.losingByTime}
+                  isVictory={cell.isVictory}
+                  isStalemate={cell.isStalemate}
+                  isDraw={cell.isDraw}
+                  handleStopGame={handleStopGame}
+                  cell={cell}
+                  click={click}
+                  mouseDown={mouseDown}
+                  coordinates={{ x: cell.x, y: cell.y }}
+                >
+                  {cell.figure?.logo && (
+                    <DraggableFigure
                       id={`${cell.x}-${cell.y}`}
-                      color={cell.color}
-                      selected={cell.x === selectedCell?.x && cell.y === selectedCell?.y}
-                      isAvailable={cell.available}
-                      isKingInCheck={cell.isKingInCheck}
-                      isCheckmate={cell.isCheckmate}
-                      resign={cell.resign}
-                      losingByTime={cell.losingByTime}
-                      isVictory={cell.isVictory}
-                      isStalemate={cell.isStalemate}
-                      isDraw={cell.isDraw}
-                      handleStopGame={handleStopGame}
-                      cell={cell}
-                      click={click}
-                      mouseDown={mouseDown}
-                      coordinates={{ x: cell.x, y: cell.y }}
-                    >
-                      {cell.figure?.logo && (
-                        <DraggableFigure
-                          id={`${cell.x}-${cell.y}`}
-                          src={cell.figure.logo}
-                        />
-                      )}
-                    </DroppableCell>
-                  )
-                }
+                      src={cell.figure.logo} />
+                  )}
+                </DroppableCell>
+                )}
               </React.Fragment>
-            )
-            }
-          </div >
-        </DndContext>
-        <div className='lostFiguresAndTime'>
-          <LostFigures
-            board={board}
-            color='black'
-            figures={board.lostBlackFigures}
-            whoLeads={whoLeads}
-            setWholeads={setWholeads}
-            whitePoints={whitePoints}
-            setWhitePoints={setWhitePoints}
-            blackPoints={blackPoints}
-            setBlackPoints={setBlackPoints}
-          />
-          <div className={['time', 'whiteTime', currentPlayer === whitePlayer ? 'goes' : ''].join(' ')}>
-            <Clock fill='black' />
-            <span>
-              {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
-            </span>
+              )}
+            </div>
+          </DndContext>
+          <div className='lostFiguresAndTime'>
+            <LostFigures
+              board={board}
+              color='black'
+              figures={board.lostBlackFigures}
+              whoLeads={whoLeads}
+              setWholeads={setWholeads}
+              whitePoints={whitePoints}
+              setWhitePoints={setWhitePoints}
+              blackPoints={blackPoints}
+              setBlackPoints={setBlackPoints} />
+            <div className={['time', 'whiteTime', currentPlayer === whitePlayer && !isAnalysis ? 'goes' : ''].join(' ')}>
+              <Clock fill='black' />
+              <span>
+                {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
+              </span>
+            </div>
           </div>
         </div>
+        <SidebarComponent history={history} currentMove={currentMove} goToPreviousMove={goToPreviousMove}
+          goToNextMove={goToNextMove} boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard} />
       </div>
     </>
   );
-};
+}
 
 export default BoardComponent;

@@ -9,6 +9,7 @@ export class Rook extends Figure {
   shortCastle: boolean;
   firstMove: boolean;
   castleMove: boolean;
+  isItPromotionFigure: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
@@ -19,6 +20,7 @@ export class Rook extends Figure {
     this.shortCastle = true;
     this.firstMove = false;
     this.castleMove = false;
+    this.isItPromotionFigure = false;
   }
 
   canMove(target: Cell): boolean {
@@ -62,5 +64,15 @@ export class Rook extends Figure {
     if (this.cell.isEmptyVertical(target, this.color) || this.cell.isEmptyHorizontal(target, this.color))
       return this.cell.isPathClear(target, this.color);
     return false;
+  }
+
+  getCopy(): Rook {
+    const copy = new Rook(this.color, this.cell);
+    copy.longCastle = this.longCastle;
+    copy.shortCastle = this.shortCastle;
+    copy.firstMove = this.firstMove;
+    copy.castleMove = this.castleMove
+    copy.isItPromotionFigure = this.isItPromotionFigure;
+    return copy;
   }
 }

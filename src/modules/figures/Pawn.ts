@@ -103,4 +103,11 @@ export class Pawn extends Figure {
 
     return (target.y === this.cell.y + direction && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1));
   }
+
+  getCopy(): Pawn {
+    const copy = new Pawn(this.color, this.cell);
+    copy.isFirstStep = this.isFirstStep;
+    copy.isItCapture = this.isItCapture;
+    return copy;
+  }
 }

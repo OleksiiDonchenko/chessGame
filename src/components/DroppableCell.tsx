@@ -40,9 +40,9 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, colo
         'cell',
         color,
         selected && cell.figure ? 'selected' : '',
-        isAvailable ? 'available' : '',
+        isAvailable && !cell.figure ? 'available' : '',
         isAvailable && isOver ? 'over-available-cell' : '',
-        isAvailable && cell.figure && active || isAvailable && cell.figure ? 'attacked' : '',
+        isAvailable && cell.figure ? 'attacked' : '',
         isKingInCheck ? 'check' : '',
         isVictory ? 'victoriousKing' : '',
         isCheckmate && cell.figure?.color === 'white' ? 'defeatedWhiteKing' : isCheckmate && cell.figure?.color === 'black' ? 'defeatedBlackKing' : '',
@@ -50,7 +50,7 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, colo
         isStalemate ? 'stalemate' : '',
         isDraw ? 'stalemate' : '',
         resign ? 'resign' : '',
-      ].join(' ')}
+      ].filter(Boolean).join(' ')}
       onClick={() => click(cell)}
       onMouseDown={() => mouseDown(cell)}
     >

@@ -19,7 +19,7 @@
   /* поэтому нужны префиксы */
   -ms-user-select: none;
 
-  background-image: url(../src/assets/wood.jpg);
+  background-image: url('./assets/wood.jpg');
   background-size: calc(64px * 8);
 }
 
@@ -144,6 +144,11 @@
 
 .wrapper {
   display: flex;
+  /* flex-direction: column; */
+}
+
+.wrapper-board {
+  display: flex;
   flex-direction: column;
 }
 
@@ -170,13 +175,47 @@
 .buttons button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+
+.btn::after {
+  content: '';
+  display: block;
+  background-position: center;
+  background-size: initial;
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+  padding: 0.6em 1.2em;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+}
+
+.restart-game-btn::after {
+  background-image: url(./assets/icons/restart-game.svg);
+}
+
+.play-btn::after  {
+  background-image: url(./assets/icons/play.svg);
+}
+
+.analysis-btn::after {
+  background-image: url(./assets/icons/analysis.svg);
+}
+
+.draw-btn::after {
+  background-image: url(./assets/icons/draw.svg);
+}
+
+.resign-btn::after {
+  background-image: url(./assets/icons/resign.svg);
 }
 
 .buttons button:hover {
@@ -270,7 +309,7 @@ button:focus-visible {
     top: -8px;
     height: 30px;
     width: 30px;
-    background-image: url('../src/assets/icons/the-victorious-king.svg');
+    background-image: url('./assets/icons/the-victorious-king.svg');
     color: white;
     background-position: center;
     background-size: auto;
@@ -290,7 +329,7 @@ button:focus-visible {
     top: -8px;
     height: 30px;
     width: 30px;
-    background-image: url('../src/assets/icons/the-defeated-black-king.svg');
+    background-image: url('./assets/icons/the-defeated-black-king.svg');
     color: white;
     background-position: center;
     background-size: initial;
@@ -310,7 +349,7 @@ button:focus-visible {
     top: -8px;
     height: 30px;
     width: 30px;
-    background-image: url('../src/assets/icons/the-defeated-white-king.svg');
+    background-image: url('./assets/icons/the-defeated-white-king.svg');
     color: white;
     background-position: center;
     background-size: initial;
@@ -330,13 +369,12 @@ button:focus-visible {
     top: -8px;
     height: 30px;
     width: 30px;
-    background-image: url('../src/assets/icons/clock.svg');
+    background-image: url('./assets/icons/clock.svg');
     color: white;
     background-position: center;
     background-size: initial;
     background-repeat: no-repeat;
     z-index: 4;
-    color: white;
     background-color: #e02828;
     border-radius: 50%;
   }
@@ -351,13 +389,12 @@ button:focus-visible {
     top: -8px;
     height: 30px;
     width: 30px;
-    background-image: url('../src/assets/icons/resign.svg');
+    background-image: url('./assets/icons/resign.svg');
     color: white;
     background-position: center;
     background-size: initial;
     background-repeat: no-repeat;
     z-index: 4;
-    color: white;
     background-color: #e02828;
     border-radius: 50%;
   }
@@ -372,14 +409,54 @@ button:focus-visible {
     top: -8px;
     height: 30px;
     width: 30px;
-    background-image: url('../src/assets/icons/draw.svg');
+    background-image: url('./assets/icons/draw.svg');
     color: white;
     background-position: center;
     background-size: initial;
     background-repeat: no-repeat;
     z-index: 4;
-    color: white;
     background-color: #555351;
     border-radius: 50%;
+  }
+}
+
+.sidebar {
+  height: 100%;
+  min-height: 650px;
+  width: 400px;
+  background-color: #1a1a1a;
+  margin-left: 30px;
+  border-radius: 3%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-buttons {
+  /* align-self: flex-end; */
+}
+
+.sidebar-button {
+  padding: 10px 70px;
+  margin: 10px 5px;
+
+  &.angle-left::before {
+    content: '';
+    display: block;
+    background-image: url('./assets/icons/angle-left.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 30px;
+    width: 30px;
+  }
+
+  &.angle-right::before {
+    content: '';
+    display: block;
+    background-image: url('./assets/icons/angle-right.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 30px;
+    width: 30px;
   }
 }

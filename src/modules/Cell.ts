@@ -129,9 +129,29 @@ export class Cell {
   }
 
   addLostFigure(figure: Figure) {
-    figure.color === Colors.BLACK
-      ? this.board.lostBlackFigures.push(figure)
-      : this.board.lostWhiteFigures.push(figure);
+    if (!figure.isItPromotionFigure) {
+      figure.color === Colors.BLACK
+        ? this.board.lostBlackFigures.push(figure)
+        : this.board.lostWhiteFigures.push(figure);
+    } else if (figure.isItPromotionFigure) {
+      if (figure.color === Colors.BLACK) {
+        let found = false;
+        this.board.blackPromotionFigureValues.forEach((value, i) => {
+          if (figure.value === value && !found) {
+            this.board.blackPromotionFigureValues.splice(i, 1);
+            found = true;
+          }
+        })
+      } else if (figure.color === Colors.WHITE) {
+        let found = false;
+        this.board.whitePromotionFigureValues.forEach((value, i) => {
+          if (figure.value === value && !found) {
+            this.board.whitePromotionFigureValues.splice(i, 1);
+            found = true;
+          }
+        })
+      }
+    }
   }
 
   moveFigure(target: Cell) {
@@ -173,7 +193,7 @@ export class Cell {
         const enemy = this.isEnemy(target);
 
         this.figure.moveFigure(target);
-        if (target.figure && !target.figure.isItPromotionFigure) {
+        if (target.figure) {
           this.addLostFigure(target.figure);
         }
         target.setFigure(this.figure);
@@ -228,7 +248,7 @@ export class Cell {
         const enemy = this.isEnemy(target);
 
         this.figure.moveFigure(target);
-        if (target.figure && !target.figure.isItPromotionFigure) {
+        if (target.figure) {
           this.addLostFigure(target.figure);
         }
         target.setFigure(this.figure);
@@ -278,7 +298,7 @@ export class Cell {
 
       // Other figures
       this.figure.moveFigure(target);
-      if (target.figure && !target.figure.isItPromotionFigure) {
+      if (target.figure) {
         this.addLostFigure(target.figure);
       }
 
@@ -331,5 +351,18 @@ export class Cell {
 
       return;
     }
+  }
+
+  getCopy(): Cell {
+    const copy = new Cell(this.board, this.x, this.y, this.color, this.figure ? this.figure.getCopy() : null);
+    copy.isKingInCheck = this.isKingInCheck;
+    copy.isCheckmate = this.isCheckmate;
+    copy.isVictory = this.isVictory;
+    copy.resign = this.resign;
+    copy.losingByTime = this.losingByTime;
+    copy.isStalemate = this.isStalemate;
+    copy.isDraw = this.isDraw;
+
+    return copy;
   }
 }

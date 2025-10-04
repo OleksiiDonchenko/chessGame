@@ -139,4 +139,11 @@ export class King extends Figure {
 
     return dx <= 1 && dy <= 1;
   }
+
+  getCopy(): King {
+    const copy = new King(this.color, this.cell);
+    copy.hasMoved = this.hasMoved;
+    copy.castleMove = this.castleMove;
+    return copy;
+  }
 }

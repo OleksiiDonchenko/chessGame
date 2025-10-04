@@ -16,6 +16,8 @@ export class Board {
   cells: Cell[][] = [];
   lostBlackFigures: Figure[] = [];
   lostWhiteFigures: Figure[] = [];
+  whitePromotionFigureValues: number[] = [];
+  blackPromotionFigureValues: number[] = [];
   inPassingTarget: Cell | null = null;
 
   public initCells() {
@@ -37,6 +39,25 @@ export class Board {
     newBoard.cells = this.cells;
     newBoard.lostBlackFigures = this.lostBlackFigures;
     newBoard.lostWhiteFigures = this.lostWhiteFigures;
+    newBoard.whitePromotionFigureValues = this.whitePromotionFigureValues;
+    newBoard.blackPromotionFigureValues = this.blackPromotionFigureValues;
+    return newBoard;
+  }
+
+  public getDeepCopyBoard(): Board {
+    const newBoard = new Board();
+    newBoard.cells = this.cells.map(row => row.map(cell => cell.getCopy()));
+    newBoard.cells.forEach(row => row.forEach(cell => {
+      cell.board = newBoard;
+      if (cell.figure) {
+        cell.figure = cell.figure.getCopy();
+        cell.figure.cell = cell;
+      }
+    }));
+    newBoard.lostBlackFigures = [...this.lostBlackFigures];
+    newBoard.lostWhiteFigures = [...this.lostWhiteFigures];
+    newBoard.whitePromotionFigureValues = [...this.whitePromotionFigureValues];
+    newBoard.blackPromotionFigureValues = [...this.blackPromotionFigureValues];
     return newBoard;
   }
 
@@ -533,16 +554,20 @@ export class Board {
     }
   }
 
-  public isItPromotionFigure(color: Colors): number {
-    const arrPromotionValues: number[] = [0];
+  public promotionFigureValues(color: Colors) {
+    const arr = [];
     for (let row of this.cells) {
       for (let cell of row) {
-        if (cell.figure && cell.figure.color === color && cell.figure.isItPromotionFigure) {
-          arrPromotionValues.push(cell.figure.value);
+        if (cell.figure && cell.figure.isItPromotionFigure) {
+          arr.push(cell.figure.value);
         }
       }
     }
-    return arrPromotionValues.reduce((acc, curVal) => acc + curVal, 0);
+    if (color === Colors.WHITE) {
+      this.whitePromotionFigureValues = arr;
+    } else {
+      this.blackPromotionFigureValues = arr;
+    }
   }
 
   private playSound(src: string) {

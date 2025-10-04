@@ -5,12 +5,14 @@ import blackLogo from '../../assets/black_queen.png';
 import whiteLogo from '../../assets/white_queen.png';
 
 export class Queen extends Figure {
+  isItPromotionFigure: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.QUEEN;
     this.value = 9;
+    this.isItPromotionFigure = false;
   }
 
   canMove(target: Cell): boolean {
@@ -43,5 +45,11 @@ export class Queen extends Figure {
     }
 
     return false;
+  }
+
+  getCopy(): Queen {
+    const copy = new Queen(this.color, this.cell);
+    copy.isItPromotionFigure = this.isItPromotionFigure;
+    return copy;
   }
 }

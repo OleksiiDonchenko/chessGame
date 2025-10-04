@@ -5,12 +5,14 @@ import blackLogo from '../../assets/black_bishop.png';
 import whiteLogo from '../../assets/white_bishop.png';
 
 export class Bishop extends Figure {
+  isItPromotionFigure: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.BISHOP;
     this.value = 3.2;
+    this.isItPromotionFigure = false;
   }
 
   canMove(target: Cell): boolean {
@@ -36,5 +38,11 @@ export class Bishop extends Figure {
     if (this.cell.isEmptyDiagonal(target, this.color))
       return this.cell.isPathClear(target, this.color);
     return false;
+  }
+
+  getCopy(): Bishop {
+    const copy = new Bishop(this.color, this.cell);
+    copy.isItPromotionFigure = this.isItPromotionFigure;
+    return copy;
   }
 }

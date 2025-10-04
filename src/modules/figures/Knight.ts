@@ -5,12 +5,14 @@ import blackLogo from '../../assets/black_knight.png';
 import whiteLogo from '../../assets/white_knight.png';
 
 export class Knight extends Figure {
+  isItPromotionFigure: boolean;
 
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.KNIGHT;
     this.value = 3;
+    this.isItPromotionFigure = false;
   }
 
   canMove(target: Cell): boolean {
@@ -41,5 +43,11 @@ export class Knight extends Figure {
     const dy = Math.abs(this.cell.y - target.y);
 
     return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
+  }
+
+  getCopy(): Knight {
+    const copy = new Knight(this.color, this.cell);
+    copy.isItPromotionFigure = this.isItPromotionFigure;
+    return copy;
   }
 }

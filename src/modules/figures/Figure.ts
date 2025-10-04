@@ -51,4 +51,11 @@ export class Figure {
     target;
     return true;
   }
+
+  getCopy(): Figure {
+    const copy = new Figure(this.color, this.cell);
+    copy.isItPromotionFigure = this.isItPromotionFigure;
+    copy.id = this.id;
+    return copy;
+  };
 }
