@@ -29,7 +29,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   const initialBoard = new Board();
   // const [board, setBoard] = useState<Board>(initialBoard);
   const [history, sethistory] = useState<Board[]>([initialBoard.getDeepCopyBoard()]);
-  const [board, setBoard] = useState<Board>(history[0].getDeepCopyBoard());
+  const [board, setBoard] = useState<Board>(history[history.length - 1].getDeepCopyBoard());
   const [currentMove, setCurrentMove] = useState(0);
 
   // const board = useMemo(() => history[currentMove].getDeepCopyBoard(), [history, currentMove]);
@@ -41,7 +41,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
         cell.available = false;
       });
     });
-    const newHistory = [...history.slice(0, currentMove + 1), newBoard.getDeepCopyBoard()];
+    const newHistory = [...history.slice(0, currentMove + 1), newBoard];
     sethistory(newHistory);
     setCurrentMove(newHistory.length - 1);
   }

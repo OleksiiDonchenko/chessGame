@@ -46,7 +46,8 @@ function BoardComponent() {
         selectedCell.moveFigure(cell);
       } else {
         selectedCell.moveFigure(cell);
-        makeMove(board);
+        const newBoard = board.getDeepCopyBoard();
+        makeMove(newBoard);
         swapPlayer();
       }
       setSelectedCell(null);
@@ -81,7 +82,8 @@ function BoardComponent() {
       }
       board.isStalemate(enemyColor);
       board.promotionFigureValues(pawn.color);
-      makeMove(board);
+      const newBoard = board.getDeepCopyBoard();
+      makeMove(newBoard);
       swapPlayer();
     }
     setPromotionCell(null);
@@ -266,7 +268,8 @@ function BoardComponent() {
           fromCell.moveFigure(toCell);
         } else {
           fromCell.moveFigure(toCell);
-          makeMove(board);
+          const newBoard = board.getDeepCopyBoard();
+          makeMove(newBoard);
           swapPlayer();
         }
         setSelectedCell(null);
