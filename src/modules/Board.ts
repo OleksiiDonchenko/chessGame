@@ -18,7 +18,7 @@ export class Board {
   lostWhiteFigures: Figure[] = [];
   whitePromotionFigureValues: number[] = [];
   blackPromotionFigureValues: number[] = [];
-  inPassingTarget: Cell | null = null;
+  enPassantTarget: Cell | null = null;
 
   public initCells() {
     for (let i = 0; i < 8; i++) {
@@ -58,6 +58,23 @@ export class Board {
     newBoard.lostWhiteFigures = [...this.lostWhiteFigures];
     newBoard.whitePromotionFigureValues = [...this.whitePromotionFigureValues];
     newBoard.blackPromotionFigureValues = [...this.blackPromotionFigureValues];
+
+    const rows = this.cells;
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (!this.enPassantTarget) {
+        for (let j = 0; j < row.length; j++) {
+          const cell = row[j];
+          if (cell.board.enPassantTarget) {
+            this.enPassantTarget = cell.board.getCell(cell.board.enPassantTarget.x, cell.board.enPassantTarget.y);
+          }
+          break;
+        }
+        break;
+      }
+    }
+
+    newBoard.enPassantTarget = this.enPassantTarget;
     return newBoard;
   }
 

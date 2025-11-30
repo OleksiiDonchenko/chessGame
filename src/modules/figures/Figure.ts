@@ -40,7 +40,7 @@ export class Figure {
 
   moveFigure(target: Cell) {
     target;
-    this.cell.board.inPassingTarget = null;
+    this.cell.board.enPassantTarget = null;
     const kingCell = this.cell.board.findKing(this.color);
     if (kingCell?.isKingInCheck) {
       kingCell.isKingInCheck = false;

@@ -64,10 +64,24 @@ export class Pawn extends Figure {
     // The hit in passing
     if (this.cell.y === 3 && this.cell.figure?.color === 'white'
       || this.cell.y === 4 && this.cell.figure?.color === 'black') {
-      if (this.cell.board.inPassingTarget
-        && target.x === this.cell.board.inPassingTarget?.x
-        && target.y === this.cell.board.inPassingTarget?.y) {
-        return true;
+      if (this.cell.figure?.color === 'white') {
+        if (this.cell.board.enPassantTarget
+          && target.x === this.cell.board.enPassantTarget?.x && this.cell.board.enPassantTarget?.x === this.cell.x + 1
+          && target.y === this.cell.board.enPassantTarget?.y && this.cell.board.enPassantTarget?.y === 2 ||
+          this.cell.board.enPassantTarget
+          && target.x === this.cell.board.enPassantTarget?.x && this.cell.board.enPassantTarget?.x === this.cell.x - 1
+          && target.y === this.cell.board.enPassantTarget?.y && this.cell.board.enPassantTarget?.y === 2) {
+          return true;
+        }
+      } else if (this.cell.figure?.color === 'black') {
+        if (this.cell.board.enPassantTarget
+          && target.x === this.cell.board.enPassantTarget?.x && this.cell.board.enPassantTarget?.x === this.cell.x + 1
+          && target.y === this.cell.board.enPassantTarget?.y && this.cell.board.enPassantTarget?.y === 5 ||
+          this.cell.board.enPassantTarget
+          && target.x === this.cell.board.enPassantTarget?.x && this.cell.board.enPassantTarget?.x === this.cell.x - 1
+          && target.y === this.cell.board.enPassantTarget?.y && this.cell.board.enPassantTarget?.y === 5) {
+          return true;
+        }
       }
     }
 
@@ -84,13 +98,13 @@ export class Pawn extends Figure {
 
     // Checking whether a move of 2 cells
     if (Math.abs(target.y - this.cell.y) === 2) {
-      this.cell.board.inPassingTarget = this.cell.board.getCell(this.cell.x, this.cell.y + direction);
+      this.cell.board.enPassantTarget = this.cell.board.getCell(this.cell.x, this.cell.y + direction);
     } else {
-      this.cell.board.inPassingTarget = null;
+      this.cell.board.enPassantTarget = null;
     }
 
     // Checking whether hit was in passing
-    if (this.cell.board.inPassingTarget && target.x === this.cell.board.inPassingTarget?.x && target.y === this.cell.board.inPassingTarget?.y) {
+    if (this.cell.board.enPassantTarget && target.x === this.cell.board.enPassantTarget?.x && target.y === this.cell.board.enPassantTarget?.y) {
       const enemyCell = this.cell.board.getCell(target.x, target.y - direction);
       if (enemyCell.figure instanceof Pawn && enemyCell.figure.color !== this.color) {
         enemyCell.figure = null;

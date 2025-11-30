@@ -160,12 +160,12 @@ export class Cell {
       const black = Colors.BLACK;
       const enemyColor = this.figure.color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
-      if (this.figure instanceof Pawn && this.board.inPassingTarget && target.x === this.board.inPassingTarget.x && target.y === this.board.inPassingTarget.y) {
-        const passingPawnCell = this.board.getCell(this.board.inPassingTarget.x, this.figure.cell.y);
+      if (this.figure instanceof Pawn && this.board.enPassantTarget && target.x === this.board.enPassantTarget.x && target.y === this.board.enPassantTarget.y) {
+        const enPassantPawnCell = this.board.getCell(this.board.enPassantTarget.x, this.figure.cell.y);
 
-        if (passingPawnCell.figure) {
-          this.addLostFigure(passingPawnCell.figure);
-          passingPawnCell.figure = null;
+        if (enPassantPawnCell.figure) {
+          this.addLostFigure(enPassantPawnCell.figure);
+          enPassantPawnCell.figure = null;
         }
         this.figure.moveFigure(target);
         target.setFigure(this.figure);
