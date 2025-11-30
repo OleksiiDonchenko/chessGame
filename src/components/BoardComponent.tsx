@@ -383,7 +383,8 @@ function BoardComponent() {
           </div>
         </div>
         <SidebarComponent history={history} currentMove={currentMove} goToPreviousMove={goToPreviousMove}
-          goToNextMove={goToNextMove} boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard} />
+          goToNextMove={goToNextMove} boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard}
+          swapPlayer={swapPlayer} isAnalysis={isAnalysis} setSelectedCell={setSelectedCell} currentPlayer={currentPlayer} />
       </div>
     </>
   );
