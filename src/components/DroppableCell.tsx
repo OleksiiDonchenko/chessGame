@@ -4,7 +4,6 @@ import { Cell } from '../modules/Cell';
 
 interface DroppableCellProps {
   cell: Cell;
-  click: (cell: Cell) => void;
   id: string;
   children?: ReactNode;
   color: string;
@@ -22,7 +21,7 @@ interface DroppableCellProps {
   mouseDown: (cell: Cell) => void;
 }
 
-const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
+const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
   const { setNodeRef, isOver, active } = useDroppable({ id, });
   const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -51,7 +50,6 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, click, id, children, colo
         isDraw ? 'stalemate' : '',
         resign ? 'resign' : '',
       ].filter(Boolean).join(' ')}
-      onClick={() => click(cell)}
       onMouseDown={() => mouseDown(cell)}
     >
       {cell.figure && cell.figure.logo && active &&

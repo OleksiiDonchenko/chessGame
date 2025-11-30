@@ -39,24 +39,6 @@ function BoardComponent() {
     highlightCells();
   }, [selectedCell]);
 
-  function click(cell: Cell) {
-    if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
-      if (selectedCell.figure instanceof Pawn && (cell.y === 0 || cell.y === 7)) {
-        setPromotionCell(cell);
-        selectedCell.moveFigure(cell);
-      } else {
-        selectedCell.moveFigure(cell);
-        makeMove(board);
-        swapPlayer();
-      }
-      setSelectedCell(null);
-    } else {
-      if (cell.figure?.color === currentPlayer?.color) {
-        setSelectedCell(cell);
-      }
-    }
-  }
-
   function mouseDown(cell: Cell) {
     if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
       if (selectedCell.figure instanceof Pawn && (cell.y === 0 || cell.y === 7)) {
@@ -218,7 +200,6 @@ function BoardComponent() {
 
   function handleAnalysis() {
     setIsAnalysis(true);
-    setgameIsOn(true);
     setGameWasStarted(true);
     setCurrentPlayer(whitePlayer);
   }
@@ -368,7 +349,6 @@ function BoardComponent() {
                   isDraw={cell.isDraw}
                   handleStopGame={handleStopGame}
                   cell={cell}
-                  click={click}
                   mouseDown={mouseDown}
                   coordinates={{ x: cell.x, y: cell.y }}
                 >
