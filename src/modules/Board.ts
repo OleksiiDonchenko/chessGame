@@ -291,16 +291,14 @@ export class Board {
     })
 
     if (allies.length === 0 && enemyAllies.length === 0
-      // || (countKnights === 2 && countBishops === 0 && countOtherFigures === 0)
-      // && (enemyAllies.length === 0)
       || (countKnights === 1 && countBishops === 0 && countOtherFigures === 0)
+      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
+      || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
       && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherFigures === 0)
       || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
-      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
+      && (countEnemyKnights === 0 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
       || (countKnights === 1 && countBishops === 0 && countOtherFigures === 0)
-      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
-      || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
-      && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherFigures === 0)) {
+      && (countEnemyKnights === 0 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)) {
       return true;
     }
     return false;

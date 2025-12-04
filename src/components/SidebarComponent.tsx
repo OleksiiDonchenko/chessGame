@@ -2,7 +2,6 @@ import { FC, useEffect } from 'react';
 import { Board } from '../modules/Board';
 import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
-// import { useChess } from '../context/ChessContext';
 
 interface SidebarComponentProps {
   history: Board[];

@@ -1,4 +1,3 @@
-// import React, { FC, useEffect, useRef, useState } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 import { Board } from '../modules/Board';
 import { Cell } from '../modules/Cell';
@@ -15,12 +14,6 @@ import Clock from '../assets/icons/clock.svg?react';
 import LostFigures from './LostFigures';
 import { useChess } from '../context/ChessContext';
 import SidebarComponent from './SidebarComponent';
-
-// interface BoardProps {
-//   board: Board;
-//   setBoard: (board: Board) => void;
-// }
-// : FC<BoardProps> { board, setBoard }
 
 function BoardComponent() {
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -221,8 +214,6 @@ function BoardComponent() {
 
   const handleDragStart = (event: any) => {
     const { over } = event;
-    // active,
-    // const fromCell = board.getCellById(active.id);
     const figure = event.activatorEvent.srcElement;
     const cell = figure.parentElement;
 

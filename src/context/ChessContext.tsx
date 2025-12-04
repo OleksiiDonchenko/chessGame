@@ -1,4 +1,3 @@
-// import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Board } from '../modules/Board';
 
@@ -12,7 +11,7 @@ interface ChessContextType {
   makeMove: (newBoard: Board) => void;
   goToPreviousMove: () => void;
   goToNextMove: () => void;
-  snapshotBoard:(newBoard: Board) => void;
+  snapshotBoard: (newBoard: Board) => void;
 }
 
 const ChessContext = createContext<ChessContextType | undefined>(undefined);
@@ -27,13 +26,9 @@ export const useChess = () => {
 
 export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   const initialBoard = new Board();
-  // const [board, setBoard] = useState<Board>(initialBoard);
   const [history, sethistory] = useState<Board[]>([initialBoard.getDeepCopyBoard()]);
   const [board, setBoard] = useState<Board>(history[history.length - 1].getDeepCopyBoard());
   const [currentMove, setCurrentMove] = useState(0);
-
-  // const board = useMemo(() => history[currentMove].getDeepCopyBoard(), [history, currentMove]);
-  // const board = history[currentMove];
 
   function makeMove(newBoard: Board) {
     newBoard.cells.forEach(row => {
@@ -70,7 +65,6 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    // setBoard(history[currentMove].getDeepCopyBoard());
     setNewBoard();
   }, [currentMove, history]);
 
