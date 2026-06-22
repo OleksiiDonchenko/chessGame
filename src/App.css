@@ -126,7 +126,6 @@
   background: radial-gradient(circle,
       transparent 75%,
       rgba(66, 121, 52) 80%);
-  /* rgba(20, 85, 0, 0.6) 80%); */
   pointer-events: none;
   opacity: 0.6;
 }
@@ -144,7 +143,6 @@
 
 .wrapper {
   display: flex;
-  /* flex-direction: column; */
 }
 
 .wrapper-board {
@@ -202,7 +200,7 @@
   background-image: url(./assets/icons/restart-game.svg);
 }
 
-.play-btn::after  {
+.play-btn::after {
   background-image: url(./assets/icons/play.svg);
 }
 
@@ -430,10 +428,6 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.sidebar-buttons {
-  /* align-self: flex-end; */
 }
 
 .sidebar-button {

@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useChess } from '../context/ChessContext';
 import { Board } from '../modules/Board';
 import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
 import { Colors } from '../modules/Colors';
-import Buttons from './Buttons';
 import { Pawn } from '../modules/figures/Pawn';
+import Buttons from './Buttons';
+import LostFigures from './LostFigures';
 import PromotionModal from './PromotionModal';
+import SidebarComponent from './SidebarComponent';
+import Clock from '../assets/icons/clock.svg?react';
 import { DndContext } from '@dnd-kit/core';
 import DroppableCell from './DroppableCell';
 import DraggableFigure from './DraggableFigure';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import Clock from '../assets/icons/clock.svg?react';
-import LostFigures from './LostFigures';
-import { useChess } from '../context/ChessContext';
-import SidebarComponent from './SidebarComponent';
 
 function BoardComponent() {
   const boardRef = useRef<HTMLDivElement | null>(null);
