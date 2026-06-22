@@ -65,7 +65,7 @@ const SidebarComponent: FC<SidebarComponentProps> = ({ history, currentMove, goT
         <h1>Moves</h1>
         <p>Number of moves: {history.length - 1}</p>
         <p>Current move: {currentMove + 1}</p>
-        <p>Current player: {currentPlayer ? currentPlayer.color : 'You must start the game!'}</p>
+        <p>Current move for: {currentPlayer ? `${currentPlayer.color} player` : 'You must start the game!'}</p>
       </div>
       <div className='sidebar-buttons'>
         <button className="sidebar-button angle-left"
