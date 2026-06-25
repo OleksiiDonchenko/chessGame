@@ -18,6 +18,8 @@
   -moz-user-select: none;
   /* поэтому нужны префиксы */
   -ms-user-select: none;
+  /* стандартное свойство */
+  user-select: none;
 
   background-image: url('./assets/wood.jpg');
   background-size: calc(64px * 8);

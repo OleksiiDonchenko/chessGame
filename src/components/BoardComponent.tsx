@@ -11,9 +11,9 @@ import PromotionModal from './PromotionModal';
 import SidebarComponent from './SidebarComponent';
 import Clock from '../assets/icons/clock.svg?react';
 import { DndContext } from '@dnd-kit/core';
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import DroppableCell from './DroppableCell';
 import DraggableFigure from './DraggableFigure';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 function BoardComponent() {
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -178,6 +178,7 @@ function BoardComponent() {
     setgameIsOn(false);
     setGameWasStarted(false);
     setCurrentPlayer(null);
+    setSelectedCell(null);
     setBlackTimeMinutes(5);
     setWhiteTimeMinutes(5);
     setBlackTimeSeconds(60);
