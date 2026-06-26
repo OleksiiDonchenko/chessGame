@@ -5,7 +5,7 @@ import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
 import { Colors } from '../modules/Colors';
 import { Pawn } from '../modules/figures/Pawn';
-import Buttons from './Buttons';
+import ButtonsComponent from './Buttons/ButtonsComponent';
 import LostFigures from './LostFigures';
 import PromotionModal from './PromotionModal';
 import SidebarComponent from './SidebarComponent';
@@ -294,7 +294,7 @@ function BoardComponent() {
     <>
       <div className='wrapper'>
         <div className="wrapper-board">
-          <Buttons handleRestart={handleRestart}
+          <ButtonsComponent handleRestart={handleRestart}
             handleStartGame={handleStartGame}
             handleAnalysis={handleAnalysis}
             handleStopGame={handleStopGame}
