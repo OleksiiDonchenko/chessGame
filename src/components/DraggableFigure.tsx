@@ -1,4 +1,5 @@
-import { useDraggable } from '@dnd-kit/core';
+import { useDraggable } from '@dnd-kit/react';
+import { Feedback } from '@dnd-kit/dom';
 import { FC } from 'react';
 
 interface DraggableFigureProps {
@@ -7,25 +8,26 @@ interface DraggableFigureProps {
 }
 
 const DraggableFigure: FC<DraggableFigureProps> = ({ id, src }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id, });
-
-  const style = {
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
-  }
+  const { ref, isDragging } = useDraggable({
+    id,
+    plugins: [
+      Feedback.configure({
+        dropAnimation: null,
+      })
+    ],
+    alignment: {
+      x: 'center',
+      y: 'center',
+    },
+  });
 
   return (
     <img
-      className='figure'
-      ref={setNodeRef}
+      ref={ref}
+      className={`figure ${isDragging ? 'dragging' : ''}`}
       src={src}
       alt='figure'
-      style={{
-        ...style,
-      }}
-      {...listeners}
-      {...attributes}
+      draggable={false}
     />
   );
 };

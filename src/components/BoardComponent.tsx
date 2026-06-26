@@ -10,8 +10,8 @@ import LostFigures from './LostFigures';
 import PromotionModal from './PromotionModal';
 import SidebarComponent from './SidebarComponent';
 import Clock from '../assets/icons/clock.svg?react';
-import { DndContext } from '@dnd-kit/core';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { DragDropProvider, DragStartEvent, DragEndEvent, DragMoveEvent, BeforeDragStartEvent } from '@dnd-kit/react';
+import { RestrictToWindow } from '@dnd-kit/dom/modifiers';
 import DroppableCell from './DroppableCell';
 import DraggableFigure from './DraggableFigure';
 
@@ -213,65 +213,116 @@ function BoardComponent() {
     handleStopGame();
   }
 
-  const handleDragStart = (event: any) => {
-    const { over } = event;
-    const figure = event.activatorEvent.srcElement;
-    const cell = figure.parentElement;
+  interface DragOverlayState {
+    src: string;
+    x: number;
+    y: number;
+  }
 
-    const cellRect = cell.getBoundingClientRect();
+  const [dragOverlay, setDragOverlay] = useState<DragOverlayState | null>(null);
 
-    // Size the figure
-    const figureSize = 60;
+  function getPointerPosition(nativeEvent: Event | undefined) {
+    if (!nativeEvent || !('clientX' in nativeEvent) || !('clientY' in nativeEvent)) {
+      return null;
+    }
 
-    // The cursor position in the cell
-    const cursorX = event.activatorEvent.clientX - cellRect.left;
-    const cursorY = event.activatorEvent.clientY - cellRect.top;
+    return {
+      x: nativeEvent.clientX as number,
+      y: nativeEvent.clientY as number,
+    };
+  }
 
-    // Offset for centering the figure under the cursor
-    const offsetX = cursorX - figureSize / 2;
-    const offsetY = cursorY - figureSize / 2;
+  const handleBeforeDragStart = (event: BeforeDragStartEvent) => {
+    const { source } = event.operation;
 
-    figure.style.left = `${offsetX}px`;
-    figure.style.top = `${offsetY}px`;
+    if (!source) {
+      event.preventDefault();
+      return;
+    }
 
-    figure.addEventListener('mouseup', () => {
-      figure.style.left = '2px';
-      figure.style.top = '2px';
+    const fromCell = board.getCellById(`${source.id}`);
+
+    if (!fromCell?.figure) {
+      event.preventDefault();
+      return;
+    }
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { source } = event.operation;
+
+    if (!source) return;
+
+    const fromCell = board.getCellById(`${source.id}`);
+    const point = getPointerPosition(event.nativeEvent);
+
+    if (!fromCell?.figure?.logo || !point) return;
+
+    setDragOverlay({
+      src: fromCell.figure.logo,
+      x: point.x,
+      y: point.y,
     });
 
     setClickOnBoard(true);
-
-    if (!over) return;
   };
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
+  const handleDragMove = (event: DragMoveEvent) => {
+    const point = getPointerPosition(event.nativeEvent);
 
-    if (!over) return;
+    if (!point) return;
 
-    const figure = event.activatorEvent.srcElement;
-    const fromCell = board.getCellById(`${active.id}`);
-    const toCell = board.getCellById(`${over.id}`);
+    setDragOverlay((prev) => {
+      if (!prev) return prev;
 
-    if (currentPlayer?.color === fromCell?.figure?.color) {
-      if (fromCell && toCell && fromCell.figure?.canMove(toCell)) {
-        if (fromCell.figure instanceof Pawn && (toCell.y === 0 || toCell.y === 7)) {
-          setPromotionCell(toCell);
-          fromCell.moveFigure(toCell);
-        } else {
-          fromCell.moveFigure(toCell);
-          const newBoard = board.getDeepCopyBoard();
-          makeMove(newBoard);
-          swapPlayer();
-        }
-        setSelectedCell(null);
-      } else if (fromCell?.figure?.color === currentPlayer?.color) {
-        setSelectedCell(fromCell);
-      }
+      return {
+        ...prev,
+        x: point.x,
+        y: point.y,
+      };
+    });
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setDragOverlay(null);
+
+    const { operation, canceled } = event;
+    const { source, target } = operation;
+
+    if (!source) return;
+
+    const fromCell = board.getCellById(`${source.id}`);
+
+    if (!fromCell) return;
+
+    if (currentPlayer?.color !== fromCell.figure?.color) {
+      setSelectedCell(null);
+      return;
     }
 
-    figure.style.left = '2px';
-    figure.style.top = '2px';
+    if (canceled || !target) {
+      setSelectedCell(fromCell);
+      return;
+    }
+
+    const toCell = board.getCellById(`${target.id}`);
+
+    if (!toCell || !fromCell.figure?.canMove(toCell)) {
+      setSelectedCell(fromCell);
+      return;
+    }
+
+    if (fromCell.figure instanceof Pawn && (toCell.y === 0 || toCell.y === 7)) {
+      setPromotionCell(toCell);
+      fromCell.moveFigure(toCell);
+    } else {
+      fromCell.moveFigure(toCell);
+      const newBoard = board.getDeepCopyBoard();
+      makeMove(newBoard);
+      swapPlayer();
+    }
+
+    setSelectedCell(null);
   };
 
   function clickOnTheBoard() {
@@ -322,7 +373,7 @@ function BoardComponent() {
               </span>
             </div>
           </div>
-          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
+          <DragDropProvider onBeforeDragStart={handleBeforeDragStart} onDragStart={handleDragStart} onDragMove={handleDragMove} onDragEnd={handleDragEnd} modifiers={(defaults) => [...defaults, RestrictToWindow]}>
             <div ref={boardRef} className={['board', promotionCell ? 'eclipse' : ''].join(' ')} onClick={() => clickOnTheBoard()}>
               {promotionCell && (
                 <PromotionModal onSelect={handlePromotion} x={promotionCell.x} color={promotionCell.figure?.color}
@@ -357,7 +408,18 @@ function BoardComponent() {
               </React.Fragment>
               )}
             </div>
-          </DndContext>
+            {dragOverlay && (
+              <img
+                className='dragging-figure-overlay'
+                src={dragOverlay.src}
+                alt='dragging figure'
+                style={{
+                  left: dragOverlay.x,
+                  top: dragOverlay.y,
+                }}
+              />
+            )}
+          </DragDropProvider>
           <div className='lostFiguresAndTime'>
             <LostFigures
               board={board}

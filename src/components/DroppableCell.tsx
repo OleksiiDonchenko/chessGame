@@ -1,4 +1,4 @@
-import { useDroppable } from '@dnd-kit/core';
+import { useDroppable } from '@dnd-kit/react';
 import { FC, ReactNode, useEffect } from 'react';
 import { Cell } from '../modules/Cell';
 
@@ -22,7 +22,13 @@ interface DroppableCellProps {
 }
 
 const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
-  const { setNodeRef, isOver, active } = useDroppable({ id, });
+  const { ref, isDropTarget, droppable } = useDroppable({
+    id,
+  });
+
+  const activeSourceId = droppable.manager?.dragOperation?.source?.id;
+  const isSourceCellDragging = activeSourceId === id;
+
   const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
@@ -34,13 +40,13 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, sele
 
   return (
     <div
-      ref={setNodeRef}
+      ref={ref}
       className={[
         'cell',
         color,
         selected && cell.figure ? 'selected' : '',
         isAvailable && !cell.figure ? 'available' : '',
-        isAvailable && isOver ? 'over-available-cell' : '',
+        isAvailable && isDropTarget ? 'over-available-cell' : '',
         isAvailable && cell.figure ? 'attacked' : '',
         isKingInCheck ? 'check' : '',
         isVictory ? 'victoriousKing' : '',
@@ -52,7 +58,7 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, sele
       ].filter(Boolean).join(' ')}
       onMouseDown={() => mouseDown(cell)}
     >
-      {cell.figure && cell.figure.logo && active &&
+      {cell.figure && cell.figure.logo && isSourceCellDragging &&
         <img
           className='background-figure'
           src={cell.figure.logo}

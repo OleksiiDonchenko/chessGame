@@ -41,7 +41,22 @@
   top: 2px;
   left: 2px;
   cursor: grab;
-  z-index: 3;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.dragging {
+  opacity: 0;
+}
+
+.dragging-figure-overlay {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  z-index: 9999;
 }
 
 .cell img:active {
