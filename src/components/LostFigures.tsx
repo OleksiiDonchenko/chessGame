@@ -27,13 +27,11 @@ const LostFigures: FC<LostFiguresProps> = ({ board, color, figures, whoLeads, se
 
   const arrWhitePoints: number[] = [];
   const arrBlackPoints: number[] = [];
-  
+
   const arrPromotionWhiteFiguresValue: number[] = board.whitePromotionFigureValues;
   const arrPromotionBlackFiguresValue: number[] = board.blackPromotionFigureValues;
 
   useEffect(() => {
-
-    // if (sortedFigures.length > 0) {
     if (color === 'white') {
       sortedFigures.forEach(figure => {
         arrWhitePoints.push(figure.value);
@@ -47,7 +45,6 @@ const LostFigures: FC<LostFiguresProps> = ({ board, color, figures, whoLeads, se
       setBlackPoints(Math.floor(arrBlackPoints.reduce((acc, curVal) => acc + curVal, 0) + arrPromotionWhiteFiguresValue.reduce((acc, curVal) => acc + curVal, 0)));
       setWholeads(whitePoints - blackPoints);
     }
-    // }
   }, [sortedFigures, arrWhitePoints, arrBlackPoints, arrPromotionWhiteFiguresValue, arrPromotionBlackFiguresValue])
 
   return (
