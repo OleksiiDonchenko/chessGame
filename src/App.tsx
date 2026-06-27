@@ -1,5 +1,5 @@
 import './App.css';
-import BoardComponent from './components/BoardComponent';
+import ChessBoard from './components/ChessBoard';
 import { ChessProvider } from './context/ChessContext';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
   return (
     <ChessProvider>
       <main className='main'>
-        <BoardComponent />
+        <ChessBoard />
       </main>
     </ChessProvider>
   )

@@ -2,7 +2,7 @@ import { Board } from "../../modules/Board";
 import { Colors } from "../../modules/Colors";
 import { Player } from "../../modules/Player";
 
-export interface ButtonsProps {
+export interface GameControlsProps {
   handleRestart: () => void;
   handleStartGame: () => void;
   handleAnalysis: () => void;
@@ -15,25 +15,25 @@ export interface ButtonsProps {
   snapshotBoard: (newBoard: Board) => void;
 }
 
-export interface ButtonRestartProps {
+export interface RestartButtonProps {
   handleRestart: () => void;
   gameIsOn: boolean;
   gameWasStarted: boolean;
 }
 
-export interface ButtonStartProps {
+export interface StartButtonProps {
   handleStartGame: () => void;
-  gameIsOn: boolean;
+  gameIsOn: boolean; 
   gameWasStarted: boolean;
 }
 
-export interface ButtonAnalysisProps {
+export interface AnalysisButtonProps {
   handleAnalysis: () => void;
   gameIsOn: boolean;
   gameWasStarted: boolean;
 }
 
-export interface ButtonDrawProps {
+export interface DrawButtonProps {
   handleDraw: (color: Colors) => void;
   snapshotBoard: (newBoard: Board) => void;
   gameIsOn: boolean;
@@ -41,7 +41,7 @@ export interface ButtonDrawProps {
   board: Board;
 }
 
-export interface ButtonResignProps {
+export interface ResignButtonProps {
   handleStopGame: (color?: Colors) => void;
   snapshotBoard: (newBoard: Board) => void;
   gameIsOn: boolean;

@@ -1,7 +1,7 @@
 import { Colors } from '../../modules/Colors';
-import { ButtonResignProps } from './types';
+import { ResignButtonProps } from './types';
 
-const ButtonResignComponent = ({ handleStopGame, snapshotBoard, gameIsOn, currentPlayer, board }: ButtonResignProps) => {
+const ResignButton = ({ handleStopGame, snapshotBoard, gameIsOn, currentPlayer, board }: ResignButtonProps) => {
 
   function resign(color: Colors) {
     handleStopGame(color);
@@ -21,4 +21,4 @@ const ButtonResignComponent = ({ handleStopGame, snapshotBoard, gameIsOn, curren
   );
 };
 
-export default ButtonResignComponent;
+export default ResignButton;

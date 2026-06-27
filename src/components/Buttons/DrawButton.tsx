@@ -1,7 +1,7 @@
 import { Colors } from '../../modules/Colors';
-import { ButtonDrawProps } from './types';
+import { DrawButtonProps } from './types';
 
-const ButtonDrawComponent = ({ handleDraw, snapshotBoard, gameIsOn, currentPlayer, board }: ButtonDrawProps) => {
+const DrawButton = ({ handleDraw, snapshotBoard, gameIsOn, currentPlayer, board }: DrawButtonProps) => {
 
   function draw(color: Colors) {
     handleDraw(color);
@@ -21,4 +21,4 @@ const ButtonDrawComponent = ({ handleDraw, snapshotBoard, gameIsOn, currentPlaye
   );
 };
 
-export default ButtonDrawComponent;
+export default DrawButton;

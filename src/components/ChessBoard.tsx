@@ -5,17 +5,17 @@ import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
 import { Colors } from '../modules/Colors';
 import { Pawn } from '../modules/figures/Pawn';
-import ButtonsComponent from './Buttons/ButtonsComponent';
-import LostFigures from './LostFigures';
+import GameControls from './Buttons/GameControls';
+import CapturedPieces from './CapturedPieces';
 import PromotionModal from './PromotionModal';
-import SidebarComponent from './SidebarComponent';
+import GameSidebar from './GameSidebar';
 import Clock from '../assets/icons/clock.svg?react';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import DroppableCell from './DroppableCell';
-import DraggableFigure from './DraggableFigure';
+import DroppableSquare from './DroppableSquare';
+import DraggablePiece from './DraggablePiece';
 
-function BoardComponent() {
+function ChessBoard() {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [whitePlayer] = useState(new Player(Colors.WHITE));
@@ -294,7 +294,7 @@ function BoardComponent() {
     <>
       <div className='wrapper'>
         <div className="wrapper-board">
-          <ButtonsComponent handleRestart={handleRestart}
+          <GameControls handleRestart={handleRestart}
             handleStartGame={handleStartGame}
             handleAnalysis={handleAnalysis}
             handleStopGame={handleStopGame}
@@ -305,7 +305,7 @@ function BoardComponent() {
             board={board}
             snapshotBoard={snapshotBoard} />
           <div className='lostFiguresAndTime'>
-            <LostFigures
+            <CapturedPieces
               board={board}
               color='white'
               figures={board.lostWhiteFigures}
@@ -329,7 +329,7 @@ function BoardComponent() {
                   cell={promotionCell} />
               )}
               {board.cells.map((row, y) => <React.Fragment key={y}>
-                {row.map((cell) => <DroppableCell
+                {row.map((cell) => <DroppableSquare
                   key={cell.id}
                   id={`${cell.x}-${cell.y}`}
                   color={cell.color}
@@ -348,18 +348,18 @@ function BoardComponent() {
                   coordinates={{ x: cell.x, y: cell.y }}
                 >
                   {cell.figure?.logo && (
-                    <DraggableFigure
+                    <DraggablePiece
                       id={`${cell.x}-${cell.y}`}
                       src={cell.figure.logo} />
                   )}
-                </DroppableCell>
+                </DroppableSquare>
                 )}
               </React.Fragment>
               )}
             </div>
           </DndContext>
           <div className='lostFiguresAndTime'>
-            <LostFigures
+            <CapturedPieces
               board={board}
               color='black'
               figures={board.lostBlackFigures}
@@ -377,7 +377,7 @@ function BoardComponent() {
             </div>
           </div>
         </div>
-        <SidebarComponent history={history} currentMove={currentMove} goToPreviousMove={goToPreviousMove}
+        <GameSidebar history={history} currentMove={currentMove} goToPreviousMove={goToPreviousMove}
           goToNextMove={goToNextMove} boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard}
           swapPlayer={swapPlayer} isAnalysis={isAnalysis} setSelectedCell={setSelectedCell} currentPlayer={currentPlayer} />
       </div>
@@ -385,4 +385,4 @@ function BoardComponent() {
   );
 }
 
-export default BoardComponent;
+export default ChessBoard;
