@@ -48,7 +48,7 @@ const LostFigures: FC<LostFiguresProps> = ({ board, color, figures, whoLeads, se
   }, [sortedFigures, arrWhitePoints, arrBlackPoints, arrPromotionWhiteFiguresValue, arrPromotionBlackFiguresValue])
 
   return (
-    <div className='lost'>
+    <div className='captured'>
       {sortedFigures.map(figure =>
         <div key={figure.id}>
           {figure.logo && <img width={20} height={20} src={figure.logo} />}

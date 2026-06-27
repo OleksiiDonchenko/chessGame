@@ -36,7 +36,7 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, sele
     <div
       ref={setNodeRef}
       className={[
-        'cell',
+        'square',
         color,
         selected && cell.figure ? 'selected' : '',
         isAvailable && !cell.figure ? 'available' : '',

@@ -304,7 +304,7 @@ function ChessBoard() {
             currentPlayer={currentPlayer}
             board={board}
             snapshotBoard={snapshotBoard} />
-          <div className='lostFiguresAndTime'>
+          <div className='capturedPiecesAndTime'>
             <CapturedPieces
               board={board}
               color='white'
@@ -358,7 +358,7 @@ function ChessBoard() {
               )}
             </div>
           </DndContext>
-          <div className='lostFiguresAndTime'>
+          <div className='capturedPiecesAndTime'>
             <CapturedPieces
               board={board}
               color='black'
