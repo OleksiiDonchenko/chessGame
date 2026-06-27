@@ -1,9 +1,10 @@
 import { ButtonStartProps } from './types';
 
-const ButtonStartComponent= ({ handleStartGame, gameIsOn, gameWasStarted }: ButtonStartProps) => {
+const ButtonStartComponent = ({ handleStartGame, gameIsOn, gameWasStarted }: ButtonStartProps) => {
+
   return (
     <button onClick={handleStartGame}
-      disabled={gameIsOn ? true : false || gameWasStarted ? true : false}
+      disabled={gameIsOn || gameWasStarted}
       className='btn play-btn'
       title='Play'
     />

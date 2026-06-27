@@ -8,10 +8,15 @@ const ButtonResignComponent = ({ handleStopGame, snapshotBoard, gameIsOn, curren
     snapshotBoard(board);
   }
 
+  function callbackResign() {
+    if (!currentPlayer) return;
+    return resign(currentPlayer.color);
+  }
+
   return (
-    <button onClick={currentPlayer ? () => resign(currentPlayer.color) : () => { }}
-      disabled={!gameIsOn ? true : false}
-      className=' btn resign-btn'
+    <button onClick={callbackResign}
+      disabled={!gameIsOn || !currentPlayer}
+      className='btn resign-btn'
       title='Resign' />
   );
 };

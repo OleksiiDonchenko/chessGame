@@ -8,9 +8,14 @@ const ButtonDrawComponent = ({ handleDraw, snapshotBoard, gameIsOn, currentPlaye
     snapshotBoard(board);
   }
 
+  function callbackDraw() {
+    if (!currentPlayer) return;
+    return draw(currentPlayer.color);
+  }
+
   return (
-    <button onClick={currentPlayer ? () => draw(currentPlayer.color) : () => { }}
-      disabled={!gameIsOn ? true : false}
+    <button onClick={callbackDraw}
+      disabled={!gameIsOn || !currentPlayer}
       className='btn draw-btn'
       title='Draw' />
   );
