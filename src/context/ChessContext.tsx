@@ -16,10 +16,10 @@ interface ChessContextType {
 
 const ChessContext = createContext<ChessContextType | undefined>(undefined);
 
-export const useChess = () => {
+export const useChessContext = () => {
   const context = useContext(ChessContext);
   if (!context) {
-    throw new Error('useChess must be used within a ChessProvider');
+    throw new Error('useChessContext must be used within a ChessProvider');
   }
   return context;
 }

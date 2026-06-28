@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useChess } from '../context/ChessContext';
+import { useChessContext } from '../context/ChessContext';
 import { Board } from '../modules/Board';
 import { Cell } from '../modules/Cell';
 import { Player } from '../modules/Player';
@@ -27,7 +27,8 @@ function ChessBoard() {
   const [whoLeads, setWholeads] = useState(0);
   const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
 
-  const { board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard } = useChess();
+  const { board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard } = useChessContext();
+  
   useEffect(() => {
     highlightCells();
   }, [selectedCell]);
