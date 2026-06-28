@@ -1,16 +1,16 @@
-import { Cell } from "./Cell";
-import { Colors } from "./Colors";
-import { Bishop } from "./figures/Bishop";
-import { Figure } from "./figures/Figure";
-import { King } from "./figures/King";
-import { Knight } from "./figures/Knight";
-import { Pawn } from "./figures/Pawn";
-import { Queen } from "./figures/Queen";
-import { Rook } from "./figures/Rook";
-import moveSound from "../assets/sounds/move.mp3";
-import checkSound from "../assets/sounds/check.mp3";
-import captureSound from "../assets/sounds/capture.mp3";
-import castleSound from "../assets/sounds/castle.mp3";
+import { Cell } from "./Square";
+import { Colors } from "../Colors";
+import { Bishop } from "../pieces/Bishop";
+import { Figure } from "../pieces/Piece";
+import { King } from "../pieces/King";
+import { Knight } from "../pieces/Knight";
+import { Pawn } from "../pieces/Pawn";
+import { Queen } from "../pieces/Queen";
+import { Rook } from "../pieces/Rook";
+import moveSound from "../../assets/sounds/move.mp3";
+import checkSound from "../../assets/sounds/check.mp3";
+import captureSound from "../../assets/sounds/capture.mp3";
+import castleSound from "../../assets/sounds/castle.mp3";
 
 export class Board {
   cells: Cell[][] = [];

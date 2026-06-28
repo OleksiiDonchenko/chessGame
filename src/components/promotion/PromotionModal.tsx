@@ -1,14 +1,14 @@
 import { FC } from 'react';
-import { Colors } from '../modules/Colors';
-import { Cell } from '../modules/Cell';
-import blackQueen from '../assets/black_queen.png';
-import whiteQueen from '../assets/white_queen.png';
-import blackKnight from '../assets/black_knight.png';
-import whiteKnight from '../assets/white_knight.png';
-import blackRook from '../assets/black_rook.png';
-import whiteRook from '../assets/white_rook.png';
-import blackBishop from '../assets/black_bishop.png';
-import whiteBishop from '../assets/white_bishop.png';
+import { Colors } from '../../modules/Colors';
+import { Cell } from '../../modules/board/Square';
+import blackQueen from '../../assets/black_queen.png';
+import whiteQueen from '../../assets/white_queen.png';
+import blackKnight from '../../assets/black_knight.png';
+import whiteKnight from '../../assets/white_knight.png';
+import blackRook from '../../assets/black_rook.png';
+import whiteRook from '../../assets/white_rook.png';
+import blackBishop from '../../assets/black_bishop.png';
+import whiteBishop from '../../assets/white_bishop.png';
 
 interface PromotionModalProps {
   onSelect: (figure: string) => void;

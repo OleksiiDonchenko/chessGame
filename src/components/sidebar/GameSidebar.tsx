@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
-import { Board } from '../modules/Board';
-import { Cell } from '../modules/Cell';
-import { Player } from '../modules/Player';
+import { Board } from '../../modules/board/Board';
+import { Cell } from '../../modules/board/Square';
+import { Player } from '../../modules/Player';
 
 interface SidebarComponentProps {
   history: Board[];

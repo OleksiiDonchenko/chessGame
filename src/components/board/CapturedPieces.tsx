@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
-import { Figure } from '../modules/figures/Figure';
-import { Board } from '../modules/Board';
+import { Figure } from '../../modules/pieces/Piece';
+import { Board } from '../../modules/board/Board';
 
 interface LostFiguresProps {
   board: Board;

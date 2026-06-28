@@ -1,6 +1,6 @@
-import { Figure, FigureNames } from "./Figure";
+import { Figure, FigureNames } from "./Piece";
 import { Colors } from "../Colors";
-import { Cell } from "../Cell";
+import { Cell } from "../board/Square";
 import blackLogo from '../../assets/black_knight.png';
 import whiteLogo from '../../assets/white_knight.png';
 

@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import { FC, ReactNode, useEffect } from 'react';
-import { Cell } from '../modules/Cell';
+import { Cell } from '../../modules/board/Square';
 
 interface DroppableCellProps {
   cell: Cell;

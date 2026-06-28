@@ -1,4 +1,4 @@
-import { Board } from "../../modules/Board";
+import { Board } from "../../modules/board/Board";
 import { Colors } from "../../modules/Colors";
 import { Player } from "../../modules/Player";
 

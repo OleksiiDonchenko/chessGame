@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Board } from '../modules/Board';
+import { Board } from '../modules/board/Board';
 
 interface ChessContextType {
   board: Board;

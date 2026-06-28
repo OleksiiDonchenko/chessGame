@@ -1,9 +1,9 @@
 import { Board } from "./Board";
-import { Colors } from "./Colors";
-import { Figure } from "./figures/Figure";
-import { King } from "./figures/King";
-import { Pawn } from "./figures/Pawn";
-import { Rook } from "./figures/Rook";
+import { Colors } from "../Colors";
+import { Figure } from "../pieces/Piece";
+import { King } from "../pieces/King";
+import { Pawn } from "../pieces/Pawn";
+import { Rook } from "../pieces/Rook";
 
 export class Cell {
   x: number;
