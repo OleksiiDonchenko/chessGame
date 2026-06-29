@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { FC, ReactNode, useEffect } from 'react';
 import { Cell } from '../../modules/board/Square';
 
-interface DroppableCellProps {
+interface DroppableSquareProps {
   cell: Cell;
   id: string;
   children?: ReactNode;
@@ -21,7 +21,7 @@ interface DroppableCellProps {
   mouseDown: (cell: Cell) => void;
 }
 
-const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
+const DroppableSquare: FC<DroppableSquareProps> = ({ cell, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
   const { setNodeRef, isOver, active } = useDroppable({ id, });
   const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -54,9 +54,9 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, sele
     >
       {cell.figure && cell.figure.logo && active &&
         <img
-          className='background-figure'
+          className='background-piece'
           src={cell.figure.logo}
-          alt='background-figure'
+          alt='background-piece'
         />}
       {coordinates.x === 7 && (
         <span
@@ -81,4 +81,4 @@ const DroppableCell: FC<DroppableCellProps> = ({ cell, id, children, color, sele
   );
 };
 
-export default DroppableCell;
+export default DroppableSquare;

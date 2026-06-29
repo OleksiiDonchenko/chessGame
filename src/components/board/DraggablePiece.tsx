@@ -1,12 +1,12 @@
 import { useDraggable } from '@dnd-kit/core';
 import { FC } from 'react';
 
-interface DraggableFigureProps {
+interface DraggablePieceProps {
   id: string;
   src: string;
 }
 
-const DraggableFigure: FC<DraggableFigureProps> = ({ id, src }) => {
+const DraggablePiece: FC<DraggablePieceProps> = ({ id, src }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id, });
 
   const style = {
@@ -17,10 +17,10 @@ const DraggableFigure: FC<DraggableFigureProps> = ({ id, src }) => {
 
   return (
     <img
-      className='figure'
+      className='piece'
       ref={setNodeRef}
       src={src}
-      alt='figure'
+      alt='piece'
       style={{
         ...style,
       }}
@@ -30,4 +30,4 @@ const DraggableFigure: FC<DraggableFigureProps> = ({ id, src }) => {
   );
 };
 
-export default DraggableFigure;
+export default DraggablePiece;

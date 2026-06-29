@@ -3,7 +3,7 @@ import { Board } from '../../modules/board/Board';
 import { Cell } from '../../modules/board/Square';
 import { Player } from '../../modules/Player';
 
-interface SidebarComponentProps {
+interface GameSidebarProps {
   history: Board[];
   currentMove: number;
   goToPreviousMove: () => void;
@@ -17,7 +17,7 @@ interface SidebarComponentProps {
   currentPlayer: Player | null;
 }
 
-const SidebarComponent: FC<SidebarComponentProps> = ({ history, currentMove, goToPreviousMove, goToNextMove, boardRef, clickOnBoard, setClickOnBoard, swapPlayer, isAnalysis, setSelectedCell, currentPlayer }) => {
+const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousMove, goToNextMove, boardRef, clickOnBoard, setClickOnBoard, swapPlayer, isAnalysis, setSelectedCell, currentPlayer }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -81,4 +81,4 @@ const SidebarComponent: FC<SidebarComponentProps> = ({ history, currentMove, goT
   );
 };
 
-export default SidebarComponent;
+export default GameSidebar;

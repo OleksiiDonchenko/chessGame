@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 import { Figure } from '../../modules/pieces/Piece';
 import { Board } from '../../modules/board/Board';
 
-interface LostFiguresProps {
+interface CapturedPiecesProps {
   board: Board;
   color: string;
   figures: Figure[];
@@ -14,7 +14,7 @@ interface LostFiguresProps {
   setBlackPoints: (value: number) => void;
 }
 
-const LostFigures: FC<LostFiguresProps> = ({ board, color, figures, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
+const CapturedPieces: FC<CapturedPiecesProps> = ({ board, color, figures, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
   let sortedFigures: Figure[] = [];
   if (figures.length > 0) {
     sortedFigures = figures.sort((a, b) => {
@@ -61,4 +61,4 @@ const LostFigures: FC<LostFiguresProps> = ({ board, color, figures, whoLeads, se
   );
 };
 
-export default LostFigures;
+export default CapturedPieces;
