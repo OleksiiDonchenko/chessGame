@@ -1,5 +1,5 @@
 import logo from '../../assets/black_king.png'
-import { Cell } from '../board/Square';
+import { Square } from '../board/Square';
 import { Colors } from "../Colors";
 
 export enum FigureNames {
@@ -15,16 +15,16 @@ export enum FigureNames {
 export class Figure {
   color: Colors;
   logo: typeof logo | null;
-  cell: Cell;
+  square: Square;
   name: FigureNames;
   id: number;
   value: number;
   isItPromotionFigure: boolean;
 
-  constructor(color: Colors, cell: Cell) {
+  constructor(color: Colors, square: Square) {
     this.color = color;
-    this.cell = cell;
-    this.cell.figure = this;
+    this.square = square;
+    this.square.figure = this;
     this.logo = null;
     this.name = FigureNames.FIGURE;
     this.id = Math.random();
@@ -32,28 +32,28 @@ export class Figure {
     this.isItPromotionFigure = false;
   }
 
-  canMove(target: Cell): boolean {
+  canMove(target: Square): boolean {
     if (target.figure?.color === this.color && this.name !== 'King')
       return false;
     return true;
   }
 
-  moveFigure(target: Cell) {
+  moveFigure(target: Square) {
     target;
-    this.cell.board.enPassantTarget = null;
-    const kingCell = this.cell.board.findKing(this.color);
-    if (kingCell?.isKingInCheck) {
-      kingCell.isKingInCheck = false;
+    this.square.board.enPassantTarget = null;
+    const kingSquare = this.square.board.findKing(this.color);
+    if (kingSquare?.isKingInCheck) {
+      kingSquare.isKingInCheck = false;
     }
   }
 
-  canAttack(target: Cell): boolean {
+  canAttack(target: Square): boolean {
     target;
     return true;
   }
 
   getCopy(): Figure {
-    const copy = new Figure(this.color, this.cell);
+    const copy = new Figure(this.color, this.square);
     copy.isItPromotionFigure = this.isItPromotionFigure;
     copy.id = this.id;
     return copy;

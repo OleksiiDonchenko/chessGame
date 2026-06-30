@@ -1,9 +1,9 @@
 import { useDroppable } from '@dnd-kit/core';
 import { FC, ReactNode, useEffect } from 'react';
-import { Cell } from '../../modules/board/Square';
+import { Square } from '../../modules/board/Square';
 
 interface DroppableSquareProps {
-  cell: Cell;
+  square: Square;
   id: string;
   children?: ReactNode;
   color: string;
@@ -18,10 +18,10 @@ interface DroppableSquareProps {
   isDraw: boolean;
   handleStopGame: () => void;
   coordinates: { x: number; y: number };
-  mouseDown: (cell: Cell) => void;
+  mouseDown: (square: Square) => void;
 }
 
-const DroppableSquare: FC<DroppableSquareProps> = ({ cell, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
+const DroppableSquare: FC<DroppableSquareProps> = ({ square, id, children, color, selected, isAvailable, isKingInCheck, isCheckmate, resign, losingByTime, isVictory, isStalemate, isDraw, handleStopGame, coordinates, mouseDown }) => {
   const { setNodeRef, isOver, active } = useDroppable({ id, });
   const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -38,24 +38,24 @@ const DroppableSquare: FC<DroppableSquareProps> = ({ cell, id, children, color, 
       className={[
         'square',
         color,
-        selected && cell.figure ? 'selected' : '',
-        isAvailable && !cell.figure ? 'available' : '',
-        isAvailable && isOver ? 'over-available-cell' : '',
-        isAvailable && cell.figure ? 'attacked' : '',
+        selected && square.figure ? 'selected' : '',
+        isAvailable && !square.figure ? 'available' : '',
+        isAvailable && isOver ? 'over-available-square' : '',
+        isAvailable && square.figure ? 'attacked' : '',
         isKingInCheck ? 'check' : '',
         isVictory ? 'victoriousKing' : '',
-        isCheckmate && cell.figure?.color === 'white' ? 'defeatedWhiteKing' : isCheckmate && cell.figure?.color === 'black' ? 'defeatedBlackKing' : '',
-        losingByTime && cell.figure?.color === 'white' ? 'losingByTime' : losingByTime && cell.figure?.color === 'black' ? 'losingByTime' : '',
+        isCheckmate && square.figure?.color === 'white' ? 'defeatedWhiteKing' : isCheckmate && square.figure?.color === 'black' ? 'defeatedBlackKing' : '',
+        losingByTime && square.figure?.color === 'white' ? 'losingByTime' : losingByTime && square.figure?.color === 'black' ? 'losingByTime' : '',
         isStalemate ? 'stalemate' : '',
         isDraw ? 'stalemate' : '',
         resign ? 'resign' : '',
       ].filter(Boolean).join(' ')}
-      onMouseDown={() => mouseDown(cell)}
+      onMouseDown={() => mouseDown(square)}
     >
-      {cell.figure && cell.figure.logo && active &&
+      {square.figure && square.figure.logo && active &&
         <img
           className='background-piece'
-          src={cell.figure.logo}
+          src={square.figure.logo}
           alt='background-piece'
         />}
       {coordinates.x === 7 && (

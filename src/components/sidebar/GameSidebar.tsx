@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
 import { Board } from '../../modules/board/Board';
-import { Cell } from '../../modules/board/Square';
+import { Square } from '../../modules/board/Square';
 import { Player } from '../../modules/Player';
 
 interface GameSidebarProps {
@@ -13,11 +13,11 @@ interface GameSidebarProps {
   setClickOnBoard: (arg: boolean) => void;
   swapPlayer: () => void;
   isAnalysis: boolean;
-  setSelectedCell: (cell: Cell | null) => void;
+  setSelectedSquare: (square: Square | null) => void;
   currentPlayer: Player | null;
 }
 
-const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousMove, goToNextMove, boardRef, clickOnBoard, setClickOnBoard, swapPlayer, isAnalysis, setSelectedCell, currentPlayer }) => {
+const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousMove, goToNextMove, boardRef, clickOnBoard, setClickOnBoard, swapPlayer, isAnalysis, setSelectedSquare, currentPlayer }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,12 +29,12 @@ const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousM
         goToPreviousMove();
         if (isAnalysis && currentMove > 0)
           swapPlayer();
-        setSelectedCell(null);
+        setSelectedSquare(null);
       } else if (e.key === 'ArrowRight') {
         goToNextMove();
         if (isAnalysis && currentMove < history.length - 1)
           swapPlayer();
-        setSelectedCell(null);
+        setSelectedSquare(null);
       }
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -48,7 +48,7 @@ const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousM
     goToNextMove();
     if (isAnalysis)
       swapPlayer();
-    setSelectedCell(null);
+    setSelectedSquare(null);
   }
 
   function previousMove() {
@@ -56,7 +56,7 @@ const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousM
     goToPreviousMove();
     if (isAnalysis)
       swapPlayer();
-    setSelectedCell(null);
+    setSelectedSquare(null);
   }
 
   return (

@@ -5,7 +5,7 @@ import { King } from "../pieces/King";
 import { Pawn } from "../pieces/Pawn";
 import { Rook } from "../pieces/Rook";
 
-export class Cell {
+export class Square {
   x: number;
   y: number;
   readonly color: Colors;
@@ -45,43 +45,43 @@ export class Cell {
     return this.figure === null;
   }
 
-  isEnemy(target: Cell): boolean {
+  isEnemy(target: Square): boolean {
     if (target.figure) {
       return this.figure?.color !== target.figure.color;
     }
     return false;
   }
 
-  isEmptyVertical(target: Cell, color: Colors): boolean {
+  isEmptyVertical(target: Square, color: Colors): boolean {
     if (this.x !== target.x)
       return false;
 
     const min = Math.min(this.y, target.y);
     const max = Math.max(this.y, target.y);
     for (let y = min + 1; y < max; y++) {
-      const cell = this.board.getCell(this.x, y);
-      if (!cell.isEmpty(true, color)) {
+      const square = this.board.getSquare(this.x, y);
+      if (!square.isEmpty(true, color)) {
         return false;
       }
     }
     return true;
   }
 
-  isEmptyHorizontal(target: Cell, color: Colors): boolean {
+  isEmptyHorizontal(target: Square, color: Colors): boolean {
     if (this.y !== target.y)
       return false;
 
     const min = Math.min(this.x, target.x);
     const max = Math.max(this.x, target.x);
     for (let x = min + 1; x < max; x++) {
-      if (!this.board.getCell(x, this.y).isEmpty(true, color)) {
+      if (!this.board.getSquare(x, this.y).isEmpty(true, color)) {
         return false;
       }
     }
     return true;
   }
 
-  isEmptyDiagonal(target: Cell, color: Colors): boolean {
+  isEmptyDiagonal(target: Square, color: Colors): boolean {
     const absX = Math.abs(target.x - this.x);
     const absY = Math.abs(target.y - this.y);
     if (absY !== absX)
@@ -91,14 +91,14 @@ export class Cell {
     const dy = this.y < target.y ? 1 : -1;
 
     for (let i = 1; i < absY; i++) {
-      if (!this.board.getCell(this.x + dx * i, this.y + dy * i).isEmpty(true, color))
+      if (!this.board.getSquare(this.x + dx * i, this.y + dy * i).isEmpty(true, color))
         return false;
     }
 
     return true;
   }
 
-  isPathClear(target: Cell, color: Colors): boolean {
+  isPathClear(target: Square, color: Colors): boolean {
     const dx = target.x - this.x;
     const dy = target.y - this.y;
 
@@ -109,11 +109,11 @@ export class Cell {
     let y = this.y + stepY;
 
     while (x !== target.x || y !== target.y) {
-      const cell = this.board.getCell(x, y);
-      if (!cell.isEmpty(true, color) && cell.figure?.color !== this.figure?.color) {
+      const square = this.board.getSquare(x, y);
+      if (!square.isEmpty(true, color) && square.figure?.color !== this.figure?.color) {
         return false;
       }
-      if (!cell.isEmpty(true, color) && cell.figure?.color === this.figure?.color) {
+      if (!square.isEmpty(true, color) && square.figure?.color === this.figure?.color) {
         return false;
       }
       x += stepX;
@@ -125,7 +125,7 @@ export class Cell {
 
   setFigure(figure: Figure) {
     this.figure = figure;
-    this.figure.cell = this;
+    this.figure.square = this;
   }
 
   addLostFigure(figure: Figure) {
@@ -154,18 +154,18 @@ export class Cell {
     }
   }
 
-  moveFigure(target: Cell) {
+  moveFigure(target: Square) {
     if (this.figure && this.figure.canMove(target)) {
       const white = Colors.WHITE;
       const black = Colors.BLACK;
       const enemyColor = this.figure.color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
       if (this.figure instanceof Pawn && this.board.enPassantTarget && target.x === this.board.enPassantTarget.x && target.y === this.board.enPassantTarget.y) {
-        const enPassantPawnCell = this.board.getCell(this.board.enPassantTarget.x, this.figure.cell.y);
+        const enPassantPawnSquare = this.board.getSquare(this.board.enPassantTarget.x, this.figure.square.y);
 
-        if (enPassantPawnCell.figure) {
-          this.addLostFigure(enPassantPawnCell.figure);
-          enPassantPawnCell.figure = null;
+        if (enPassantPawnSquare.figure) {
+          this.addLostFigure(enPassantPawnSquare.figure);
+          enPassantPawnSquare.figure = null;
         }
         this.figure.moveFigure(target);
         target.setFigure(this.figure);
@@ -316,7 +316,7 @@ export class Cell {
           this.board.highlightKing(black);
           this.board.isCheckmate(black);
         } else if (pawn instanceof Pawn && (target.y === 0 || target.y === 7)) {
-          // 'Silence', because if the pawn gets promotion cell sounds will after transformation
+          // 'Silence', because if the pawn gets promotion square sounds will after transformation
         } else {
           this.board.handleMove('move');
         }
@@ -339,7 +339,7 @@ export class Cell {
           this.board.highlightKing(black);
           this.board.isCheckmate(black);
         } else if (pawn instanceof Pawn && (target.y === 0 || target.y === 7)) {
-          // 'Silence', because if the pawn gets promotion cell sounds will after transformation
+          // 'Silence', because if the pawn gets promotion square sounds will after transformation
           pawn.isItCapture = true;
         } else {
           this.board.handleMove('capture');
@@ -353,8 +353,8 @@ export class Cell {
     }
   }
 
-  getCopy(): Cell {
-    const copy = new Cell(this.board, this.x, this.y, this.color, this.figure ? this.figure.getCopy() : null);
+  getCopy(): Square {
+    const copy = new Square(this.board, this.x, this.y, this.color, this.figure ? this.figure.getCopy() : null);
     copy.isKingInCheck = this.isKingInCheck;
     copy.isCheckmate = this.isCheckmate;
     copy.isVictory = this.isVictory;

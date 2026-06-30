@@ -1,4 +1,4 @@
-import { Cell } from "../board/Square";
+import { Square } from "../board/Square";
 import { Colors } from "../Colors";
 import { Figure, FigureNames } from "./Piece";
 import blackLogo from '../../assets/black_bishop.png';
@@ -7,41 +7,41 @@ import whiteLogo from '../../assets/white_bishop.png';
 export class Bishop extends Figure {
   isItPromotionFigure: boolean;
 
-  constructor(color: Colors, cell: Cell) {
-    super(color, cell);
+  constructor(color: Colors, square: Square) {
+    super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.BISHOP;
     this.value = 3.2;
     this.isItPromotionFigure = false;
   }
 
-  canMove(target: Cell): boolean {
+  canMove(target: Square): boolean {
     if (!super.canMove(target))
       return false;
-    const movesOfBishop = this.cell.isEmptyDiagonal(target, this.color);
-    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
-    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+    const movesOfBishop = this.square.isEmptyDiagonal(target, this.color);
+    const canMoveWithoutCheck: boolean = this.square.board.canMoveWithoutCheck(this.square, target, this.color);
+    if (!this.square.board.findKing(this.color)?.isKingInCheck) {
       if (movesOfBishop && canMoveWithoutCheck)
         return true;
     } else {
-      if (movesOfBishop && this.cell.board.canBlockCheck(target, this.color) && canMoveWithoutCheck)
+      if (movesOfBishop && this.square.board.canBlockCheck(target, this.color) && canMoveWithoutCheck)
         return true;
-      if (movesOfBishop && this.cell.board.attackerCellOnKing(target, this.color) && canMoveWithoutCheck)
+      if (movesOfBishop && this.square.board.attackerSquareOnKing(target, this.color) && canMoveWithoutCheck)
         return true;
     }
     return false;
   }
 
-  canAttack(target: Cell): boolean {
+  canAttack(target: Square): boolean {
     if (!super.canAttack(target))
       return false;
-    if (this.cell.isEmptyDiagonal(target, this.color))
-      return this.cell.isPathClear(target, this.color);
+    if (this.square.isEmptyDiagonal(target, this.color))
+      return this.square.isPathClear(target, this.color);
     return false;
   }
 
   getCopy(): Bishop {
-    const copy = new Bishop(this.color, this.cell);
+    const copy = new Bishop(this.color, this.square);
     copy.isItPromotionFigure = this.isItPromotionFigure;
     return copy;
   }

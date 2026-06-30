@@ -1,52 +1,52 @@
 import { Figure, FigureNames } from "./Piece";
 import { Colors } from "../Colors";
-import { Cell } from "../board/Square";
+import { Square } from "../board/Square";
 import blackLogo from '../../assets/black_knight.png';
 import whiteLogo from '../../assets/white_knight.png';
 
 export class Knight extends Figure {
   isItPromotionFigure: boolean;
 
-  constructor(color: Colors, cell: Cell) {
-    super(color, cell);
+  constructor(color: Colors, square: Square) {
+    super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.KNIGHT;
     this.value = 3;
     this.isItPromotionFigure = false;
   }
 
-  canMove(target: Cell): boolean {
+  canMove(target: Square): boolean {
     if (!super.canMove(target))
       return false;
-    const dx = Math.abs(this.cell.x - target.x);
-    const dy = Math.abs(this.cell.y - target.y);
-    const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
-    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
-    const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
+    const dx = Math.abs(this.square.x - target.x);
+    const dy = Math.abs(this.square.y - target.y);
+    const canBlockCheck: boolean = this.square.board.canBlockCheck(target, this.color);
+    const canMoveWithoutCheck: boolean = this.square.board.canMoveWithoutCheck(this.square, target, this.color);
+    const attackerSquareOnKing: boolean = this.square.board.attackerSquareOnKing(target, this.color);
 
-    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+    if (!this.square.board.findKing(this.color)?.isKingInCheck) {
       if (canMoveWithoutCheck) {
         return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
       }
     } else {
-      if (attackerCellOnKing && canMoveWithoutCheck || canBlockCheck && canMoveWithoutCheck) {
+      if (attackerSquareOnKing && canMoveWithoutCheck || canBlockCheck && canMoveWithoutCheck) {
         return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
       }
     }
     return false;
   }
 
-  canAttack(target: Cell): boolean {
+  canAttack(target: Square): boolean {
     if (!super.canAttack(target))
       return false;
-    const dx = Math.abs(this.cell.x - target.x);
-    const dy = Math.abs(this.cell.y - target.y);
+    const dx = Math.abs(this.square.x - target.x);
+    const dy = Math.abs(this.square.y - target.y);
 
     return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
   }
 
   getCopy(): Knight {
-    const copy = new Knight(this.color, this.cell);
+    const copy = new Knight(this.color, this.square);
     copy.isItPromotionFigure = this.isItPromotionFigure;
     return copy;
   }

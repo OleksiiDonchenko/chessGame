@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Colors } from '../../modules/Colors';
-import { Cell } from '../../modules/board/Square';
+import { Square } from '../../modules/board/Square';
 import blackQueen from '../../assets/black_queen.png';
 import whiteQueen from '../../assets/white_queen.png';
 import blackKnight from '../../assets/black_knight.png';
@@ -14,30 +14,30 @@ interface PromotionModalProps {
   onSelect: (figure: string) => void;
   x: number;
   color: Colors | undefined;
-  cell: Cell;
+  square: Square;
 }
 
-const PromotionModal: FC<PromotionModalProps> = ({ onSelect, x, color, cell }) => {
+const PromotionModal: FC<PromotionModalProps> = ({ onSelect, x, color, square }) => {
 
   const figures = ['Queen', 'Knight', 'Rook', 'Bishop'];
-  const cellSize = 64;
+  const squareSize = 64;
 
   return (
     <div className='modal'
       style={{
-        left: `${x * cellSize}px`,
-        top: color === 'black' ? `${4 * cellSize}px` : 0,
+        left: `${x * squareSize}px`,
+        top: color === 'black' ? `${4 * squareSize}px` : 0,
         flexDirection: color === 'black' ? 'column-reverse' : 'column',
       }}>
       {figures.map((figure, i) => (
-        <button className='cell' key={i} onClick={() => onSelect(figure)}>
-          {cell.figure?.logo && figure === 'Queen'
+        <button className='square' key={i} onClick={() => onSelect(figure)}>
+          {square.figure?.logo && figure === 'Queen'
             && <img src={color === Colors.BLACK ? blackQueen : whiteQueen} alt="" />}
-          {cell.figure?.logo && figure === 'Knight'
+          {square.figure?.logo && figure === 'Knight'
             && <img src={color === Colors.BLACK ? blackKnight : whiteKnight} alt="" />}
-          {cell.figure?.logo && figure === 'Rook'
+          {square.figure?.logo && figure === 'Rook'
             && <img src={color === Colors.BLACK ? blackRook : whiteRook} alt="" />}
-          {cell.figure?.logo && figure === 'Bishop'
+          {square.figure?.logo && figure === 'Bishop'
             && <img src={color === Colors.BLACK ? blackBishop : whiteBishop} alt="" />}
         </button>
       ))}

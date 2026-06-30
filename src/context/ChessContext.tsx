@@ -31,9 +31,9 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentMove, setCurrentMove] = useState(0);
 
   function makeMove(newBoard: Board) {
-    newBoard.cells.forEach(row => {
-      row.forEach(cell => {
-        cell.available = false;
+    newBoard.squares.forEach(row => {
+      row.forEach(square => {
+        square.available = false;
       });
     });
     const newHistory = [...history.slice(0, currentMove + 1), newBoard];

@@ -1,54 +1,54 @@
 import { Figure, FigureNames } from "./Piece";
 import { Colors } from "../Colors";
-import { Cell } from "../board/Square";
+import { Square } from "../board/Square";
 import blackLogo from '../../assets/black_queen.png';
 import whiteLogo from '../../assets/white_queen.png';
 
 export class Queen extends Figure {
   isItPromotionFigure: boolean;
 
-  constructor(color: Colors, cell: Cell) {
-    super(color, cell);
+  constructor(color: Colors, square: Square) {
+    super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.QUEEN;
     this.value = 9;
     this.isItPromotionFigure = false;
   }
 
-  canMove(target: Cell): boolean {
+  canMove(target: Square): boolean {
     if (!super.canMove(target))
       return false;
-    const movesOfQueen = (this.cell.isEmptyVertical(target, this.color) || this.cell.isEmptyHorizontal(target, this.color) || this.cell.isEmptyDiagonal(target, this.color));
-    const canBlockCheck: boolean = this.cell.board.canBlockCheck(target, this.color);
-    const canMoveWithoutCheck: boolean = this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
-    const attackerCellOnKing: boolean = this.cell.board.attackerCellOnKing(target, this.color);
+    const movesOfQueen = (this.square.isEmptyVertical(target, this.color) || this.square.isEmptyHorizontal(target, this.color) || this.square.isEmptyDiagonal(target, this.color));
+    const canBlockCheck: boolean = this.square.board.canBlockCheck(target, this.color);
+    const canMoveWithoutCheck: boolean = this.square.board.canMoveWithoutCheck(this.square, target, this.color);
+    const attackerSquareOnKing: boolean = this.square.board.attackerSquareOnKing(target, this.color);
 
-    if (!this.cell.board.findKing(this.color)?.isKingInCheck) {
+    if (!this.square.board.findKing(this.color)?.isKingInCheck) {
       if (movesOfQueen && canMoveWithoutCheck)
         return true;
     } else {
       if (movesOfQueen && canBlockCheck && canMoveWithoutCheck)
         return true;
-      if (movesOfQueen && attackerCellOnKing && canMoveWithoutCheck) {
+      if (movesOfQueen && attackerSquareOnKing && canMoveWithoutCheck) {
         return true;
       }
     }
     return false;
   }
 
-  canAttack(target: Cell): boolean {
+  canAttack(target: Square): boolean {
     if (!super.canAttack(target))
       return false;
 
-    if (this.cell.isEmptyVertical(target, this.color) || this.cell.isEmptyHorizontal(target, this.color) || this.cell.isEmptyDiagonal(target, this.color)) {
-      return this.cell.isPathClear(target, this.color);
+    if (this.square.isEmptyVertical(target, this.color) || this.square.isEmptyHorizontal(target, this.color) || this.square.isEmptyDiagonal(target, this.color)) {
+      return this.square.isPathClear(target, this.color);
     }
 
     return false;
   }
 
   getCopy(): Queen {
-    const copy = new Queen(this.color, this.cell);
+    const copy = new Queen(this.color, this.square);
     copy.isItPromotionFigure = this.isItPromotionFigure;
     return copy;
   }

@@ -108,7 +108,7 @@
   border-radius: 0;
 }
 
-.over-available-cell::before {
+.over-available-square::before {
   content: '';
   position: absolute;
   width: 64px;

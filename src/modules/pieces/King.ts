@@ -1,4 +1,4 @@
-import { Cell } from "../board/Square";
+import { Square } from "../board/Square";
 import { Colors } from "../Colors";
 import { Figure, FigureNames } from "./Piece";
 import blackLogo from '../../assets/black_king.png';
@@ -8,52 +8,52 @@ export class King extends Figure {
   hasMoved: boolean;
   castleMove: boolean;
 
-  constructor(color: Colors, cell: Cell) {
-    super(color, cell);
+  constructor(color: Colors, square: Square) {
+    super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.KING;
     this.hasMoved = false;
     this.castleMove = false;
   }
 
-  canMove(target: Cell): boolean {
+  canMove(target: Square): boolean {
     if (!super.canMove(target))
       return false;
 
-    const dx = Math.abs(target.x - this.cell.x);
-    const dy = Math.abs(target.y - this.cell.y);
-    const x = target.x - this.cell.x;
+    const dx = Math.abs(target.x - this.square.x);
+    const dy = Math.abs(target.y - this.square.y);
+    const x = target.x - this.square.x;
 
-    const standardMoves = target.isEmpty(true, this.color) && !this.cell.board.isUnderAttack(target, this.color);
+    const standardMoves = target.isEmpty(true, this.color) && !this.square.board.isUnderAttack(target, this.color);
 
-    const whiteRookShortCastle = this.cell.board.findRook(this.color, 7, 7);
-    const whiteRookLongCastle = this.cell.board.findRook(this.color, 0, 7);
-    const blackRookShortCastle = this.cell.board.findRook(this.color, 7, 0);
-    const blackRookLongCastle = this.cell.board.findRook(this.color, 0, 0);
+    const whiteRookShortCastle = this.square.board.findRook(this.color, 7, 7);
+    const whiteRookLongCastle = this.square.board.findRook(this.color, 0, 7);
+    const blackRookShortCastle = this.square.board.findRook(this.color, 7, 0);
+    const blackRookLongCastle = this.square.board.findRook(this.color, 0, 0);
 
     const whiteShortCastleMove = (x === 2 && dy === 0) && !this.hasMoved
-      && whiteRookShortCastle ? this.cell.isPathClear(whiteRookShortCastle?.cell, this.color) : false;
+      && whiteRookShortCastle ? this.square.isPathClear(whiteRookShortCastle?.square, this.color) : false;
     const blackShortCastleMove = (x === 2 && dy === 0) && !this.hasMoved
-      && blackRookShortCastle ? this.cell.isPathClear(blackRookShortCastle?.cell, this.color) : false;
+      && blackRookShortCastle ? this.square.isPathClear(blackRookShortCastle?.square, this.color) : false;
     const whiteLongCastleMove = (x === -2 && dy === 0) && !this.hasMoved
-      && whiteRookLongCastle ? this.cell.isPathClear(whiteRookLongCastle?.cell, this.color) : false;
+      && whiteRookLongCastle ? this.square.isPathClear(whiteRookLongCastle?.square, this.color) : false;
     const blackLongCastleMove = (x === -2 && dy === 0) && !this.hasMoved
-      && blackRookLongCastle ? this.cell.isPathClear(blackRookLongCastle?.cell, this.color) : false;
+      && blackRookLongCastle ? this.square.isPathClear(blackRookLongCastle?.square, this.color) : false;
 
     if (this.color === Colors.WHITE) {
-      const isWhiteShortCastlePossibleCell = this.cell.board.findCellForKingCastle(5, 7);
-      const isWhiteLongCastlePossibleCellOne = this.cell.board.findCellForKingCastle(2, 7);
-      const isWhiteLongCastlePossibleCellTwo = this.cell.board.findCellForKingCastle(3, 7);
+      const isWhiteShortCastlePossibleSquare = this.square.board.findSquareForKingCastle(5, 7);
+      const isWhiteLongCastlePossibleSquareOne = this.square.board.findSquareForKingCastle(2, 7);
+      const isWhiteLongCastlePossibleSquareTwo = this.square.board.findSquareForKingCastle(3, 7);
 
-      if (isWhiteShortCastlePossibleCell && isWhiteLongCastlePossibleCellOne && isWhiteLongCastlePossibleCellTwo) {
+      if (isWhiteShortCastlePossibleSquare && isWhiteLongCastlePossibleSquareOne && isWhiteLongCastlePossibleSquareTwo) {
         if ((dx === 1 && dy <= 1) || (dy === 1 && dx <= 1)
-          || whiteShortCastleMove && whiteRookShortCastle?.shortCastle && !this.cell.isKingInCheck
-          && !this.cell.board.isUnderAttack(isWhiteShortCastlePossibleCell, this.color)
-          || whiteLongCastleMove && whiteRookLongCastle?.longCastle && !this.cell.isKingInCheck
-          && !this.cell.board.isUnderAttack(isWhiteLongCastlePossibleCellOne, this.color)
-          && !this.cell.board.isUnderAttack(isWhiteLongCastlePossibleCellTwo, this.color)) {
-          if (standardMoves || this.cell.isEnemy(target)) {
-            const isKingUnderAttackAfterMove = !this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
+          || whiteShortCastleMove && whiteRookShortCastle?.shortCastle && !this.square.isKingInCheck
+          && !this.square.board.isUnderAttack(isWhiteShortCastlePossibleSquare, this.color)
+          || whiteLongCastleMove && whiteRookLongCastle?.longCastle && !this.square.isKingInCheck
+          && !this.square.board.isUnderAttack(isWhiteLongCastlePossibleSquareOne, this.color)
+          && !this.square.board.isUnderAttack(isWhiteLongCastlePossibleSquareTwo, this.color)) {
+          if (standardMoves || this.square.isEnemy(target)) {
+            const isKingUnderAttackAfterMove = !this.square.board.canMoveWithoutCheck(this.square, target, this.color);
             if (isKingUnderAttackAfterMove) {
               return false; // If the King is under check, the move is not possible
             }
@@ -62,19 +62,19 @@ export class King extends Figure {
         }
       }
     } else {
-      const isBlackShortCastlePossibleCell = this.cell.board.findCellForKingCastle(5, 0);
-      const isBlackLongCastlePossibleCellOne = this.cell.board.findCellForKingCastle(2, 0);
-      const isBlackLongCastlePossibleCellTwo = this.cell.board.findCellForKingCastle(3, 0);
+      const isBlackShortCastlePossibleSquare = this.square.board.findSquareForKingCastle(5, 0);
+      const isBlackLongCastlePossibleSquareOne = this.square.board.findSquareForKingCastle(2, 0);
+      const isBlackLongCastlePossibleSquareTwo = this.square.board.findSquareForKingCastle(3, 0);
 
-      if (isBlackShortCastlePossibleCell && isBlackLongCastlePossibleCellOne && isBlackLongCastlePossibleCellTwo) {
+      if (isBlackShortCastlePossibleSquare && isBlackLongCastlePossibleSquareOne && isBlackLongCastlePossibleSquareTwo) {
         if ((dx === 1 && dy <= 1) || (dy === 1 && dx <= 1)
-          || blackShortCastleMove && blackRookShortCastle?.shortCastle && !this.cell.isKingInCheck
-          && !this.cell.board.isUnderAttack(isBlackShortCastlePossibleCell, this.color)
-          || blackLongCastleMove && blackRookLongCastle?.longCastle && !this.cell.isKingInCheck
-          && !this.cell.board.isUnderAttack(isBlackLongCastlePossibleCellOne, this.color)
-          && !this.cell.board.isUnderAttack(isBlackLongCastlePossibleCellTwo, this.color)) {
-          if (standardMoves || this.cell.isEnemy(target)) {
-            const isKingUnderAttackAfterMove = !this.cell.board.canMoveWithoutCheck(this.cell, target, this.color);
+          || blackShortCastleMove && blackRookShortCastle?.shortCastle && !this.square.isKingInCheck
+          && !this.square.board.isUnderAttack(isBlackShortCastlePossibleSquare, this.color)
+          || blackLongCastleMove && blackRookLongCastle?.longCastle && !this.square.isKingInCheck
+          && !this.square.board.isUnderAttack(isBlackLongCastlePossibleSquareOne, this.color)
+          && !this.square.board.isUnderAttack(isBlackLongCastlePossibleSquareTwo, this.color)) {
+          if (standardMoves || this.square.isEnemy(target)) {
+            const isKingUnderAttackAfterMove = !this.square.board.canMoveWithoutCheck(this.square, target, this.color);
             if (isKingUnderAttackAfterMove) {
               return false; // If the King is under check, the move is not possible
             }
@@ -87,61 +87,61 @@ export class King extends Figure {
     return false;
   }
 
-  moveFigure(target: Cell): void {
+  moveFigure(target: Square): void {
     // Do the basic figure movement
     super.moveFigure(target);
 
-    const whiteRookShortCastle = this.cell.board.findRook(this.color, 7, 7);
-    const whiteRookLongCastle = this.cell.board.findRook(this.color, 0, 7);
-    const blackRookShortCastle = this.cell.board.findRook(this.color, 7, 0);
-    const blackRookLongCastle = this.cell.board.findRook(this.color, 0, 0);
+    const whiteRookShortCastle = this.square.board.findRook(this.color, 7, 7);
+    const whiteRookLongCastle = this.square.board.findRook(this.color, 0, 7);
+    const blackRookShortCastle = this.square.board.findRook(this.color, 7, 0);
+    const blackRookLongCastle = this.square.board.findRook(this.color, 0, 0);
 
-    let cellForRookCastle;
+    let squareForRookCastle;
 
     if (this.color === Colors.WHITE) {
       if (target.x === 6 && target.y === 7 && !this.hasMoved && whiteRookShortCastle?.shortCastle) {
-        cellForRookCastle = this.cell.board.findCellForRookCastle(5, 7);
-        if (cellForRookCastle) {
+        squareForRookCastle = this.square.board.findSquareForRookCastle(5, 7);
+        if (squareForRookCastle) {
           this.castleMove = true;
           whiteRookShortCastle.castleMove = true;
-          whiteRookShortCastle.cell.moveFigure(cellForRookCastle);
+          whiteRookShortCastle.square.moveFigure(squareForRookCastle);
         }
       } else if (target.x === 2 && target.y === 7 && !this.hasMoved && whiteRookLongCastle?.longCastle) {
-        cellForRookCastle = this.cell.board.findCellForRookCastle(3, 7);
-        if (cellForRookCastle) {
+        squareForRookCastle = this.square.board.findSquareForRookCastle(3, 7);
+        if (squareForRookCastle) {
           this.castleMove = true;
           whiteRookLongCastle.castleMove = true;
-          whiteRookLongCastle.cell.moveFigure(cellForRookCastle);
+          whiteRookLongCastle.square.moveFigure(squareForRookCastle);
         }
       }
     } else {
       if (target.x === 6 && target.y === 0 && !this.hasMoved && blackRookShortCastle?.shortCastle) {
-        cellForRookCastle = this.cell.board.findCellForRookCastle(5, 0);
-        if (cellForRookCastle) {
+        squareForRookCastle = this.square.board.findSquareForRookCastle(5, 0);
+        if (squareForRookCastle) {
           this.castleMove = true;
           blackRookShortCastle.castleMove = true;
-          blackRookShortCastle.cell.moveFigure(cellForRookCastle);
+          blackRookShortCastle.square.moveFigure(squareForRookCastle);
         }
       } else if (target.x === 2 && target.y === 0 && !this.hasMoved && blackRookLongCastle?.longCastle) {
-        cellForRookCastle = this.cell.board.findCellForRookCastle(3, 0);
-        if (cellForRookCastle) {
+        squareForRookCastle = this.square.board.findSquareForRookCastle(3, 0);
+        if (squareForRookCastle) {
           this.castleMove = true;
           blackRookLongCastle.castleMove = true;
-          blackRookLongCastle.cell.moveFigure(cellForRookCastle);
+          blackRookLongCastle.square.moveFigure(squareForRookCastle);
         }
       }
     }
   }
 
-  canAttack(target: Cell): boolean {
-    const dx = Math.abs(target.x - this.cell.x);
-    const dy = Math.abs(target.y - this.cell.y);
+  canAttack(target: Square): boolean {
+    const dx = Math.abs(target.x - this.square.x);
+    const dy = Math.abs(target.y - this.square.y);
 
     return dx <= 1 && dy <= 1;
   }
 
   getCopy(): King {
-    const copy = new King(this.color, this.cell);
+    const copy = new King(this.color, this.square);
     copy.hasMoved = this.hasMoved;
     copy.castleMove = this.castleMove;
     return copy;
