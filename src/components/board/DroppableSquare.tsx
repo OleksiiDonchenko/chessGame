@@ -38,24 +38,24 @@ const DroppableSquare: FC<DroppableSquareProps> = ({ square, id, children, color
       className={[
         'square',
         color,
-        selected && square.figure ? 'selected' : '',
-        isAvailable && !square.figure ? 'available' : '',
+        selected && square.piece ? 'selected' : '',
+        isAvailable && !square.piece ? 'available' : '',
         isAvailable && isOver ? 'over-available-square' : '',
-        isAvailable && square.figure ? 'attacked' : '',
+        isAvailable && square.piece ? 'attacked' : '',
         isKingInCheck ? 'check' : '',
         isVictory ? 'victoriousKing' : '',
-        isCheckmate && square.figure?.color === 'white' ? 'defeatedWhiteKing' : isCheckmate && square.figure?.color === 'black' ? 'defeatedBlackKing' : '',
-        losingByTime && square.figure?.color === 'white' ? 'losingByTime' : losingByTime && square.figure?.color === 'black' ? 'losingByTime' : '',
+        isCheckmate && square.piece?.color === 'white' ? 'defeatedWhiteKing' : isCheckmate && square.piece?.color === 'black' ? 'defeatedBlackKing' : '',
+        losingByTime && square.piece?.color === 'white' ? 'losingByTime' : losingByTime && square.piece?.color === 'black' ? 'losingByTime' : '',
         isStalemate ? 'stalemate' : '',
         isDraw ? 'stalemate' : '',
         resign ? 'resign' : '',
       ].filter(Boolean).join(' ')}
       onMouseDown={() => mouseDown(square)}
     >
-      {square.figure && square.figure.logo && active &&
+      {square.piece && square.piece.logo && active &&
         <img
           className='background-piece'
-          src={square.figure.logo}
+          src={square.piece.logo}
           alt='background-piece'
         />}
       {coordinates.x === 7 && (

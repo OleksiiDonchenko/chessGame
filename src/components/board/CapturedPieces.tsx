@@ -1,11 +1,11 @@
 import { FC, useEffect } from 'react';
-import { Figure } from '../../modules/pieces/Piece';
+import { Piece } from '../../modules/pieces/Piece';
 import { Board } from '../../modules/board/Board';
 
 interface CapturedPiecesProps {
   board: Board;
   color: string;
-  figures: Figure[];
+  pieces: Piece[];
   whoLeads: number;
   setWholeads: (value: number) => void;
   whitePoints: number;
@@ -14,10 +14,10 @@ interface CapturedPiecesProps {
   setBlackPoints: (value: number) => void;
 }
 
-const CapturedPieces: FC<CapturedPiecesProps> = ({ board, color, figures, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
-  let sortedFigures: Figure[] = [];
-  if (figures.length > 0) {
-    sortedFigures = figures.sort((a, b) => {
+const CapturedPieces: FC<CapturedPiecesProps> = ({ board, color, pieces, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
+  let sortedPieces: Piece[] = [];
+  if (pieces.length > 0) {
+    sortedPieces = pieces.sort((a, b) => {
       if (a.value && b.value) {
         return a.value - b.value;
       }
@@ -28,35 +28,35 @@ const CapturedPieces: FC<CapturedPiecesProps> = ({ board, color, figures, whoLea
   const arrWhitePoints: number[] = [];
   const arrBlackPoints: number[] = [];
 
-  const arrPromotionWhiteFiguresValue: number[] = board.whitePromotionFigureValues;
-  const arrPromotionBlackFiguresValue: number[] = board.blackPromotionFigureValues;
+  const arrPromotionWhitePiecesValue: number[] = board.whitePromotionPieceValues;
+  const arrPromotionBlackPiecesValue: number[] = board.blackPromotionPieceValues;
 
   useEffect(() => {
     if (color === 'white') {
-      sortedFigures.forEach(figure => {
-        arrWhitePoints.push(figure.value);
+      sortedPieces.forEach(piece => {
+        arrWhitePoints.push(piece.value);
       })
-      setWhitePoints(Math.floor(arrWhitePoints.reduce((acc, curVal) => acc + curVal, 0) + arrPromotionBlackFiguresValue.reduce((acc, curVal) => acc + curVal, 0)));
+      setWhitePoints(Math.floor(arrWhitePoints.reduce((acc, curVal) => acc + curVal, 0) + arrPromotionBlackPiecesValue.reduce((acc, curVal) => acc + curVal, 0)));
       setWholeads(whitePoints - blackPoints);
     } else {
-      sortedFigures.forEach(figure => {
-        arrBlackPoints.push(figure.value);
+      sortedPieces.forEach(piece => {
+        arrBlackPoints.push(piece.value);
       })
-      setBlackPoints(Math.floor(arrBlackPoints.reduce((acc, curVal) => acc + curVal, 0) + arrPromotionWhiteFiguresValue.reduce((acc, curVal) => acc + curVal, 0)));
+      setBlackPoints(Math.floor(arrBlackPoints.reduce((acc, curVal) => acc + curVal, 0) + arrPromotionWhitePiecesValue.reduce((acc, curVal) => acc + curVal, 0)));
       setWholeads(whitePoints - blackPoints);
     }
-  }, [sortedFigures, arrWhitePoints, arrBlackPoints, arrPromotionWhiteFiguresValue, arrPromotionBlackFiguresValue])
+  }, [sortedPieces, arrWhitePoints, arrBlackPoints, arrPromotionWhitePiecesValue, arrPromotionBlackPiecesValue])
 
   return (
     <div className='captured'>
-      {sortedFigures.map(figure =>
-        <div key={figure.id}>
-          {figure.logo && <img width={20} height={20} src={figure.logo} />}
+      {sortedPieces.map(piece =>
+        <div key={piece.id}>
+          {piece.logo && <img width={20} height={20} src={piece.logo} />}
         </div>
       )}
       {whoLeads !== 0 ?
-        (sortedFigures.length > 0 && sortedFigures[0].color === 'white' && whoLeads > 0 ? `+${whoLeads}` : '')
-        || (sortedFigures.length > 0 && sortedFigures[0].color === 'black' && whoLeads < 0 ? `+${Math.abs(whoLeads)}` : '') : ''}
+        (sortedPieces.length > 0 && sortedPieces[0].color === 'white' && whoLeads > 0 ? `+${whoLeads}` : '')
+        || (sortedPieces.length > 0 && sortedPieces[0].color === 'black' && whoLeads < 0 ? `+${Math.abs(whoLeads)}` : '') : ''}
     </div>
   );
 };

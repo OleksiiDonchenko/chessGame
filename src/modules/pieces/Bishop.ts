@@ -1,18 +1,18 @@
 import { Square } from "../board/Square";
 import { Colors } from "../Colors";
-import { Figure, FigureNames } from "./Piece";
+import { Piece, PieceNames } from "./Piece";
 import blackLogo from '../../assets/black_bishop.png';
 import whiteLogo from '../../assets/white_bishop.png';
 
-export class Bishop extends Figure {
-  isItPromotionFigure: boolean;
+export class Bishop extends Piece {
+  isItPromotionPiece: boolean;
 
   constructor(color: Colors, square: Square) {
     super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
-    this.name = FigureNames.BISHOP;
+    this.name = PieceNames.BISHOP;
     this.value = 3.2;
-    this.isItPromotionFigure = false;
+    this.isItPromotionPiece = false;
   }
 
   canMove(target: Square): boolean {
@@ -42,7 +42,7 @@ export class Bishop extends Figure {
 
   getCopy(): Bishop {
     const copy = new Bishop(this.color, this.square);
-    copy.isItPromotionFigure = this.isItPromotionFigure;
+    copy.isItPromotionPiece = this.isItPromotionPiece;
     return copy;
   }
 }

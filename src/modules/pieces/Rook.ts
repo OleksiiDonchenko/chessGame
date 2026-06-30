@@ -1,26 +1,26 @@
-import { Figure, FigureNames } from "./Piece"
+import { Piece, PieceNames } from "./Piece"
 import { Colors } from "../Colors";
 import { Square } from "../board/Square";
 import blackLogo from '../../assets/black_rook.png';
 import whiteLogo from '../../assets/white_rook.png';
 
-export class Rook extends Figure {
+export class Rook extends Piece {
   longCastle: boolean;
   shortCastle: boolean;
   firstMove: boolean;
   castleMove: boolean;
-  isItPromotionFigure: boolean;
+  isItPromotionPiece: boolean;
 
   constructor(color: Colors, square: Square) {
     super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
-    this.name = FigureNames.ROOK;
+    this.name = PieceNames.ROOK;
     this.value = 5;
     this.longCastle = true;
     this.shortCastle = true;
     this.firstMove = false;
     this.castleMove = false;
-    this.isItPromotionFigure = false;
+    this.isItPromotionPiece = false;
   }
 
   canMove(target: Square): boolean {
@@ -43,9 +43,9 @@ export class Rook extends Figure {
     return false;
   }
 
-  moveFigure(target: Square): void {
-    // Do the basic figure movement
-    super.moveFigure(target);
+  movePiece(target: Square): void {
+    // Do the basic piece movement
+    super.movePiece(target);
 
     if (this.square.x === 0 && this.square.y === 0 && this.color === Colors.BLACK
       || this.square.x === 0 && this.square.y === 7 && this.color === Colors.WHITE) {
@@ -72,7 +72,7 @@ export class Rook extends Figure {
     copy.shortCastle = this.shortCastle;
     copy.firstMove = this.firstMove;
     copy.castleMove = this.castleMove
-    copy.isItPromotionFigure = this.isItPromotionFigure;
+    copy.isItPromotionPiece = this.isItPromotionPiece;
     return copy;
   }
 }

@@ -11,7 +11,7 @@ import blackBishop from '../../assets/black_bishop.png';
 import whiteBishop from '../../assets/white_bishop.png';
 
 interface PromotionModalProps {
-  onSelect: (figure: string) => void;
+  onSelect: (piece: string) => void;
   x: number;
   color: Colors | undefined;
   square: Square;
@@ -19,7 +19,7 @@ interface PromotionModalProps {
 
 const PromotionModal: FC<PromotionModalProps> = ({ onSelect, x, color, square }) => {
 
-  const figures = ['Queen', 'Knight', 'Rook', 'Bishop'];
+  const pieces = ['Queen', 'Knight', 'Rook', 'Bishop'];
   const squareSize = 64;
 
   return (
@@ -29,15 +29,15 @@ const PromotionModal: FC<PromotionModalProps> = ({ onSelect, x, color, square })
         top: color === 'black' ? `${4 * squareSize}px` : 0,
         flexDirection: color === 'black' ? 'column-reverse' : 'column',
       }}>
-      {figures.map((figure, i) => (
-        <button className='square' key={i} onClick={() => onSelect(figure)}>
-          {square.figure?.logo && figure === 'Queen'
+      {pieces.map((piece, i) => (
+        <button className='square' key={i} onClick={() => onSelect(piece)}>
+          {square.piece?.logo && piece === 'Queen'
             && <img src={color === Colors.BLACK ? blackQueen : whiteQueen} alt="" />}
-          {square.figure?.logo && figure === 'Knight'
+          {square.piece?.logo && piece === 'Knight'
             && <img src={color === Colors.BLACK ? blackKnight : whiteKnight} alt="" />}
-          {square.figure?.logo && figure === 'Rook'
+          {square.piece?.logo && piece === 'Rook'
             && <img src={color === Colors.BLACK ? blackRook : whiteRook} alt="" />}
-          {square.figure?.logo && figure === 'Bishop'
+          {square.piece?.logo && piece === 'Bishop'
             && <img src={color === Colors.BLACK ? blackBishop : whiteBishop} alt="" />}
         </button>
       ))}

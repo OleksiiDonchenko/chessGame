@@ -1,7 +1,7 @@
 import { Square } from "./Square";
 import { Colors } from "../Colors";
 import { Bishop } from "../pieces/Bishop";
-import { Figure } from "../pieces/Piece";
+import { Piece } from "../pieces/Piece";
 import { King } from "../pieces/King";
 import { Knight } from "../pieces/Knight";
 import { Pawn } from "../pieces/Pawn";
@@ -14,10 +14,10 @@ import castleSound from "../../assets/sounds/castle.mp3";
 
 export class Board {
   squares: Square[][] = [];
-  lostBlackFigures: Figure[] = [];
-  lostWhiteFigures: Figure[] = [];
-  whitePromotionFigureValues: number[] = [];
-  blackPromotionFigureValues: number[] = [];
+  lostBlackPieces: Piece[] = [];
+  lostWhitePieces: Piece[] = [];
+  whitePromotionPieceValues: number[] = [];
+  blackPromotionPieceValues: number[] = [];
   enPassantTarget: Square | null = null;
 
   public initSquares() {
@@ -37,10 +37,10 @@ export class Board {
   public getCopyBoard(): Board {
     const newBoard = new Board();
     newBoard.squares = this.squares;
-    newBoard.lostBlackFigures = this.lostBlackFigures;
-    newBoard.lostWhiteFigures = this.lostWhiteFigures;
-    newBoard.whitePromotionFigureValues = this.whitePromotionFigureValues;
-    newBoard.blackPromotionFigureValues = this.blackPromotionFigureValues;
+    newBoard.lostBlackPieces = this.lostBlackPieces;
+    newBoard.lostWhitePieces = this.lostWhitePieces;
+    newBoard.whitePromotionPieceValues = this.whitePromotionPieceValues;
+    newBoard.blackPromotionPieceValues = this.blackPromotionPieceValues;
     return newBoard;
   }
 
@@ -49,15 +49,15 @@ export class Board {
     newBoard.squares = this.squares.map(row => row.map(square => square.getCopy()));
     newBoard.squares.forEach(row => row.forEach(square => {
       square.board = newBoard;
-      if (square.figure) {
-        square.figure = square.figure.getCopy();
-        square.figure.square = square;
+      if (square.piece) {
+        square.piece = square.piece.getCopy();
+        square.piece.square = square;
       }
     }));
-    newBoard.lostBlackFigures = [...this.lostBlackFigures];
-    newBoard.lostWhiteFigures = [...this.lostWhiteFigures];
-    newBoard.whitePromotionFigureValues = [...this.whitePromotionFigureValues];
-    newBoard.blackPromotionFigureValues = [...this.blackPromotionFigureValues];
+    newBoard.lostBlackPieces = [...this.lostBlackPieces];
+    newBoard.lostWhitePieces = [...this.lostWhitePieces];
+    newBoard.whitePromotionPieceValues = [...this.whitePromotionPieceValues];
+    newBoard.blackPromotionPieceValues = [...this.blackPromotionPieceValues];
 
     const rows = this.squares;
     for (let i = 0; i < rows.length; i++) {
@@ -83,7 +83,7 @@ export class Board {
       const row = this.squares[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        target.available = !!selectedSquare?.figure?.canMove(target);
+        target.available = !!selectedSquare?.piece?.canMove(target);
       }
     }
   }
@@ -109,7 +109,7 @@ export class Board {
         const row = this.squares[i];
         for (let j = 0; j < row.length; j++) {
           const target = row[j];
-          if (kingSquare.figure?.canMove(target)) {
+          if (kingSquare.piece?.canMove(target)) {
             squaresForEscape.push(target);
           }
         }
@@ -124,22 +124,22 @@ export class Board {
 
   public canBlockOrCapture(color: Colors): boolean {
     const squaresForBlockOrCapture: Square[] = [];
-    const allies: Figure[] = [];
+    const allies: Piece[] = [];
 
     for (let i = 0; i < this.squares.length; i++) {
       const row = this.squares[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        if (target.figure?.color === color && target.figure.name !== 'King') {
-          allies.push(target.figure);
+        if (target.piece?.color === color && target.piece.name !== 'King') {
+          allies.push(target.piece);
         }
       }
     }
 
-    allies.forEach(figure => {
+    allies.forEach(piece => {
       this.squares.forEach(row => {
         row.forEach(target => {
-          if (figure.canMove(target)) {
+          if (piece.canMove(target)) {
             squaresForBlockOrCapture.push(target);
           }
         })
@@ -175,7 +175,7 @@ export class Board {
         const row = this.squares[i];
         for (let j = 0; j < row.length; j++) {
           const target = row[j];
-          if (kingSquare.figure?.canMove(target)) {
+          if (kingSquare.piece?.canMove(target)) {
             squaresForMove.push(target);
           }
         }
@@ -190,22 +190,22 @@ export class Board {
 
   public canAlliesMakeMoves(color: Colors): boolean {
     const squaresForMoves: Square[] = [];
-    const allies: Figure[] = [];
+    const allies: Piece[] = [];
 
     for (let i = 0; i < this.squares.length; i++) {
       const row = this.squares[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        if (target.figure?.color === color && target.figure.name !== 'King') {
-          allies.push(target.figure);
+        if (target.piece?.color === color && target.piece.name !== 'King') {
+          allies.push(target.piece);
         }
       }
     }
 
-    allies.forEach(figure => {
+    allies.forEach(piece => {
       this.squares.forEach(row => {
         row.forEach(target => {
-          if (figure.canMove(target)) {
+          if (piece.canMove(target)) {
             squaresForMoves.push(target);
           }
         })
@@ -218,15 +218,15 @@ export class Board {
     return true;
   }
 
-  public doAlliedFiguresExist(color: Colors): boolean {
-    const allies: Figure[] = [];
+  public doAlliedPiecesExist(color: Colors): boolean {
+    const allies: Piece[] = [];
 
     for (let i = 0; i < this.squares.length; i++) {
       const row = this.squares[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        if (target.figure?.color === color && target.figure.name !== 'King') {
-          allies.push(target.figure);
+        if (target.piece?.color === color && target.piece.name !== 'King') {
+          allies.push(target.piece);
         }
       }
     }
@@ -240,65 +240,65 @@ export class Board {
   public isInsufficientMaterialForCheckmate(color: Colors) {
     const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
-    const allies: Figure[] = [];
+    const allies: Piece[] = [];
     let countBishops = 0;
     let countKnights = 0;
-    let countOtherFigures = 0;
+    let countOtherPieces = 0;
 
     for (let i = 0; i < this.squares.length; i++) {
       const row = this.squares[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        if (target.figure?.color === color && target.figure.name !== 'King') {
-          allies.push(target.figure);
+        if (target.piece?.color === color && target.piece.name !== 'King') {
+          allies.push(target.piece);
         }
       }
     }
 
-    allies.forEach(figure => {
-      if (figure instanceof Bishop) {
+    allies.forEach(piece => {
+      if (piece instanceof Bishop) {
         countBishops += 1;
-      } else if (figure instanceof Knight) {
+      } else if (piece instanceof Knight) {
         countKnights += 1;
-      } else if (figure.name !== 'Bishop' && figure.name !== 'Knight') {
-        countOtherFigures += 1;
+      } else if (piece.name !== 'Bishop' && piece.name !== 'Knight') {
+        countOtherPieces += 1;
       }
     })
 
-    const enemyAllies: Figure[] = [];
+    const enemyAllies: Piece[] = [];
     let countEnemyBishops = 0;
     let countEnemyKnights = 0;
-    let countEnemyOtherFigures = 0;
+    let countEnemyOtherPieces = 0;
 
     for (let i = 0; i < this.squares.length; i++) {
       const row = this.squares[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        if (target.figure?.color === enemyColor && target.figure.name !== 'King') {
-          enemyAllies.push(target.figure);
+        if (target.piece?.color === enemyColor && target.piece.name !== 'King') {
+          enemyAllies.push(target.piece);
         }
       }
     }
 
-    enemyAllies.forEach(figure => {
-      if (figure instanceof Bishop) {
+    enemyAllies.forEach(piece => {
+      if (piece instanceof Bishop) {
         countEnemyBishops += 1;
-      } else if (figure instanceof Knight) {
+      } else if (piece instanceof Knight) {
         countEnemyKnights += 1;
-      } else if (figure.name !== 'Bishop' && figure.name !== 'Knight') {
-        countEnemyOtherFigures += 1;
+      } else if (piece.name !== 'Bishop' && piece.name !== 'Knight') {
+        countEnemyOtherPieces += 1;
       }
     })
 
     if (allies.length === 0 && enemyAllies.length === 0
-      || (countKnights === 1 && countBishops === 0 && countOtherFigures === 0)
-      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
-      || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
-      && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherFigures === 0)
-      || (countKnights === 0 && countBishops === 1 && countOtherFigures === 0)
-      && (countEnemyKnights === 0 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)
-      || (countKnights === 1 && countBishops === 0 && countOtherFigures === 0)
-      && (countEnemyKnights === 0 && countEnemyBishops === 0 && countEnemyOtherFigures === 0)) {
+      || (countKnights === 1 && countBishops === 0 && countOtherPieces === 0)
+      && (countEnemyKnights === 1 && countEnemyBishops === 0 && countEnemyOtherPieces === 0)
+      || (countKnights === 0 && countBishops === 1 && countOtherPieces === 0)
+      && (countEnemyKnights === 0 && countEnemyBishops === 1 && countEnemyOtherPieces === 0)
+      || (countKnights === 0 && countBishops === 1 && countOtherPieces === 0)
+      && (countEnemyKnights === 0 && countEnemyBishops === 0 && countEnemyOtherPieces === 0)
+      || (countKnights === 1 && countBishops === 0 && countOtherPieces === 0)
+      && (countEnemyKnights === 0 && countEnemyBishops === 0 && countEnemyOtherPieces === 0)) {
       return true;
     }
     return false;
@@ -365,8 +365,8 @@ export class Board {
   public isUnderAttack(square: Square, color: Colors): boolean {
     for (let row of this.squares) {
       for (let currentSquare of row) {
-        const figure = currentSquare.figure;
-        if (figure && figure.color !== color && figure.canAttack(square)) {
+        const piece = currentSquare.piece;
+        if (piece && piece.color !== color && piece.canAttack(square)) {
           return true;
         }
       }
@@ -377,7 +377,7 @@ export class Board {
   public findKing(color: Colors): Square | null {
     for (let row of this.squares) {
       for (let square of row) {
-        if (square.figure instanceof King && square.figure.color === color) {
+        if (square.piece instanceof King && square.piece.color === color) {
           return square;
         }
       }
@@ -401,8 +401,8 @@ export class Board {
     const attackerSquares: Square[] = [];
     for (let row of this.squares) {
       for (let currentSquare of row) {
-        const figure = currentSquare.figure;
-        if (figure && figure.color !== color && figure.canAttack(kingSquare)) {
+        const piece = currentSquare.piece;
+        if (piece && piece.color !== color && piece.canAttack(kingSquare)) {
           attackerSquares.push(currentSquare);
         }
       }
@@ -429,8 +429,8 @@ export class Board {
     const attackerSquares: Square[] = [];
     for (let row of this.squares) {
       for (let currentSquare of row) {
-        const figure = currentSquare.figure;
-        if (figure && figure.color !== color && figure.canAttack(kingSquare)) {
+        const piece = currentSquare.piece;
+        if (piece && piece.color !== color && piece.canAttack(kingSquare)) {
           attackerSquares.push(currentSquare);
         }
       }
@@ -442,10 +442,10 @@ export class Board {
     }
 
     const attackerSquare = attackerSquares[0];
-    const attackingFigure = attackerSquare.figure!;
+    const attackingPiece = attackerSquare.piece!;
 
     // If it's check from the knight, the only way to block it is to take the knight
-    if (attackingFigure instanceof Knight) {
+    if (attackingPiece instanceof Knight) {
       return square === attackerSquare;
     }
 
@@ -469,33 +469,33 @@ export class Board {
   }
 
   public canMoveWithoutCheck(fromSquare: Square, toSquare: Square, color: Colors): boolean {
-    const originalFigure = fromSquare.figure; // Save the figure, which was on the square
-    const originalEnemyFigure = toSquare.figure;
+    const originalPiece = fromSquare.piece; // Save the piece, which was on the square
+    const originalEnemyPiece = toSquare.piece;
 
-    if (toSquare.figure && toSquare.figure.color !== color) {
-      // Moving our figure
-      fromSquare.figure = null;
-      toSquare.figure = originalFigure;
+    if (toSquare.piece && toSquare.piece.color !== color) {
+      // Moving our piece
+      fromSquare.piece = null;
+      toSquare.piece = originalPiece;
 
       // Checking, is King safe?
       const isKingSafe = !this.isKingInCheck(color);
 
       // And put everything back in place
-      toSquare.figure = originalEnemyFigure;
-      fromSquare.figure = originalFigure;
+      toSquare.piece = originalEnemyPiece;
+      fromSquare.piece = originalPiece;
 
       return isKingSafe;
     } else {
-      // Moving our figure
-      fromSquare.figure = null;
-      toSquare.figure = originalFigure;
+      // Moving our piece
+      fromSquare.piece = null;
+      toSquare.piece = originalPiece;
 
       // Checking, is King safe?
       const isKingSafe = !this.isKingInCheck(color);
 
       // And put everything back in place
-      toSquare.figure = null;
-      fromSquare.figure = originalFigure;
+      toSquare.piece = null;
+      fromSquare.piece = originalPiece;
 
       return isKingSafe;
     }
@@ -504,7 +504,7 @@ export class Board {
   public findRook(color: Colors, x: number, y: number): Rook | null {
     for (let row of this.squares) {
       for (let square of row) {
-        const rook = square.figure;
+        const rook = square.piece;
         if (square.x === x && square.y === y && rook instanceof Rook && rook.color === color) {
           return rook;
         }
@@ -535,7 +535,7 @@ export class Board {
     return null;
   }
 
-  public createNewFigure(type: string, color: Colors, square: Square) {
+  public createNewPiece(type: string, color: Colors, square: Square) {
     switch (type) {
       case 'Queen':
         return new Queen(color, square);
@@ -569,19 +569,19 @@ export class Board {
     }
   }
 
-  public promotionFigureValues(color: Colors) {
+  public promotionPieceValues(color: Colors) {
     const arr = [];
     for (let row of this.squares) {
       for (let square of row) {
-        if (square.figure && square.figure.isItPromotionFigure) {
-          arr.push(square.figure.value);
+        if (square.piece && square.piece.isItPromotionPiece) {
+          arr.push(square.piece.value);
         }
       }
     }
     if (color === Colors.WHITE) {
-      this.whitePromotionFigureValues = arr;
+      this.whitePromotionPieceValues = arr;
     } else {
-      this.blackPromotionFigureValues = arr;
+      this.blackPromotionPieceValues = arr;
     }
   }
 
@@ -628,7 +628,7 @@ export class Board {
     }
   }
 
-  public addFigures() {
+  public addPieces() {
     this.addKings();
     this.addQueens();
     this.addRooks();

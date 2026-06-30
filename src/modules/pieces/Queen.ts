@@ -1,18 +1,18 @@
-import { Figure, FigureNames } from "./Piece";
+import { Piece, PieceNames } from "./Piece";
 import { Colors } from "../Colors";
 import { Square } from "../board/Square";
 import blackLogo from '../../assets/black_queen.png';
 import whiteLogo from '../../assets/white_queen.png';
 
-export class Queen extends Figure {
-  isItPromotionFigure: boolean;
+export class Queen extends Piece {
+  isItPromotionPiece: boolean;
 
   constructor(color: Colors, square: Square) {
     super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
-    this.name = FigureNames.QUEEN;
+    this.name = PieceNames.QUEEN;
     this.value = 9;
-    this.isItPromotionFigure = false;
+    this.isItPromotionPiece = false;
   }
 
   canMove(target: Square): boolean {
@@ -49,7 +49,7 @@ export class Queen extends Figure {
 
   getCopy(): Queen {
     const copy = new Queen(this.color, this.square);
-    copy.isItPromotionFigure = this.isItPromotionFigure;
+    copy.isItPromotionPiece = this.isItPromotionPiece;
     return copy;
   }
 }

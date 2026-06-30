@@ -1,6 +1,6 @@
 import { Board } from "./Board";
 import { Colors } from "../Colors";
-import { Figure } from "../pieces/Piece";
+import { Piece } from "../pieces/Piece";
 import { King } from "../pieces/King";
 import { Pawn } from "../pieces/Pawn";
 import { Rook } from "../pieces/Rook";
@@ -9,7 +9,7 @@ export class Square {
   x: number;
   y: number;
   readonly color: Colors;
-  figure: Figure | null;
+  piece: Piece | null;
   board: Board;
   available: boolean; // Can you move?
   id: number; // For keys of React
@@ -21,11 +21,11 @@ export class Square {
   isStalemate: boolean;
   isDraw: boolean;
 
-  constructor(board: Board, x: number, y: number, color: Colors, figure: Figure | null) {
+  constructor(board: Board, x: number, y: number, color: Colors, piece: Piece | null) {
     this.x = x;
     this.y = y;
     this.color = color;
-    this.figure = figure;
+    this.piece = piece;
     this.board = board;
     this.available = false;
     this.id = Math.random();
@@ -39,15 +39,15 @@ export class Square {
   }
 
   isEmpty(ignoreOpponentKing: boolean = false, color: Colors): boolean {
-    if (ignoreOpponentKing && this.figure instanceof King && this.figure.color !== color) {
+    if (ignoreOpponentKing && this.piece instanceof King && this.piece.color !== color) {
       return true;
     }
-    return this.figure === null;
+    return this.piece === null;
   }
 
   isEnemy(target: Square): boolean {
-    if (target.figure) {
-      return this.figure?.color !== target.figure.color;
+    if (target.piece) {
+      return this.piece?.color !== target.piece.color;
     }
     return false;
   }
@@ -110,10 +110,10 @@ export class Square {
 
     while (x !== target.x || y !== target.y) {
       const square = this.board.getSquare(x, y);
-      if (!square.isEmpty(true, color) && square.figure?.color !== this.figure?.color) {
+      if (!square.isEmpty(true, color) && square.piece?.color !== this.piece?.color) {
         return false;
       }
-      if (!square.isEmpty(true, color) && square.figure?.color === this.figure?.color) {
+      if (!square.isEmpty(true, color) && square.piece?.color === this.piece?.color) {
         return false;
       }
       x += stepX;
@@ -123,30 +123,30 @@ export class Square {
     return true;
   }
 
-  setFigure(figure: Figure) {
-    this.figure = figure;
-    this.figure.square = this;
+  setPiece(piece: Piece) {
+    this.piece = piece;
+    this.piece.square = this;
   }
 
-  addLostFigure(figure: Figure) {
-    if (!figure.isItPromotionFigure) {
-      figure.color === Colors.BLACK
-        ? this.board.lostBlackFigures.push(figure)
-        : this.board.lostWhiteFigures.push(figure);
-    } else if (figure.isItPromotionFigure) {
-      if (figure.color === Colors.BLACK) {
+  addLostPiece(piece: Piece) {
+    if (!piece.isItPromotionPiece) {
+      piece.color === Colors.BLACK
+        ? this.board.lostBlackPieces.push(piece)
+        : this.board.lostWhitePieces.push(piece);
+    } else if (piece.isItPromotionPiece) {
+      if (piece.color === Colors.BLACK) {
         let found = false;
-        this.board.blackPromotionFigureValues.forEach((value, i) => {
-          if (figure.value === value && !found) {
-            this.board.blackPromotionFigureValues.splice(i, 1);
+        this.board.blackPromotionPieceValues.forEach((value, i) => {
+          if (piece.value === value && !found) {
+            this.board.blackPromotionPieceValues.splice(i, 1);
             found = true;
           }
         })
-      } else if (figure.color === Colors.WHITE) {
+      } else if (piece.color === Colors.WHITE) {
         let found = false;
-        this.board.whitePromotionFigureValues.forEach((value, i) => {
-          if (figure.value === value && !found) {
-            this.board.whitePromotionFigureValues.splice(i, 1);
+        this.board.whitePromotionPieceValues.forEach((value, i) => {
+          if (piece.value === value && !found) {
+            this.board.whitePromotionPieceValues.splice(i, 1);
             found = true;
           }
         })
@@ -154,22 +154,22 @@ export class Square {
     }
   }
 
-  moveFigure(target: Square) {
-    if (this.figure && this.figure.canMove(target)) {
+  movePiece(target: Square) {
+    if (this.piece && this.piece.canMove(target)) {
       const white = Colors.WHITE;
       const black = Colors.BLACK;
-      const enemyColor = this.figure.color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+      const enemyColor = this.piece.color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
-      if (this.figure instanceof Pawn && this.board.enPassantTarget && target.x === this.board.enPassantTarget.x && target.y === this.board.enPassantTarget.y) {
-        const enPassantPawnSquare = this.board.getSquare(this.board.enPassantTarget.x, this.figure.square.y);
+      if (this.piece instanceof Pawn && this.board.enPassantTarget && target.x === this.board.enPassantTarget.x && target.y === this.board.enPassantTarget.y) {
+        const enPassantPawnSquare = this.board.getSquare(this.board.enPassantTarget.x, this.piece.square.y);
 
-        if (enPassantPawnSquare.figure) {
-          this.addLostFigure(enPassantPawnSquare.figure);
-          enPassantPawnSquare.figure = null;
+        if (enPassantPawnSquare.piece) {
+          this.addLostPiece(enPassantPawnSquare.piece);
+          enPassantPawnSquare.piece = null;
         }
-        this.figure.moveFigure(target);
-        target.setFigure(this.figure);
-        this.figure = null;
+        this.piece.movePiece(target);
+        target.setPiece(this.piece);
+        this.piece = null;
 
         if (this.board.isKingInCheck(white)) {
           this.board.handleMove('check');
@@ -188,16 +188,16 @@ export class Square {
       }
 
       // The King moves
-      if (this.figure instanceof King) {
-        const king = this.figure;
+      if (this.piece instanceof King) {
+        const king = this.piece;
         const enemy = this.isEnemy(target);
 
-        this.figure.moveFigure(target);
-        if (target.figure) {
-          this.addLostFigure(target.figure);
+        this.piece.movePiece(target);
+        if (target.piece) {
+          this.addLostPiece(target.piece);
         }
-        target.setFigure(this.figure);
-        this.figure = null;
+        target.setPiece(this.piece);
+        this.piece = null;
 
         if (king.castleMove && !king.hasMoved) {
           if (this.board.isKingInCheck(white)) {
@@ -243,16 +243,16 @@ export class Square {
       }
 
       // The Rook moves
-      if (this.figure instanceof Rook) {
-        const rook = this.figure;
+      if (this.piece instanceof Rook) {
+        const rook = this.piece;
         const enemy = this.isEnemy(target);
 
-        this.figure.moveFigure(target);
-        if (target.figure) {
-          this.addLostFigure(target.figure);
+        this.piece.movePiece(target);
+        if (target.piece) {
+          this.addLostPiece(target.piece);
         }
-        target.setFigure(this.figure);
-        this.figure = null;
+        target.setPiece(this.piece);
+        this.piece = null;
 
         if (rook.castleMove && !rook.firstMove) {
           if (this.board.isKingInCheck(white)) {
@@ -296,17 +296,17 @@ export class Square {
         return;
       }
 
-      // Other figures
-      this.figure.moveFigure(target);
-      if (target.figure) {
-        this.addLostFigure(target.figure);
+      // Other pieces
+      this.piece.movePiece(target);
+      if (target.piece) {
+        this.addLostPiece(target.piece);
       }
 
       // Just a move and check except for the King and the Rook
-      if (target.figure === null && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
-        const pawn = this.figure;
-        target.setFigure(this.figure);
-        this.figure = null;
+      if (target.piece === null && this.piece.name !== 'King' && this.piece.name !== 'Rook') {
+        const pawn = this.piece;
+        target.setPiece(this.piece);
+        this.piece = null;
         if (this.board.isKingInCheck(white)) {
           this.board.handleMove('check');
           this.board.highlightKing(white);
@@ -326,10 +326,10 @@ export class Square {
       }
 
       // Capture and check except for the King and the Rook
-      if (this.isEnemy(target) && this.figure.name !== 'King' && this.figure.name !== 'Rook') {
-        const pawn = this.figure;
-        target.setFigure(this.figure);
-        this.figure = null;
+      if (this.isEnemy(target) && this.piece.name !== 'King' && this.piece.name !== 'Rook') {
+        const pawn = this.piece;
+        target.setPiece(this.piece);
+        this.piece = null;
         if (this.board.isKingInCheck(white)) {
           this.board.handleMove('check');
           this.board.highlightKing(white);
@@ -354,7 +354,7 @@ export class Square {
   }
 
   getCopy(): Square {
-    const copy = new Square(this.board, this.x, this.y, this.color, this.figure ? this.figure.getCopy() : null);
+    const copy = new Square(this.board, this.x, this.y, this.color, this.piece ? this.piece.getCopy() : null);
     copy.isKingInCheck = this.isKingInCheck;
     copy.isCheckmate = this.isCheckmate;
     copy.isVictory = this.isVictory;

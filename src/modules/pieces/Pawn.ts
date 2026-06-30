@@ -1,10 +1,10 @@
-import { Figure, FigureNames } from "./Piece";
+import { Piece, PieceNames } from "./Piece";
 import { Square } from "../board/Square";
 import { Colors } from "../Colors";
 import blackLogo from '../../assets/black_pawn.png';
 import whiteLogo from '../../assets/white_pawn.png';
 
-export class Pawn extends Figure {
+export class Pawn extends Piece {
 
   isFirstStep: boolean;
   isItCapture: boolean;
@@ -12,7 +12,7 @@ export class Pawn extends Figure {
   constructor(color: Colors, square: Square) {
     super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
-    this.name = FigureNames.PAWN;
+    this.name = PieceNames.PAWN;
     this.value = 1;
     this.isFirstStep = true;
     this.isItCapture = false;
@@ -21,19 +21,19 @@ export class Pawn extends Figure {
   canMove(target: Square): boolean {
     if (!super.canMove(target))
       return false;
-    const direction = this.square.figure?.color === Colors.BLACK ? 1 : -1;
-    const firstStepDirection = this.square.figure?.color === Colors.BLACK ? 2 : -2;
+    const direction = this.square.piece?.color === Colors.BLACK ? 1 : -1;
+    const firstStepDirection = this.square.piece?.color === Colors.BLACK ? 2 : -2;
     const canMoveWithoutCheck: boolean = this.square.board.canMoveWithoutCheck(this.square, target, this.color);
     const moveForward: boolean = target.y === this.square.y + direction
       && target.x === this.square.x
       && this.square.board.getSquare(target.x, target.y).isEmpty(true, this.color)
-      && target.figure?.name !== 'King';
+      && target.piece?.name !== 'King';
     const moveForward2Squares: boolean = this.isFirstStep
       && target.y === this.square.y + firstStepDirection
       && target.x === this.square.x
       && this.square.board.getSquare(target.x, target.y).isEmpty(true, this.color)
       && this.square.board.getSquare(target.x, this.square.y + direction).isEmpty(true, this.color)
-      && target.figure?.name !== 'King';
+      && target.piece?.name !== 'King';
     const attack: boolean = target.y === this.square.y + direction
       && (target.x === this.square.x + 1 || target.x === this.square.x - 1)
       && this.square.isEnemy(target);
@@ -63,9 +63,9 @@ export class Pawn extends Figure {
     }
 
     // The hit in passing
-    if (this.square.y === 3 && this.square.figure?.color === 'white'
-      || this.square.y === 4 && this.square.figure?.color === 'black') {
-      if (this.square.figure?.color === 'white') {
+    if (this.square.y === 3 && this.square.piece?.color === 'white'
+      || this.square.y === 4 && this.square.piece?.color === 'black') {
+      if (this.square.piece?.color === 'white') {
         if (this.square.board.enPassantTarget
           && target.x === this.square.board.enPassantTarget?.x && this.square.board.enPassantTarget?.x === this.square.x + 1
           && target.y === this.square.board.enPassantTarget?.y && this.square.board.enPassantTarget?.y === 2 ||
@@ -74,7 +74,7 @@ export class Pawn extends Figure {
           && target.y === this.square.board.enPassantTarget?.y && this.square.board.enPassantTarget?.y === 2) {
           return true;
         }
-      } else if (this.square.figure?.color === 'black') {
+      } else if (this.square.piece?.color === 'black') {
         if (this.square.board.enPassantTarget
           && target.x === this.square.board.enPassantTarget?.x && this.square.board.enPassantTarget?.x === this.square.x + 1
           && target.y === this.square.board.enPassantTarget?.y && this.square.board.enPassantTarget?.y === 5 ||
@@ -89,9 +89,9 @@ export class Pawn extends Figure {
     return false;
   }
 
-  moveFigure(target: Square): void {
-    // Do the basic figure movement
-    super.moveFigure(target);
+  movePiece(target: Square): void {
+    // Do the basic piece movement
+    super.movePiece(target);
     // Pawn did first step
     this.isFirstStep = false;
 
@@ -107,8 +107,8 @@ export class Pawn extends Figure {
     // Checking whether hit was in passing
     if (this.square.board.enPassantTarget && target.x === this.square.board.enPassantTarget?.x && target.y === this.square.board.enPassantTarget?.y) {
       const enemySquare = this.square.board.getSquare(target.x, target.y - direction);
-      if (enemySquare.figure instanceof Pawn && enemySquare.figure.color !== this.color) {
-        enemySquare.figure = null;
+      if (enemySquare.piece instanceof Pawn && enemySquare.piece.color !== this.color) {
+        enemySquare.piece = null;
       }
     }
   }

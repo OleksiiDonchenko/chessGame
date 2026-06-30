@@ -34,36 +34,36 @@ function ChessBoard() {
   }, [selectedSquare]);
 
   function mouseDown(square: Square) {
-    if (selectedSquare && selectedSquare !== square && selectedSquare.figure?.canMove(square)) {
-      if (selectedSquare.figure instanceof Pawn && (square.y === 0 || square.y === 7)) {
+    if (selectedSquare && selectedSquare !== square && selectedSquare.piece?.canMove(square)) {
+      if (selectedSquare.piece instanceof Pawn && (square.y === 0 || square.y === 7)) {
         setPromotionSquare(square);
-        selectedSquare.moveFigure(square);
+        selectedSquare.movePiece(square);
       } else {
-        selectedSquare.moveFigure(square);
+        selectedSquare.movePiece(square);
         const newBoard = board.getDeepCopyBoard();
         makeMove(newBoard);
         swapPlayer();
       }
       setSelectedSquare(null);
     } else {
-      if (square.figure?.color === currentPlayer?.color) {
+      if (square.piece?.color === currentPlayer?.color) {
         setSelectedSquare(square);
       }
     }
-    if (square.figure === null || square.figure.color !== currentPlayer?.color) {
+    if (square.piece === null || square.piece.color !== currentPlayer?.color) {
       setSelectedSquare(null);
     }
   }
 
-  function handlePromotion(figure: string) {
-    if (promotionSquare && promotionSquare.figure instanceof Pawn) {
-      const pawn = promotionSquare.figure;
-      promotionSquare.addLostFigure(pawn);
-      promotionSquare.figure = board.createNewFigure(figure, promotionSquare.figure.color, promotionSquare);
+  function handlePromotion(piece: string) {
+    if (promotionSquare && promotionSquare.piece instanceof Pawn) {
+      const pawn = promotionSquare.piece;
+      promotionSquare.addLostPiece(pawn);
+      promotionSquare.piece = board.createNewPiece(piece, promotionSquare.piece.color, promotionSquare);
       let enemyColor = Colors.WHITE;
-      if (promotionSquare.figure) {
-        enemyColor = promotionSquare.figure.color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
-        promotionSquare.figure.isItPromotionFigure = true;
+      if (promotionSquare.piece) {
+        enemyColor = promotionSquare.piece.color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
+        promotionSquare.piece.isItPromotionPiece = true;
       }
       if (board.isKingInCheck(enemyColor)) {
         board.handleMove('check');
@@ -75,7 +75,7 @@ function ChessBoard() {
         board.handleMove('move');
       }
       board.isStalemate(enemyColor);
-      board.promotionFigureValues(pawn.color);
+      board.promotionPieceValues(pawn.color);
       const newBoard = board.getDeepCopyBoard();
       makeMove(newBoard);
       swapPlayer();
@@ -101,7 +101,7 @@ function ChessBoard() {
   function restart() {
     const newBoard = new Board();
     newBoard.initSquares();
-    newBoard.addFigures();
+    newBoard.addPieces();
     setBoard(newBoard);
     setWhitePoints(0);
     setBlackPoints(0);
@@ -149,7 +149,7 @@ function ChessBoard() {
         setBlackTimeSeconds(prev => prev - 1);
       }
       if (blackTimeMinutes === 0 && blackTimeSeconds === 0 && currentPlayer) {
-        !board.doAlliedFiguresExist(Colors.WHITE) ? handleDraw(Colors.WHITE) : board.losingByTime(currentPlayer.color);
+        !board.doAlliedPiecesExist(Colors.WHITE) ? handleDraw(Colors.WHITE) : board.losingByTime(currentPlayer.color);
         handleStopGame();
         snapshotBoard(board);
       }
@@ -168,7 +168,7 @@ function ChessBoard() {
         setWhiteTimeSeconds(prev => prev - 1);
       }
       if (whiteTimeMinutes === 0 && whiteTimeSeconds === 0 && currentPlayer) {
-        !board.doAlliedFiguresExist(Colors.BLACK) ? handleDraw(Colors.BLACK) : board.losingByTime(currentPlayer.color);
+        !board.doAlliedPiecesExist(Colors.BLACK) ? handleDraw(Colors.BLACK) : board.losingByTime(currentPlayer.color);
         handleStopGame();
         snapshotBoard(board);
       }
@@ -216,28 +216,28 @@ function ChessBoard() {
 
   const handleDragStart = (event: any) => {
     const { over } = event;
-    const figure = event.activatorEvent.srcElement;
-    const square = figure.parentElement;
+    const piece = event.activatorEvent.srcElement;
+    const square = piece.parentElement;
 
     const squareRect = square.getBoundingClientRect();
 
-    // Size the figure
-    const figureSize = 60;
+    // Size the piece
+    const pieceSize = 60;
 
     // The cursor position in the square
     const cursorX = event.activatorEvent.clientX - squareRect.left;
     const cursorY = event.activatorEvent.clientY - squareRect.top;
 
-    // Offset for centering the figure under the cursor
-    const offsetX = cursorX - figureSize / 2;
-    const offsetY = cursorY - figureSize / 2;
+    // Offset for centering the piece under the cursor
+    const offsetX = cursorX - pieceSize / 2;
+    const offsetY = cursorY - pieceSize / 2;
 
-    figure.style.left = `${offsetX}px`;
-    figure.style.top = `${offsetY}px`;
+    piece.style.left = `${offsetX}px`;
+    piece.style.top = `${offsetY}px`;
 
-    figure.addEventListener('mouseup', () => {
-      figure.style.left = '2px';
-      figure.style.top = '2px';
+    piece.addEventListener('mouseup', () => {
+      piece.style.left = '2px';
+      piece.style.top = '2px';
     });
 
     setClickOnBoard(true);
@@ -250,29 +250,29 @@ function ChessBoard() {
 
     if (!over) return;
 
-    const figure = event.activatorEvent.srcElement;
+    const piece = event.activatorEvent.srcElement;
     const fromSquare = board.getSquareById(`${active.id}`);
     const toSquare = board.getSquareById(`${over.id}`);
 
-    if (currentPlayer?.color === fromSquare?.figure?.color) {
-      if (fromSquare && toSquare && fromSquare.figure?.canMove(toSquare)) {
-        if (fromSquare.figure instanceof Pawn && (toSquare.y === 0 || toSquare.y === 7)) {
+    if (currentPlayer?.color === fromSquare?.piece?.color) {
+      if (fromSquare && toSquare && fromSquare.piece?.canMove(toSquare)) {
+        if (fromSquare.piece instanceof Pawn && (toSquare.y === 0 || toSquare.y === 7)) {
           setPromotionSquare(toSquare);
-          fromSquare.moveFigure(toSquare);
+          fromSquare.movePiece(toSquare);
         } else {
-          fromSquare.moveFigure(toSquare);
+          fromSquare.movePiece(toSquare);
           const newBoard = board.getDeepCopyBoard();
           makeMove(newBoard);
           swapPlayer();
         }
         setSelectedSquare(null);
-      } else if (fromSquare?.figure?.color === currentPlayer?.color) {
+      } else if (fromSquare?.piece?.color === currentPlayer?.color) {
         setSelectedSquare(fromSquare);
       }
     }
 
-    figure.style.left = '2px';
-    figure.style.top = '2px';
+    piece.style.left = '2px';
+    piece.style.top = '2px';
   };
 
   function clickOnTheBoard() {
@@ -309,7 +309,7 @@ function ChessBoard() {
             <CapturedPieces
               board={board}
               color='white'
-              figures={board.lostWhiteFigures}
+              pieces={board.lostWhitePieces}
               whoLeads={whoLeads}
               setWholeads={setWholeads}
               whitePoints={whitePoints}
@@ -326,7 +326,7 @@ function ChessBoard() {
           <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
             <div ref={boardRef} className={['board', promotionSquare ? 'eclipse' : ''].join(' ')} onClick={() => clickOnTheBoard()}>
               {promotionSquare && (
-                <PromotionModal onSelect={handlePromotion} x={promotionSquare.x} color={promotionSquare.figure?.color}
+                <PromotionModal onSelect={handlePromotion} x={promotionSquare.x} color={promotionSquare.piece?.color}
                   square={promotionSquare} />
               )}
               {board.squares.map((row, y) => <React.Fragment key={y}>
@@ -348,10 +348,10 @@ function ChessBoard() {
                   mouseDown={mouseDown}
                   coordinates={{ x: square.x, y: square.y }}
                 >
-                  {square.figure?.logo && (
+                  {square.piece?.logo && (
                     <DraggablePiece
                       id={`${square.x}-${square.y}`}
-                      src={square.figure.logo} />
+                      src={square.piece.logo} />
                   )}
                 </DroppableSquare>
                 )}
@@ -363,7 +363,7 @@ function ChessBoard() {
             <CapturedPieces
               board={board}
               color='black'
-              figures={board.lostBlackFigures}
+              pieces={board.lostBlackPieces}
               whoLeads={whoLeads}
               setWholeads={setWholeads}
               whitePoints={whitePoints}

@@ -1,17 +1,17 @@
 import { Square } from "../board/Square";
 import { Colors } from "../Colors";
-import { Figure, FigureNames } from "./Piece";
+import { Piece, PieceNames } from "./Piece";
 import blackLogo from '../../assets/black_king.png';
 import whiteLogo from '../../assets/white_king.png';
 
-export class King extends Figure {
+export class King extends Piece {
   hasMoved: boolean;
   castleMove: boolean;
 
   constructor(color: Colors, square: Square) {
     super(color, square);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
-    this.name = FigureNames.KING;
+    this.name = PieceNames.KING;
     this.hasMoved = false;
     this.castleMove = false;
   }
@@ -87,9 +87,9 @@ export class King extends Figure {
     return false;
   }
 
-  moveFigure(target: Square): void {
-    // Do the basic figure movement
-    super.moveFigure(target);
+  movePiece(target: Square): void {
+    // Do the basic piece movement
+    super.movePiece(target);
 
     const whiteRookShortCastle = this.square.board.findRook(this.color, 7, 7);
     const whiteRookLongCastle = this.square.board.findRook(this.color, 0, 7);
@@ -104,14 +104,14 @@ export class King extends Figure {
         if (squareForRookCastle) {
           this.castleMove = true;
           whiteRookShortCastle.castleMove = true;
-          whiteRookShortCastle.square.moveFigure(squareForRookCastle);
+          whiteRookShortCastle.square.movePiece(squareForRookCastle);
         }
       } else if (target.x === 2 && target.y === 7 && !this.hasMoved && whiteRookLongCastle?.longCastle) {
         squareForRookCastle = this.square.board.findSquareForRookCastle(3, 7);
         if (squareForRookCastle) {
           this.castleMove = true;
           whiteRookLongCastle.castleMove = true;
-          whiteRookLongCastle.square.moveFigure(squareForRookCastle);
+          whiteRookLongCastle.square.movePiece(squareForRookCastle);
         }
       }
     } else {
@@ -120,14 +120,14 @@ export class King extends Figure {
         if (squareForRookCastle) {
           this.castleMove = true;
           blackRookShortCastle.castleMove = true;
-          blackRookShortCastle.square.moveFigure(squareForRookCastle);
+          blackRookShortCastle.square.movePiece(squareForRookCastle);
         }
       } else if (target.x === 2 && target.y === 0 && !this.hasMoved && blackRookLongCastle?.longCastle) {
         squareForRookCastle = this.square.board.findSquareForRookCastle(3, 0);
         if (squareForRookCastle) {
           this.castleMove = true;
           blackRookLongCastle.castleMove = true;
-          blackRookLongCastle.square.moveFigure(squareForRookCastle);
+          blackRookLongCastle.square.movePiece(squareForRookCastle);
         }
       }
     }

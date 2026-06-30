@@ -2,8 +2,8 @@ import logo from '../../assets/black_king.png'
 import { Square } from '../board/Square';
 import { Colors } from "../Colors";
 
-export enum FigureNames {
-  FIGURE = 'Figure',
+export enum PieceNames {
+  PIECE = 'Piece',
   KING = 'King',
   QUEEN = 'Queen',
   ROOK = 'Rook',
@@ -12,33 +12,33 @@ export enum FigureNames {
   PAWN = 'Pawn',
 }
 
-export class Figure {
+export class Piece {
   color: Colors;
   logo: typeof logo | null;
   square: Square;
-  name: FigureNames;
+  name: PieceNames;
   id: number;
   value: number;
-  isItPromotionFigure: boolean;
+  isItPromotionPiece: boolean;
 
   constructor(color: Colors, square: Square) {
     this.color = color;
     this.square = square;
-    this.square.figure = this;
+    this.square.piece = this;
     this.logo = null;
-    this.name = FigureNames.FIGURE;
+    this.name = PieceNames.PIECE;
     this.id = Math.random();
     this.value = 0;
-    this.isItPromotionFigure = false;
+    this.isItPromotionPiece = false;
   }
 
   canMove(target: Square): boolean {
-    if (target.figure?.color === this.color && this.name !== 'King')
+    if (target.piece?.color === this.color && this.name !== 'King')
       return false;
     return true;
   }
 
-  moveFigure(target: Square) {
+  movePiece(target: Square) {
     target;
     this.square.board.enPassantTarget = null;
     const kingSquare = this.square.board.findKing(this.color);
@@ -52,9 +52,9 @@ export class Figure {
     return true;
   }
 
-  getCopy(): Figure {
-    const copy = new Figure(this.color, this.square);
-    copy.isItPromotionFigure = this.isItPromotionFigure;
+  getCopy(): Piece {
+    const copy = new Piece(this.color, this.square);
+    copy.isItPromotionPiece = this.isItPromotionPiece;
     copy.id = this.id;
     return copy;
   };
