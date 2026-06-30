@@ -27,7 +27,7 @@ function ChessBoard() {
   const [whoLeads, setWholeads] = useState(0);
   const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
 
-  const { board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard } = useChessContext();
+  const { board, setBoard, sethistory, setCurrentMove, makeMove, snapshotBoard } = useChessContext();
   
   useEffect(() => {
     highlightSquares();
@@ -378,8 +378,7 @@ function ChessBoard() {
             </div>
           </div>
         </div>
-        <GameSidebar history={history} currentMove={currentMove} goToPreviousMove={goToPreviousMove}
-          goToNextMove={goToNextMove} boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard}
+        <GameSidebar boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard}
           swapPlayer={swapPlayer} isAnalysis={isAnalysis} setSelectedSquare={setSelectedSquare} currentPlayer={currentPlayer} />
       </div>
     </>

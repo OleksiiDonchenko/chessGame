@@ -1,13 +1,9 @@
 import { FC, useEffect } from 'react';
-import { Board } from '../../modules/board/Board';
 import { Square } from '../../modules/board/Square';
 import { Player } from '../../modules/Player';
+import { useChessContext } from '../../context/ChessContext';
 
 interface GameSidebarProps {
-  history: Board[];
-  currentMove: number;
-  goToPreviousMove: () => void;
-  goToNextMove: () => void;
   boardRef: React.RefObject<HTMLDivElement>;
   clickOnBoard: boolean;
   setClickOnBoard: (arg: boolean) => void;
@@ -17,7 +13,9 @@ interface GameSidebarProps {
   currentPlayer: Player | null;
 }
 
-const GameSidebar: FC<GameSidebarProps> = ({ history, currentMove, goToPreviousMove, goToNextMove, boardRef, clickOnBoard, setClickOnBoard, swapPlayer, isAnalysis, setSelectedSquare, currentPlayer }) => {
+const GameSidebar: FC<GameSidebarProps> = ({ boardRef, clickOnBoard, setClickOnBoard, swapPlayer, isAnalysis, setSelectedSquare, currentPlayer }) => {
+
+  const { history, currentMove, goToPreviousMove, goToNextMove } = useChessContext();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
