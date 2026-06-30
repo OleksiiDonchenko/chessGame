@@ -11,8 +11,6 @@ export interface GameControlsProps {
   gameIsOn: boolean;
   gameWasStarted: boolean;
   currentPlayer: Player | null;
-  board: Board;
-  snapshotBoard: (newBoard: Board) => void;
 }
 
 export interface RestartButtonProps {

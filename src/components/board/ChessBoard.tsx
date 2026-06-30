@@ -28,7 +28,7 @@ function ChessBoard() {
   const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
 
   const { board, setBoard, sethistory, setCurrentMove, makeMove, snapshotBoard } = useChessContext();
-  
+
   useEffect(() => {
     highlightSquares();
   }, [selectedSquare]);
@@ -302,12 +302,9 @@ function ChessBoard() {
             handleDraw={handleDraw}
             gameIsOn={gameIsOn}
             gameWasStarted={gameWasStarted}
-            currentPlayer={currentPlayer}
-            board={board}
-            snapshotBoard={snapshotBoard} />
+            currentPlayer={currentPlayer} />
           <div className='capturedPiecesAndTime'>
             <CapturedPieces
-              board={board}
               color='white'
               pieces={board.lostWhitePieces}
               whoLeads={whoLeads}
@@ -361,7 +358,6 @@ function ChessBoard() {
           </DndContext>
           <div className='capturedPiecesAndTime'>
             <CapturedPieces
-              board={board}
               color='black'
               pieces={board.lostBlackPieces}
               whoLeads={whoLeads}

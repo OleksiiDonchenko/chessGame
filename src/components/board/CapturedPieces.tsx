@@ -1,9 +1,8 @@
 import { FC, useEffect } from 'react';
 import { Piece } from '../../modules/pieces/Piece';
-import { Board } from '../../modules/board/Board';
+import { useChessContext } from '../../context/ChessContext';
 
 interface CapturedPiecesProps {
-  board: Board;
   color: string;
   pieces: Piece[];
   whoLeads: number;
@@ -14,7 +13,10 @@ interface CapturedPiecesProps {
   setBlackPoints: (value: number) => void;
 }
 
-const CapturedPieces: FC<CapturedPiecesProps> = ({ board, color, pieces, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
+const CapturedPieces: FC<CapturedPiecesProps> = ({ color, pieces, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
+
+  const { board } = useChessContext();
+
   let sortedPieces: Piece[] = [];
   if (pieces.length > 0) {
     sortedPieces = pieces.sort((a, b) => {
