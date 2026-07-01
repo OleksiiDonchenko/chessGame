@@ -215,7 +215,7 @@ function ChessBoard() {
     handleStopGame();
   }
 
-  const { handleDragStart, handleDragEnd } = useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquare, swapPlayer, setSelectedSquare });
+  const { handleDragStart, handleDragEnd, handleDragCancel } = useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquare, swapPlayer, setSelectedSquare });
 
   function clickOnTheBoard() {
     setClickOnBoard(true);
@@ -262,7 +262,7 @@ function ChessBoard() {
               </span>
             </div>
           </div>
-          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel} modifiers={[restrictToWindowEdges]}>
             <div ref={boardRef} className={['board', promotionSquare ? 'eclipse' : ''].join(' ')} onClick={() => clickOnTheBoard()}>
               {promotionSquare && (
                 <PromotionModal onSelect={handlePromotion} x={promotionSquare.x} color={promotionSquare.piece?.color}

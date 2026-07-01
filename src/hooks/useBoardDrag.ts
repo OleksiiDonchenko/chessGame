@@ -1,9 +1,11 @@
+import { useCallback } from "react";
+import { DragEndEvent, DragStartEvent, DragCancelEvent } from "@dnd-kit/core";
 import { useChessContext } from "../context/ChessContext";
 import { Square } from "../modules/board/Square";
 import { Pawn } from "../modules/pieces/Pawn";
 import { Player } from "../modules/Player";
 
-interface UseBoardDrag {
+interface UseBoardDragParams {
   setClickOnBoard: (p: boolean) => void;
   currentPlayer: Player | null;
   setPromotionSquare: (p: Square | null) => void;
@@ -11,14 +13,36 @@ interface UseBoardDrag {
   setSelectedSquare: (p: Square | null) => void;
 }
 
-export function useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquare, swapPlayer, setSelectedSquare }: UseBoardDrag) {
+function getPieceElement(event: Event): HTMLElement | null {
+  const target = event.target;
+
+  if (!(target instanceof HTMLElement)) {
+    return null;
+  }
+
+  return target;
+}
+
+function resetPiecePosition(piece: HTMLElement | null) {
+  if (!piece) return;
+
+  piece.style.left = '2px';
+  piece.style.top = '2px';
+}
+
+export function useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquare, swapPlayer, setSelectedSquare }: UseBoardDragParams) {
 
   const { board, makeMove } = useChessContext();
 
-  const handleDragStart = (event: any) => {
-    const { over } = event;
-    const piece = event.activatorEvent.srcElement;
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const piece = getPieceElement(event.activatorEvent);
+
+    if (!piece || !piece.parentElement) {
+      return;
+    }
+
     const square = piece.parentElement;
+    if (!(square instanceof HTMLElement)) return;
 
     const squareRect = square.getBoundingClientRect();
 
@@ -26,8 +50,13 @@ export function useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquar
     const pieceSize = 60;
 
     // The cursor position in the square
-    const cursorX = event.activatorEvent.clientX - squareRect.left;
-    const cursorY = event.activatorEvent.clientY - squareRect.top;
+    const cursorX = event.activatorEvent instanceof MouseEvent
+      ? event.activatorEvent.clientX - squareRect.left
+      : 0;
+
+    const cursorY = event.activatorEvent instanceof MouseEvent
+      ? event.activatorEvent.clientY - squareRect.top
+      : 0;
 
     // Offset for centering the piece under the cursor
     const offsetX = cursorX - pieceSize / 2;
@@ -36,45 +65,61 @@ export function useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquar
     piece.style.left = `${offsetX}px`;
     piece.style.top = `${offsetY}px`;
 
-    piece.addEventListener('mouseup', () => {
-      piece.style.left = '2px';
-      piece.style.top = '2px';
-    });
-
     setClickOnBoard(true);
+  }, [setClickOnBoard]);
 
-    if (!over) return;
-  };
-
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
+    const piece = getPieceElement(event.activatorEvent);
 
-    if (!over) return;
+    try {
+      if (!over) return;
 
-    const piece = event.activatorEvent.srcElement;
-    const fromSquare = board.getSquareById(`${active.id}`);
-    const toSquare = board.getSquareById(`${over.id}`);
+      const fromSquare = board.getSquareById(`${active.id}`);
+      const toSquare = board.getSquareById(`${over.id}`);
 
-    if (currentPlayer?.color === fromSquare?.piece?.color) {
-      if (fromSquare && toSquare && fromSquare.piece?.canMove(toSquare)) {
-        if (fromSquare.piece instanceof Pawn && (toSquare.y === 0 || toSquare.y === 7)) {
+      if (!fromSquare || !toSquare) {
+        return;
+      }
+
+      const movingPiece = fromSquare.piece;
+
+      if (!movingPiece) {
+        return;
+      }
+
+      if (currentPlayer?.color !== movingPiece.color) {
+        return;
+      }
+
+      if (movingPiece.canMove(toSquare)) {
+        if (movingPiece instanceof Pawn && (toSquare.y === 0 || toSquare.y === 7)) {
           setPromotionSquare(toSquare);
           fromSquare.movePiece(toSquare);
         } else {
           fromSquare.movePiece(toSquare);
+
           const newBoard = board.getDeepCopyBoard();
+
           makeMove(newBoard);
           swapPlayer();
         }
+
         setSelectedSquare(null);
-      } else if (fromSquare?.piece?.color === currentPlayer?.color) {
-        setSelectedSquare(fromSquare);
+        return;
       }
+
+      setSelectedSquare(fromSquare);
+    } finally {
+      resetPiecePosition(piece);
     }
+  }, [board, currentPlayer, makeMove, setPromotionSquare, setSelectedSquare, swapPlayer]);
 
-    piece.style.left = '2px';
-    piece.style.top = '2px';
-  };
+  const handleDragCancel = useCallback((event: DragCancelEvent) => {
+    const piece = getPieceElement(event.activatorEvent);
 
-  return { handleDragStart, handleDragEnd };
+    resetPiecePosition(piece);
+  }, []);
+
+  return { handleDragStart, handleDragEnd, handleDragCancel };
 }
