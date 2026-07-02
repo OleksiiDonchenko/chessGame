@@ -15,6 +15,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import DroppableSquare from './DroppableSquare';
 import DraggablePiece from './DraggablePiece';
 import { useBoardDrag } from '../../hooks/useBoardDrag';
+import { useGameTimers } from '../../hooks/useGameTimers';
 
 function ChessBoard() {
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +29,7 @@ function ChessBoard() {
   const [whoLeads, setWholeads] = useState(0);
   const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
 
-  const { board, setBoard, sethistory, setCurrentMove, makeMove, snapshotBoard } = useChessContext();
+  const { board, setBoard, sethistory, setCurrentMove, makeMove } = useChessContext();
 
   useEffect(() => {
     highlightSquares();
@@ -117,12 +118,8 @@ function ChessBoard() {
 
   const [gameIsOn, setgameIsOn] = useState(false);
   const [gameWasStarted, setGameWasStarted] = useState(false);
-  const [blackTimeMinutes, setBlackTimeMinutes] = useState(5);
-  const [whiteTimeMinutes, setWhiteTimeMinutes] = useState(5);
-  const [blackTimeSeconds, setBlackTimeSeconds] = useState(60);
-  const [whiteTimeSeconds, setWhiteTimeSeconds] = useState(60);
-  const timer = useRef<null | ReturnType<typeof setInterval>>(null);
   const [isAnalysis, setIsAnalysis] = useState(false);
+  const { blackTimeMinutes, setBlackTimeMinutes, whiteTimeMinutes, setWhiteTimeMinutes, blackTimeSeconds, setBlackTimeSeconds, whiteTimeSeconds, setWhiteTimeSeconds, timer, decrementBlackTimer, decrementWhiteTimer } = useGameTimers({ gameIsOn, currentPlayer, handleDraw, handleStopGame });
 
   useEffect(() => {
     if (!isAnalysis) {
@@ -136,44 +133,6 @@ function ChessBoard() {
     }
     const callback = currentPlayer?.color === Colors.BLACK ? decrementBlackTimer : decrementWhiteTimer;
     timer.current = setInterval(callback, 1000);
-  }
-
-  function decrementBlackTimer() {
-    if (gameIsOn) {
-      if (blackTimeMinutes > 0 && blackTimeSeconds === 0 || blackTimeSeconds === 60) {
-        setBlackTimeMinutes(prev => prev - 1);
-      }
-      if (blackTimeMinutes > 0 && blackTimeSeconds === 0) {
-        setBlackTimeSeconds(59);
-      }
-      if (blackTimeSeconds > 0) {
-        setBlackTimeSeconds(prev => prev - 1);
-      }
-      if (blackTimeMinutes === 0 && blackTimeSeconds === 0 && currentPlayer) {
-        !board.doAlliedPiecesExist(Colors.WHITE) ? handleDraw(Colors.WHITE) : board.losingByTime(currentPlayer.color);
-        handleStopGame();
-        snapshotBoard(board);
-      }
-    }
-  }
-
-  function decrementWhiteTimer() {
-    if (gameIsOn) {
-      if (whiteTimeMinutes > 0 && whiteTimeSeconds === 0 || whiteTimeSeconds === 60) {
-        setWhiteTimeMinutes(prev => prev - 1);
-      }
-      if (whiteTimeMinutes > 0 && whiteTimeSeconds === 0) {
-        setWhiteTimeSeconds(59);
-      }
-      if (whiteTimeSeconds > 0) {
-        setWhiteTimeSeconds(prev => prev - 1);
-      }
-      if (whiteTimeMinutes === 0 && whiteTimeSeconds === 0 && currentPlayer) {
-        !board.doAlliedPiecesExist(Colors.BLACK) ? handleDraw(Colors.BLACK) : board.losingByTime(currentPlayer.color);
-        handleStopGame();
-        snapshotBoard(board);
-      }
-    }
   }
 
   function handleRestart() {
@@ -236,7 +195,7 @@ function ChessBoard() {
   return (
     <>
       <div className='wrapper'>
-        <div className="wrapper-board">
+        <div className='wrapper-board'>
           <GameControls handleRestart={handleRestart}
             handleStartGame={handleStartGame}
             handleAnalysis={handleAnalysis}
