@@ -119,31 +119,14 @@ function ChessBoard() {
   const [gameIsOn, setgameIsOn] = useState(false);
   const [gameWasStarted, setGameWasStarted] = useState(false);
   const [isAnalysis, setIsAnalysis] = useState(false);
-  const { blackTimeMinutes, setBlackTimeMinutes, whiteTimeMinutes, setWhiteTimeMinutes, blackTimeSeconds, setBlackTimeSeconds, whiteTimeSeconds, setWhiteTimeSeconds, timer, decrementBlackTimer, decrementWhiteTimer } = useGameTimers({ gameIsOn, currentPlayer, handleDraw, handleStopGame });
-
-  useEffect(() => {
-    if (!isAnalysis) {
-      startTimer();
-    }
-  }, [currentPlayer, gameIsOn, blackTimeMinutes, whiteTimeMinutes, blackTimeSeconds, whiteTimeSeconds, isAnalysis]);
-
-  function startTimer() {
-    if (timer.current) {
-      clearInterval(timer.current);
-    }
-    const callback = currentPlayer?.color === Colors.BLACK ? decrementBlackTimer : decrementWhiteTimer;
-    timer.current = setInterval(callback, 1000);
-  }
+  const { blackFormattedTime, whiteFormattedTime, resetTimers } = useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw, handleStopGame });
 
   function handleRestart() {
     setgameIsOn(false);
     setGameWasStarted(false);
     setCurrentPlayer(null);
     setSelectedSquare(null);
-    setBlackTimeMinutes(5);
-    setWhiteTimeMinutes(5);
-    setBlackTimeSeconds(60);
-    setWhiteTimeSeconds(60);
+    resetTimers();
     restart();
   }
 
@@ -152,7 +135,6 @@ function ChessBoard() {
     setgameIsOn(true);
     setGameWasStarted(true);
     setCurrentPlayer(whitePlayer);
-    startTimer();
   }
 
   function handleAnalysis() {
@@ -217,7 +199,7 @@ function ChessBoard() {
             <div className={['time', 'blackTime', currentPlayer === blackPlayer && !isAnalysis ? 'goes' : ''].join(' ')}>
               <Clock fill='white' />
               <span>
-                {blackTimeMinutes}:{blackTimeSeconds === 60 ? '00' : blackTimeSeconds < 10 ? `0${blackTimeSeconds}` : blackTimeSeconds}
+                {blackFormattedTime}
               </span>
             </div>
           </div>
@@ -270,7 +252,7 @@ function ChessBoard() {
             <div className={['time', 'whiteTime', currentPlayer === whitePlayer && !isAnalysis ? 'goes' : ''].join(' ')}>
               <Clock fill='black' />
               <span>
-                {whiteTimeMinutes}:{whiteTimeSeconds === 60 ? '00' : whiteTimeSeconds < 10 ? `0${whiteTimeSeconds}` : whiteTimeSeconds}
+                {whiteFormattedTime}
               </span>
             </div>
           </div>

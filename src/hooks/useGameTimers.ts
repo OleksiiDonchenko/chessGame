@@ -1,62 +1,108 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Player } from "../modules/Player";
 import { Colors } from "../modules/Colors";
 import { useChessContext } from "../context/ChessContext";
 
+const INITIAL_TIME_SECONDS = 5 * 60;
+
 interface UseGameTimersParams {
   gameIsOn: boolean;
+  isAnalysis: boolean;
   currentPlayer: Player | null;
   handleDraw: (color: Colors) => void;
   handleStopGame: (color?: Colors) => void;
-
 }
 
-export function useGameTimers({ gameIsOn, currentPlayer, handleDraw, handleStopGame }: UseGameTimersParams) {
-  const [blackTimeMinutes, setBlackTimeMinutes] = useState(5);
-  const [whiteTimeMinutes, setWhiteTimeMinutes] = useState(5);
-  const [blackTimeSeconds, setBlackTimeSeconds] = useState(60);
-  const [whiteTimeSeconds, setWhiteTimeSeconds] = useState(60);
-  const timer = useRef<null | ReturnType<typeof setInterval>>(null);
+function formatTime(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return {
+    minutes,
+    seconds,
+    formatted: `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`,
+  }
+}
+
+export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw, handleStopGame }: UseGameTimersParams) {
+  const [blackTime, setBlackTime] = useState(INITIAL_TIME_SECONDS);
+  const [whiteTime, setWhiteTime] = useState(INITIAL_TIME_SECONDS);
 
   const { board, snapshotBoard } = useChessContext();
 
-  function decrementBlackTimer() {
-    if (gameIsOn) {
-      if (blackTimeMinutes > 0 && blackTimeSeconds === 0 || blackTimeSeconds === 60) {
-        setBlackTimeMinutes(prev => prev - 1);
-      }
-      if (blackTimeMinutes > 0 && blackTimeSeconds === 0) {
-        setBlackTimeSeconds(59);
-      }
-      if (blackTimeSeconds > 0) {
-        setBlackTimeSeconds(prev => prev - 1);
-      }
-      if (blackTimeMinutes === 0 && blackTimeSeconds === 0 && currentPlayer) {
-        !board.doAlliedPiecesExist(Colors.WHITE) ? handleDraw(Colors.WHITE) : board.losingByTime(currentPlayer.color);
-        handleStopGame();
-        snapshotBoard(board);
-      }
-    }
-  }
+  const blackFormattedTime = useMemo(() => {
+    return formatTime(blackTime);
+  }, [blackTime]);
 
-  function decrementWhiteTimer() {
-    if (gameIsOn) {
-      if (whiteTimeMinutes > 0 && whiteTimeSeconds === 0 || whiteTimeSeconds === 60) {
-        setWhiteTimeMinutes(prev => prev - 1);
-      }
-      if (whiteTimeMinutes > 0 && whiteTimeSeconds === 0) {
-        setWhiteTimeSeconds(59);
-      }
-      if (whiteTimeSeconds > 0) {
-        setWhiteTimeSeconds(prev => prev - 1);
-      }
-      if (whiteTimeMinutes === 0 && whiteTimeSeconds === 0 && currentPlayer) {
-        !board.doAlliedPiecesExist(Colors.BLACK) ? handleDraw(Colors.BLACK) : board.losingByTime(currentPlayer.color);
-        handleStopGame();
-        snapshotBoard(board);
-      }
-    }
-  }
+  const whiteFormattedTime = useMemo(() => {
+    return formatTime(whiteTime);
+  }, [whiteTime]);
 
-  return { blackTimeMinutes, setBlackTimeMinutes, whiteTimeMinutes, setWhiteTimeMinutes, blackTimeSeconds, setBlackTimeSeconds, whiteTimeSeconds, setWhiteTimeSeconds, timer, decrementBlackTimer, decrementWhiteTimer };
+  const resetTimers = useCallback(() => {
+    setBlackTime(INITIAL_TIME_SECONDS);
+    setWhiteTime(INITIAL_TIME_SECONDS);
+  }, []);
+
+  const handleTimeExpired = useCallback((color: Colors) => {
+    if (color === Colors.BLACK) {
+      !board.doAlliedPiecesExist(Colors.WHITE)
+        ? handleDraw(Colors.WHITE)
+        : board.losingByTime(color);
+    }
+
+    if (color === Colors.WHITE) {
+      !board.doAlliedPiecesExist(Colors.BLACK)
+        ? handleDraw(Colors.BLACK)
+        : board.losingByTime(color);
+    }
+
+    handleStopGame();
+    snapshotBoard(board);
+  }, [board, handleDraw, handleStopGame, snapshotBoard]);
+
+  useEffect(() => {
+    if (!gameIsOn || isAnalysis || !currentPlayer) {
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      if (currentPlayer.color === Colors.BLACK) {
+        setBlackTime((prevTime) => {
+          if (prevTime <= 1) {
+            handleTimeExpired(Colors.BLACK);
+            return 0;
+          }
+
+          return prevTime - 1;
+        });
+      }
+
+      if (currentPlayer.color === Colors.WHITE) {
+        setWhiteTime((prevTime) => {
+          if (prevTime <= 1) {
+            handleTimeExpired(Colors.WHITE);
+            return 0;
+          }
+
+          return prevTime - 1;
+        });
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [gameIsOn, isAnalysis, currentPlayer, handleTimeExpired]);
+
+  return { 
+    blackTime, 
+    whiteTime, 
+    blackTimeMinutes: blackFormattedTime.minutes,
+    blackTimeSeconds: blackFormattedTime.seconds,
+    blackFormattedTime: blackFormattedTime.formatted,
+    whiteTimeMinutes: whiteFormattedTime.minutes,
+    whiteTimeSeconds: whiteFormattedTime.seconds,
+    whiteFormattedTime: whiteFormattedTime.formatted,
+    resetTimers,
+   };
 }
