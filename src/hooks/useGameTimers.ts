@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Player } from "../modules/Player";
 import { Colors } from "../modules/Colors";
+import { Square } from "../modules/board/Square";
 import { useChessContext } from "../context/ChessContext";
 
 const INITIAL_TIME_SECONDS = 5 * 60;
@@ -9,8 +10,8 @@ interface UseGameTimersParams {
   gameIsOn: boolean;
   isAnalysis: boolean;
   currentPlayer: Player | null;
-  handleDraw: (color: Colors) => void;
-  handleStopGame: (color?: Colors) => void;
+  setCurrentPlayer: (p: Player | null) => void;
+  setSelectedSquare: (s: Square | null) => void;
 }
 
 function formatTime(totalSeconds: number) {
@@ -24,11 +25,11 @@ function formatTime(totalSeconds: number) {
   }
 }
 
-export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw, handleStopGame }: UseGameTimersParams) {
+export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, setCurrentPlayer, setSelectedSquare }: UseGameTimersParams) {
   const [blackTime, setBlackTime] = useState(INITIAL_TIME_SECONDS);
   const [whiteTime, setWhiteTime] = useState(INITIAL_TIME_SECONDS);
 
-  const { board, snapshotBoard } = useChessContext();
+  const { board, setGameIsOn, snapshotBoard } = useChessContext();
 
   const blackFormattedTime = useMemo(() => {
     return formatTime(blackTime);
@@ -44,21 +45,25 @@ export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw,
   }, []);
 
   const handleTimeExpired = useCallback((color: Colors) => {
-    if (color === Colors.BLACK) {
-      !board.doAlliedPiecesExist(Colors.WHITE)
-        ? handleDraw(Colors.WHITE)
-        : board.losingByTime(color);
+    const enemyColor = color === Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+
+    if (!board.doAlliedPiecesExist(enemyColor)) {
+      board.handleDraw(enemyColor);
+    } else {
+      board.losingByTime(color);
     }
 
-    if (color === Colors.WHITE) {
-      !board.doAlliedPiecesExist(Colors.BLACK)
-        ? handleDraw(Colors.BLACK)
-        : board.losingByTime(color);
-    }
-
-    handleStopGame();
+    setGameIsOn(false);
+    setCurrentPlayer(null);
+    setSelectedSquare(null);
     snapshotBoard(board);
-  }, [board, handleDraw, handleStopGame, snapshotBoard]);
+  }, [
+    board,
+    setGameIsOn,
+    setCurrentPlayer,
+    setSelectedSquare,
+    snapshotBoard,
+  ]);
 
   useEffect(() => {
     if (!gameIsOn || isAnalysis || !currentPlayer) {
@@ -92,11 +97,11 @@ export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw,
     return () => {
       clearInterval(timerId);
     };
-  }, [gameIsOn, isAnalysis, currentPlayer, handleTimeExpired]);
+  }, [gameIsOn, isAnalysis, currentPlayer]);
 
-  return { 
-    blackTime, 
-    whiteTime, 
+  return {
+    blackTime,
+    whiteTime,
     blackTimeMinutes: blackFormattedTime.minutes,
     blackTimeSeconds: blackFormattedTime.seconds,
     blackFormattedTime: blackFormattedTime.formatted,
@@ -104,5 +109,5 @@ export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw,
     whiteTimeSeconds: whiteFormattedTime.seconds,
     whiteFormattedTime: whiteFormattedTime.formatted,
     resetTimers,
-   };
+  };
 }

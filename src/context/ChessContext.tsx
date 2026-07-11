@@ -2,6 +2,12 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Board } from '../modules/board/Board';
 
 interface ChessContextType {
+  gameIsOn: boolean;
+  gameWasStarted: boolean;
+  isAnalysis: boolean;
+  setGameIsOn: (b: boolean) => void;
+  setGameWasStarted: (b: boolean) => void;
+  setIsAnalysis: (b: boolean) => void;
   board: Board;
   setBoard: (board: Board) => void;
   history: Board[];
@@ -29,6 +35,10 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   const [history, sethistory] = useState<Board[]>([initialBoard.getDeepCopyBoard()]);
   const [board, setBoard] = useState<Board>(history[history.length - 1].getDeepCopyBoard());
   const [currentMove, setCurrentMove] = useState(0);
+
+  const [gameIsOn, setGameIsOn] = useState(false);
+  const [gameWasStarted, setGameWasStarted] = useState(false);
+  const [isAnalysis, setIsAnalysis] = useState(false);
 
   function makeMove(newBoard: Board) {
     newBoard.squares.forEach(row => {
@@ -71,7 +81,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ChessContext.Provider value={{
-      board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard
+      board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis
     }}>
       {children}
     </ChessContext.Provider>

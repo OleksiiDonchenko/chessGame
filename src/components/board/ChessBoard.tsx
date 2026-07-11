@@ -16,6 +16,7 @@ import DroppableSquare from './DroppableSquare';
 import DraggablePiece from './DraggablePiece';
 import { useBoardDrag } from '../../hooks/useBoardDrag';
 import { useGameTimers } from '../../hooks/useGameTimers';
+import { useGameControls } from '../../hooks/useGameControls';
 
 function ChessBoard() {
   const boardRef = useRef<HTMLDivElement | null>(null);
@@ -29,7 +30,7 @@ function ChessBoard() {
   const [whoLeads, setWholeads] = useState(0);
   const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
 
-  const { board, setBoard, sethistory, setCurrentMove, makeMove } = useChessContext();
+  const { board, setBoard, sethistory, setCurrentMove, makeMove, gameIsOn, gameWasStarted, isAnalysis } = useChessContext();
 
   useEffect(() => {
     highlightSquares();
@@ -116,46 +117,8 @@ function ChessBoard() {
     setCurrentPlayer(currentPlayer?.color === Colors.WHITE ? blackPlayer : whitePlayer);
   }
 
-  const [gameIsOn, setgameIsOn] = useState(false);
-  const [gameWasStarted, setGameWasStarted] = useState(false);
-  const [isAnalysis, setIsAnalysis] = useState(false);
-  const { blackFormattedTime, whiteFormattedTime, resetTimers } = useGameTimers({ gameIsOn, isAnalysis, currentPlayer, handleDraw, handleStopGame });
-
-  function handleRestart() {
-    setgameIsOn(false);
-    setGameWasStarted(false);
-    setCurrentPlayer(null);
-    setSelectedSquare(null);
-    resetTimers();
-    restart();
-  }
-
-  function handleStartGame() {
-    setIsAnalysis(false);
-    setgameIsOn(true);
-    setGameWasStarted(true);
-    setCurrentPlayer(whitePlayer);
-  }
-
-  function handleAnalysis() {
-    setIsAnalysis(true);
-    setGameWasStarted(true);
-    setCurrentPlayer(whitePlayer);
-  }
-
-  function handleStopGame(color?: Colors) {
-    if (color)
-      board.handleResign(color);
-    setgameIsOn(false);
-    setCurrentPlayer(null);
-    setSelectedSquare(null);
-  }
-
-  function handleDraw(color: Colors) {
-    board.handleDraw(color);
-    handleStopGame();
-  }
-
+  const { blackFormattedTime, whiteFormattedTime, resetTimers } = useGameTimers({ gameIsOn, isAnalysis, currentPlayer, setCurrentPlayer, setSelectedSquare });
+  const { handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw } = useGameControls({ setCurrentPlayer, setSelectedSquare, restart, resetTimers, whitePlayer });
   const { handleDragStart, handleDragEnd, handleDragCancel } = useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquare, swapPlayer, setSelectedSquare });
 
   function clickOnTheBoard() {
