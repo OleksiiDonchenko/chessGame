@@ -11,7 +11,7 @@ interface ChessContextType {
   board: Board;
   setBoard: (board: Board) => void;
   history: Board[];
-  sethistory: (history: Board[]) => void;
+  setHistory: (history: Board[]) => void;
   currentMove: number;
   setCurrentMove: (currentMove: number) => void;
   makeMove: (newBoard: Board) => void;
@@ -32,7 +32,7 @@ export const useChessContext = () => {
 
 export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   const initialBoard = new Board();
-  const [history, sethistory] = useState<Board[]>([initialBoard.getDeepCopyBoard()]);
+  const [history, setHistory] = useState<Board[]>([initialBoard.getDeepCopyBoard()]);
   const [board, setBoard] = useState<Board>(history[history.length - 1].getDeepCopyBoard());
   const [currentMove, setCurrentMove] = useState(0);
 
@@ -47,7 +47,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
     const newHistory = [...history.slice(0, currentMove + 1), newBoard];
-    sethistory(newHistory);
+    setHistory(newHistory);
     setCurrentMove(newHistory.length - 1);
   }
 
@@ -67,7 +67,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
 
   function snapshotBoard(newBoard: Board) {
     const newHistory = [...history.slice(0, currentMove), newBoard.getDeepCopyBoard()];
-    sethistory(newHistory);
+    setHistory(newHistory);
   }
 
   function setNewBoard() {
@@ -81,7 +81,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ChessContext.Provider value={{
-      board, setBoard, history, sethistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis
+      board, setBoard, history, setHistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis
     }}>
       {children}
     </ChessContext.Provider>
