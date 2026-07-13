@@ -18,6 +18,12 @@ interface ChessContextType {
   goToPreviousMove: () => void;
   goToNextMove: () => void;
   snapshotBoard: (newBoard: Board) => void;
+  whitePoints: number;
+  setWhitePoints: (n: number) => void;
+  blackPoints: number;
+  setBlackPoints: (n: number) => void;
+  whoLeads: number;
+  setWholeads: (n: number) => void;
 }
 
 const ChessContext = createContext<ChessContextType | undefined>(undefined);
@@ -39,6 +45,10 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
   const [gameIsOn, setGameIsOn] = useState(false);
   const [gameWasStarted, setGameWasStarted] = useState(false);
   const [isAnalysis, setIsAnalysis] = useState(false);
+
+  const [whitePoints, setWhitePoints] = useState(0);
+  const [blackPoints, setBlackPoints] = useState(0);
+  const [whoLeads, setWholeads] = useState(0);
 
   function makeMove(newBoard: Board) {
     newBoard.squares.forEach(row => {
@@ -81,7 +91,7 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ChessContext.Provider value={{
-      board, setBoard, history, setHistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis
+      board, setBoard, history, setHistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis, whitePoints, setWhitePoints, blackPoints, setBlackPoints, whoLeads, setWholeads,
     }}>
       {children}
     </ChessContext.Provider>

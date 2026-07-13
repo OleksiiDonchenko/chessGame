@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import { useChessContext } from '../../context/ChessContext';
 import GameControls from '../controls/GameControls';
 import CapturedPieces from './CapturedPieces';
@@ -16,12 +16,8 @@ import { useChessGame } from '../../hooks/useChessGame';
 
 function ChessBoard() {
 
-  const [whitePoints, setWhitePoints] = useState(0);
-  const [blackPoints, setBlackPoints] = useState(0);
-  const [whoLeads, setWholeads] = useState(0);
-
   // useChessContext
-  const { board, gameIsOn, gameWasStarted, isAnalysis } = useChessContext();
+  const { board, gameIsOn, gameWasStarted, isAnalysis, whitePoints, setWhitePoints, blackPoints, setBlackPoints, whoLeads, setWholeads } = useChessContext();
 
   // useChessGame
   const { boardRef, clickOnBoard, setClickOnBoard, promotionSquare, setPromotionSquare, mouseDown, handlePromotion, swapPlayer, currentPlayer, setCurrentPlayer, selectedSquare, setSelectedSquare, restart, clickOnTheBoard, whitePlayer, blackPlayer, } = useChessGame({ setWhitePoints, setBlackPoints, setWholeads });
