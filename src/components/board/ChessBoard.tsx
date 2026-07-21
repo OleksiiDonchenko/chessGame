@@ -4,7 +4,6 @@ import GameControls from '../controls/GameControls';
 import CapturedPieces from './CapturedPieces';
 import PromotionModal from '../promotion/PromotionModal';
 import GameSidebar from '../sidebar/GameSidebar';
-import Clock from '../../assets/icons/clock.svg?react';
 import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import DroppableSquare from './DroppableSquare';
@@ -13,6 +12,7 @@ import { useBoardDrag } from '../../hooks/useBoardDrag';
 import { useGameTimers } from '../../hooks/useGameTimers';
 import { useGameControls } from '../../hooks/useGameControls';
 import { useChessGame } from '../../hooks/useChessGame';
+import Clock from './Clock';
 
 function ChessBoard() {
 
@@ -52,12 +52,7 @@ function ChessBoard() {
             setWhitePoints={setWhitePoints}
             blackPoints={blackPoints}
             setBlackPoints={setBlackPoints} />
-          <div className={['time', 'blackTime', currentPlayer === blackPlayer && !isAnalysis ? 'goes' : ''].join(' ')}>
-            <Clock fill='white' />
-            <span>
-              {blackFormattedTime}
-            </span>
-          </div>
+          <Clock color='blackTime' colorClockSVG='white' currentPlayer={currentPlayer} whitePlayer={whitePlayer} blackPlayer={blackPlayer} blackFormattedTime={blackFormattedTime} whiteFormattedTime={whiteFormattedTime} />
         </div>
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel} modifiers={[restrictToWindowEdges]}>
           <div ref={boardRef} className={['board', promotionSquare ? 'eclipse' : ''].join(' ')} onClick={() => clickOnTheBoard()}>
@@ -105,12 +100,7 @@ function ChessBoard() {
             setWhitePoints={setWhitePoints}
             blackPoints={blackPoints}
             setBlackPoints={setBlackPoints} />
-          <div className={['time', 'whiteTime', currentPlayer === whitePlayer && !isAnalysis ? 'goes' : ''].join(' ')}>
-            <Clock fill='black' />
-            <span>
-              {whiteFormattedTime}
-            </span>
-          </div>
+          <Clock color='whiteTime' colorClockSVG='black' currentPlayer={currentPlayer} whitePlayer={whitePlayer} blackPlayer={blackPlayer} blackFormattedTime={blackFormattedTime} whiteFormattedTime={whiteFormattedTime} />
         </div>
       </div>
       <GameSidebar boardRef={boardRef} clickOnBoard={clickOnBoard} setClickOnBoard={setClickOnBoard}
