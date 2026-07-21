@@ -1,31 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Board } from '../modules/board/Board';
-import { useChessHistory } from '../hooks/useChessHistory';
-
-interface ChessContextType {
-  gameIsOn: boolean;
-  gameWasStarted: boolean;
-  isAnalysis: boolean;
-  setGameIsOn: (b: boolean) => void;
-  setGameWasStarted: (b: boolean) => void;
-  setIsAnalysis: (b: boolean) => void;
-  board: Board;
-  setBoard: (board: Board) => void;
-  history: Board[];
-  setHistory: (history: Board[]) => void;
-  currentMove: number;
-  setCurrentMove: (currentMove: number) => void;
-  makeMove: (newBoard: Board) => void;
-  goToPreviousMove: () => void;
-  goToNextMove: () => void;
-  snapshotBoard: (newBoard: Board) => void;
-  whitePoints: number;
-  setWhitePoints: (n: number) => void;
-  blackPoints: number;
-  setBlackPoints: (n: number) => void;
-  whoLeads: number;
-  setWholeads: (n: number) => void;
-}
+import React, { createContext, useContext, useEffect } from 'react';
+import { useChessGame } from '../hooks/useChessGame';
+import { ChessContextType } from './types';
 
 const ChessContext = createContext<ChessContextType | undefined>(undefined);
 
@@ -38,24 +13,47 @@ export const useChessContext = () => {
 }
 
 export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
-  const [gameIsOn, setGameIsOn] = useState(false);
-  const [gameWasStarted, setGameWasStarted] = useState(false);
-  const [isAnalysis, setIsAnalysis] = useState(false);
 
-  const [whitePoints, setWhitePoints] = useState(0);
-  const [blackPoints, setBlackPoints] = useState(0);
-  const [whoLeads, setWholeads] = useState(0);
+  // useChessGame
+  const {
+    gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis,
 
-  const { board, setBoard, history, setHistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, setNewBoard } = useChessHistory();
+    whitePoints, setWhitePoints, blackPoints, setBlackPoints, whoLeads, setWholeads,
+
+    boardRef, clickOnBoard, setClickOnBoard, promotionSquare, selectedSquare, setSelectedSquare, currentPlayer, setCurrentPlayer, whitePlayer, blackPlayer,
+
+    board, history, currentMove, goToPreviousMove, goToNextMove, snapshotBoard, setNewBoard,
+
+    mouseDown, handlePromotion, swapPlayer, restart, clickOnTheBoard,
+
+    blackFormattedTime, whiteFormattedTime, resetTimers,
+
+    handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw,
+
+    handleDragStart, handleDragEnd, handleDragCancel,
+  } = useChessGame();
 
   useEffect(() => {
     setNewBoard();
   }, [currentMove, history]);
 
-
   return (
     <ChessContext.Provider value={{
-      board, setBoard, history, setHistory, currentMove, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis, whitePoints, setWhitePoints, blackPoints, setBlackPoints, whoLeads, setWholeads,
+      gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis,
+
+      whitePoints, setWhitePoints, blackPoints, setBlackPoints, whoLeads, setWholeads,
+
+      boardRef, clickOnBoard, setClickOnBoard, promotionSquare, selectedSquare, setSelectedSquare, currentPlayer, setCurrentPlayer, whitePlayer, blackPlayer,
+
+      board, history, currentMove, goToPreviousMove, goToNextMove, snapshotBoard,
+
+      mouseDown, handlePromotion, swapPlayer, restart, clickOnTheBoard,
+
+      blackFormattedTime, whiteFormattedTime, resetTimers,
+
+      handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw,
+
+      handleDragStart, handleDragEnd, handleDragCancel,
     }}>
       {children}
     </ChessContext.Provider>

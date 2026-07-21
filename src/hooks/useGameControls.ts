@@ -1,19 +1,22 @@
+import { Board } from "../modules/board/Board";
 import { Colors } from "../modules/Colors";
-import { useChessContext } from "../context/ChessContext";
-import { Player } from "../modules/Player.ts";
-import { Square } from "../modules/board/Square.ts";
 import { useCallback } from "react";
+import { Player } from "../modules/Player";
+import { Square } from "../modules/board/Square";
 
 interface UseGameControlsParams {
+  board: Board;
+  setGameIsOn: (b: boolean) => void;
+  setGameWasStarted: (b: boolean) => void;
+  setIsAnalysis: (b: boolean) => void;
   setCurrentPlayer: (p: Player | null) => void;
   setSelectedSquare: (s: Square | null) => void;
-  restart: () => void;
-  resetTimers: () => void;
   whitePlayer: Player;
+  resetTimers: any;
+  restart: () => void;
 }
 
-export function useGameControls({ setCurrentPlayer, setSelectedSquare, restart, resetTimers, whitePlayer }: UseGameControlsParams) {
-  const { board, setGameIsOn, setGameWasStarted, setIsAnalysis } = useChessContext();
+export function useGameControls({ board, setGameIsOn, setGameWasStarted, setIsAnalysis, setCurrentPlayer, setSelectedSquare, whitePlayer, resetTimers, restart }: UseGameControlsParams) {
 
   const handleRestart = useCallback(() => {
     setGameIsOn(false);

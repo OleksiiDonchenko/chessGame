@@ -1,19 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { Square } from "../modules/board/Square";
-import { Player } from "../modules/Player";
 import { Colors } from "../modules/Colors";
 import { Pawn } from "../modules/pieces/Pawn";
-import { useChessContext } from "../context/ChessContext";
 import { Board } from "../modules/board/Board";
+import { useGameTimers } from "./useGameTimers";
+import { Player } from "../modules/Player";
+import { useGameControls } from "./useGameControls";
+import { useBoardDrag } from "./useBoardDrag";
+import { useChessHistory } from "./useChessHistory";
 
-interface UseChessGameParams {
-  setWhitePoints: (n: number) => void;
-  setBlackPoints: (n: number) => void;
-  setWholeads: (n: number) => void;
-}
+export function useChessGame() {
 
-export function useChessGame({ setWhitePoints, setBlackPoints, setWholeads }: UseChessGameParams) {
-  const boardRef = useRef<HTMLDivElement | null>(null);
+  const [gameIsOn, setGameIsOn] = useState(false);
+  const [gameWasStarted, setGameWasStarted] = useState(false);
+  const [isAnalysis, setIsAnalysis] = useState(false);
+
+  const [whitePoints, setWhitePoints] = useState(0);
+  const [blackPoints, setBlackPoints] = useState(0);
+  const [whoLeads, setWholeads] = useState(0);
+
+  const boardRef = useRef<HTMLDivElement>(null);
   const [clickOnBoard, setClickOnBoard] = useState<boolean>(false);
   const [promotionSquare, setPromotionSquare] = useState<Square | null>(null);
   const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
@@ -21,7 +27,8 @@ export function useChessGame({ setWhitePoints, setBlackPoints, setWholeads }: Us
   const [blackPlayer] = useState(new Player(Colors.BLACK));
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
-  const { board, setBoard, makeMove, setCurrentMove, setHistory } = useChessContext();
+  // useChessHistory
+  const { board, setBoard, currentMove, history, setHistory, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, setNewBoard } = useChessHistory();
 
   function mouseDown(square: Square) {
     if (selectedSquare && selectedSquare !== square && selectedSquare.piece?.canMove(square)) {
@@ -124,22 +131,30 @@ export function useChessGame({ setWhitePoints, setBlackPoints, setWholeads }: Us
     };
   }, []);
 
+  // useGameTimers
+  const { blackFormattedTime, whiteFormattedTime, resetTimers } = useGameTimers({ board, snapshotBoard, gameIsOn, setGameIsOn, isAnalysis, currentPlayer, setCurrentPlayer, setSelectedSquare });
+
+  // useGameControls
+  const { handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw } = useGameControls({ board, setGameIsOn, setGameWasStarted, setIsAnalysis, setCurrentPlayer, setSelectedSquare, whitePlayer, resetTimers, restart });
+
+  // useBoardDrag
+  const { handleDragStart, handleDragEnd, handleDragCancel } = useBoardDrag({ board, makeMove, setClickOnBoard, currentPlayer, setPromotionSquare, setSelectedSquare, swapPlayer });
+
   return {
-    boardRef,
-    clickOnBoard,
-    setClickOnBoard,
-    promotionSquare,
-    setPromotionSquare,
-    mouseDown,
-    handlePromotion,
-    swapPlayer,
-    currentPlayer,
-    setCurrentPlayer,
-    selectedSquare,
-    setSelectedSquare,
-    restart,
-    clickOnTheBoard,
-    whitePlayer,
-    blackPlayer,
+    gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis,
+
+    whitePoints, setWhitePoints, blackPoints, setBlackPoints, whoLeads, setWholeads,
+
+    boardRef, clickOnBoard, setClickOnBoard, promotionSquare, selectedSquare, setSelectedSquare, currentPlayer, setCurrentPlayer, whitePlayer, blackPlayer,
+
+    board, history, currentMove, goToPreviousMove, goToNextMove, snapshotBoard, setNewBoard,
+
+    mouseDown, handlePromotion, swapPlayer, restart, clickOnTheBoard,
+
+    blackFormattedTime, whiteFormattedTime, resetTimers,
+
+    handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw,
+
+    handleDragStart, handleDragEnd, handleDragCancel
   };
 }

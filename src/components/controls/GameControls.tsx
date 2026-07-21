@@ -1,4 +1,3 @@
-import { GameControlsProps } from './types';
 import RestartButton from './RestartButton';
 import StartButton from './StartButton';
 import AnalysisButton from './AnalysisButton';
@@ -6,9 +5,10 @@ import DrawButton from './DrawButton';
 import ResignButton from './ResignButton';
 import { useChessContext } from '../../context/ChessContext';
 
-const GameControls = ({ handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw, gameIsOn, gameWasStarted, currentPlayer }: GameControlsProps) => {
+const GameControls = () => {
 
-  const { board, snapshotBoard } = useChessContext();
+  // useChessContext
+  const { board, snapshotBoard, gameIsOn, gameWasStarted, currentPlayer, handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw } = useChessContext();
 
   return (
     <div className="buttons">

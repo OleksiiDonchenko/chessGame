@@ -1,21 +1,18 @@
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Piece } from '../../modules/pieces/Piece';
 import { useChessContext } from '../../context/ChessContext';
 
 interface CapturedPiecesProps {
   color: string;
-  pieces: Piece[];
-  whoLeads: number;
-  setWholeads: (value: number) => void;
-  whitePoints: number;
-  setWhitePoints: (value: number) => void;
-  blackPoints: number;
-  setBlackPoints: (value: number) => void;
 }
 
-const CapturedPieces: FC<CapturedPiecesProps> = ({ color, pieces, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints }) => {
+const CapturedPieces = ({ color }: CapturedPiecesProps) => {
 
-  const { board } = useChessContext();
+  // useChessContext
+  const { board, whoLeads, setWholeads, whitePoints, setWhitePoints, blackPoints, setBlackPoints
+  } = useChessContext();
+
+  const pieces = color === 'white' ? board.lostWhitePieces : board.lostBlackPieces;
 
   let sortedPieces: Piece[] = [];
   if (pieces.length > 0) {

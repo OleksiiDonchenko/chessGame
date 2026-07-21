@@ -1,16 +1,18 @@
 import { useCallback } from "react";
 import { DragEndEvent, DragStartEvent, DragCancelEvent } from "@dnd-kit/core";
-import { useChessContext } from "../context/ChessContext";
-import { Square } from "../modules/board/Square";
 import { Pawn } from "../modules/pieces/Pawn";
+import { Board } from "../modules/board/Board";
+import { Square } from "../modules/board/Square";
 import { Player } from "../modules/Player";
 
 interface UseBoardDragParams {
-  setClickOnBoard: (p: boolean) => void;
+  board: Board;
+  makeMove: (newBoard: Board) => void;
+  setClickOnBoard: (b: boolean) => void;
+  setPromotionSquare: (s: Square | null) => void;
+  setSelectedSquare: (s: Square | null) => void;
   currentPlayer: Player | null;
-  setPromotionSquare: (p: Square | null) => void;
   swapPlayer: () => void;
-  setSelectedSquare: (p: Square | null) => void;
 }
 
 function getPieceElement(event: Event): HTMLElement | null {
@@ -30,9 +32,7 @@ function resetPiecePosition(piece: HTMLElement | null) {
   piece.style.top = '2px';
 }
 
-export function useBoardDrag({ setClickOnBoard, currentPlayer, setPromotionSquare, swapPlayer, setSelectedSquare }: UseBoardDragParams) {
-
-  const { board, makeMove } = useChessContext();
+export function useBoardDrag({ board, makeMove, setClickOnBoard, currentPlayer, setPromotionSquare, setSelectedSquare, swapPlayer }: UseBoardDragParams) {
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const piece = getPieceElement(event.activatorEvent);

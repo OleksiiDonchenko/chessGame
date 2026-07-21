@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Player } from "../modules/Player";
-import { Colors } from "../modules/Colors";
 import { Square } from "../modules/board/Square";
-import { useChessContext } from "../context/ChessContext";
+import { Colors } from "../modules/Colors";
+import { Board } from "../modules/board/Board";
 
 const INITIAL_TIME_SECONDS = 5 * 60;
 
 interface UseGameTimersParams {
+  board: Board;
+  snapshotBoard: (b: Board) => void;
+  setGameIsOn: (b: boolean) => void;
   gameIsOn: boolean;
   isAnalysis: boolean;
   currentPlayer: Player | null;
@@ -25,11 +28,10 @@ function formatTime(totalSeconds: number) {
   }
 }
 
-export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, setCurrentPlayer, setSelectedSquare }: UseGameTimersParams) {
+export function useGameTimers({ board, snapshotBoard, gameIsOn, setGameIsOn, isAnalysis, currentPlayer, setCurrentPlayer, setSelectedSquare }: UseGameTimersParams) {
+
   const [blackTime, setBlackTime] = useState(INITIAL_TIME_SECONDS);
   const [whiteTime, setWhiteTime] = useState(INITIAL_TIME_SECONDS);
-
-  const { board, setGameIsOn, snapshotBoard } = useChessContext();
 
   const blackFormattedTime = useMemo(() => {
     return formatTime(blackTime);
@@ -72,7 +74,7 @@ export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, setCurrentP
 
     const timerId = setInterval(() => {
       if (currentPlayer.color === Colors.BLACK) {
-        setBlackTime((prevTime) => {
+        setBlackTime((prevTime: number) => {
           if (prevTime <= 1) {
             handleTimeExpired(Colors.BLACK);
             return 0;
@@ -83,7 +85,7 @@ export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, setCurrentP
       }
 
       if (currentPlayer.color === Colors.WHITE) {
-        setWhiteTime((prevTime) => {
+        setWhiteTime((prevTime: number) => {
           if (prevTime <= 1) {
             handleTimeExpired(Colors.WHITE);
             return 0;
@@ -92,6 +94,7 @@ export function useGameTimers({ gameIsOn, isAnalysis, currentPlayer, setCurrentP
           return prevTime - 1;
         });
       }
+
     }, 1000);
 
     return () => {
