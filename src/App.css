@@ -143,20 +143,16 @@
   pointer-events: none;
 }
 
-.wrapper {
-  display: flex;
-}
-
-.wrapper-board {
-  display: flex;
-  flex-direction: column;
-}
-
 .main {
   display: flex;
 }
 
-.capturedPiecesAndTime {
+.chess-game {
+  display: flex;
+  flex-direction: column;
+}
+
+.capturedPiecesAndClock {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
