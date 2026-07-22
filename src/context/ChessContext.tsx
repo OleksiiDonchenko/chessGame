@@ -31,6 +31,8 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
     handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw,
 
     handleDragStart, handleDragEnd, handleDragCancel,
+
+    nextMove, previousMove,
   } = useChessGame();
 
   useEffect(() => {
@@ -54,6 +56,8 @@ export const ChessProvider = ({ children }: { children: React.ReactNode }) => {
       handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw,
 
       handleDragStart, handleDragEnd, handleDragCancel,
+
+      nextMove, previousMove,
     }}>
       {children}
     </ChessContext.Provider>

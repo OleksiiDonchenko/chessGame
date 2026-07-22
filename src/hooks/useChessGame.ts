@@ -8,6 +8,7 @@ import { Player } from "../modules/Player";
 import { useGameControls } from "./useGameControls";
 import { useBoardDrag } from "./useBoardDrag";
 import { useChessHistory } from "./useChessHistory";
+import { useGameSidebar } from "./useGameSidebar";
 
 export function useChessGame() {
 
@@ -140,6 +141,9 @@ export function useChessGame() {
   // useBoardDrag
   const { handleDragStart, handleDragEnd, handleDragCancel } = useBoardDrag({ board, makeMove, setClickOnBoard, currentPlayer, setPromotionSquare, setSelectedSquare, swapPlayer });
 
+  // useGameSidebar
+  const { nextMove, previousMove } = useGameSidebar({ isAnalysis, currentMove, goToPreviousMove, goToNextMove, boardRef, clickOnBoard, setClickOnBoard, setSelectedSquare, swapPlayer });
+
   return {
     gameIsOn, setGameIsOn, gameWasStarted, setGameWasStarted, isAnalysis, setIsAnalysis,
 
@@ -155,6 +159,8 @@ export function useChessGame() {
 
     handleRestart, handleStartGame, handleAnalysis, handleStopGame, handleDraw,
 
-    handleDragStart, handleDragEnd, handleDragCancel
+    handleDragStart, handleDragEnd, handleDragCancel,
+
+    nextMove, previousMove,
   };
 }

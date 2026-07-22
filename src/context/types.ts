@@ -57,4 +57,7 @@ export interface ChessContextType {
   handleDragStart: (e: DragStartEvent) => void;
   handleDragEnd: (e: DragEndEvent) => void;
   handleDragCancel: (e: DragCancelEvent) => void;
+
+  nextMove: () => void;
+  previousMove: () => void;
 }
