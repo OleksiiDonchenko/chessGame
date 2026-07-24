@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Board } from "../modules/board/Board";
 
-export function useChessHistory() {
+export function useGameHistory() {
   const initialBoard = new Board();
   const [history, setHistory] = useState<Board[]>([initialBoard.getDeepCopyBoard()]);
   const [board, setBoard] = useState<Board>(history[history.length - 1].getDeepCopyBoard());

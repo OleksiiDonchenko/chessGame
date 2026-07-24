@@ -7,7 +7,7 @@ import { useGameTimers } from "./useGameTimers";
 import { Player } from "../modules/Player";
 import { useGameControls } from "./useGameControls";
 import { useBoardDrag } from "./useBoardDrag";
-import { useChessHistory } from "./useChessHistory";
+import { useGameHistory } from "./useGameHistory";
 import { useGameSidebar } from "./useGameSidebar";
 
 export function useChessGame() {
@@ -28,8 +28,8 @@ export function useChessGame() {
   const [blackPlayer] = useState(new Player(Colors.BLACK));
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
-  // useChessHistory
-  const { board, setBoard, currentMove, history, setHistory, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, setNewBoard } = useChessHistory();
+  // useGameHistory
+  const { board, setBoard, currentMove, history, setHistory, setCurrentMove, makeMove, goToPreviousMove, goToNextMove, snapshotBoard, setNewBoard } = useGameHistory();
 
   function mouseDown(square: Square) {
     if (selectedSquare && selectedSquare !== square && selectedSquare.piece?.canMove(square)) {
