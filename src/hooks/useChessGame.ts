@@ -132,6 +132,70 @@ export function useChessGame() {
     };
   }, []);
 
+  useEffect(() => {
+    const squares = document.querySelectorAll('.square');
+
+    squares.forEach(el => {
+      const square = el as HTMLDivElement;
+
+
+      // Right-click of the mouse
+      square.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      })
+
+      // MOUSE DOWN
+      square.addEventListener('mousedown', (event) => {
+        // 1. Add active-right-click-preview to the square
+        if (event.button === 2 && !square.classList.contains('activeRightClick') && !square.classList.contains('activeRightClickPreview')) {
+          square.classList.add('activeRightClickPreview');
+          square.classList.add('active-right-click-preview');
+        }
+
+        // 3. Remove active-right-click and add active-right-click-preview to the square
+        if (event.button === 2 && square.classList.contains('active-right-click') && square.classList.contains('activeRightClick') && !square.classList.contains('activeRightClickPreview')) {
+          square.classList.remove('active-right-click');
+          square.classList.add('active-right-click-preview');
+          square.classList.add('activeRightClickPreview');
+        }
+      });
+
+      // MOUSE UP
+      square.addEventListener('mouseup', (event) => {
+        // 2. Remove active-right-click-preview and add active-right-click to the square
+        if (event.button === 2 && square.classList.contains('active-right-click-preview') && !square.classList.contains('activeRightClick') && square.classList.contains('activeRightClickPreview')) {
+          square.classList.remove('activeRightClickPreview');
+          square.classList.remove('active-right-click-preview');
+          square.classList.add('activeRightClick');
+          square.classList.add('active-right-click');
+        }
+
+        // 4. Remove active-right-click-preview from the square
+        if (event.button === 2 && square.classList.contains('active-right-click-preview') && square.classList.contains('activeRightClick') && square.classList.contains('activeRightClickPreview')) {
+          square.classList.remove('activeRightClick');
+          square.classList.remove('activeRightClickPreview');
+          square.classList.remove('active-right-click-preview');
+        }
+      });
+
+      // Left-click of the mouse
+      square.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        if (event.button === 0) {
+          squares.forEach(square => {
+            square.classList.remove('activeRightClick');
+            square.classList.remove('activeRightClickPreview');
+            square.classList.remove('active-right-click');
+            square.classList.remove('active-right-click-preview');
+          })
+        }
+      })
+
+    });
+  }, [board]);
+
+
+
   // useGameTimers
   const { blackFormattedTime, whiteFormattedTime, resetTimers } = useGameTimers({ board, snapshotBoard, gameIsOn, setGameIsOn, isAnalysis, currentPlayer, setCurrentPlayer, setSelectedSquare });
 

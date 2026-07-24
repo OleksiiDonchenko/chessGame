@@ -9,7 +9,7 @@ function App() {
 
   return (
     <main className='main'>
-      <div className='wrapper-board'>
+      <div className='chess-game'>
         <GameControls />
         <div className='capturedPiecesAndClock'>
           <CapturedPieces color='white' />
